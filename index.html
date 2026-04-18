@@ -818,60 +818,41 @@ document.getElementById('mobileMenu').addEventListener('click',function(e){if(e.
 
 setInterval(function(){goQ((qi+1)%5);},4500);
 
-/* ATMOSPHERE — violin-like tone */
-var atmCtx=null,atmNodes=[],atmOn=false;
+/* ATMOSPHERE — Handpan 432Hz */
+var atmAudio=null,atmOn=false;
 function toggleAtm(){atmOn?stopAtm():startAtm();}
 function startAtm(){
   try{
-    if(!atmCtx)atmCtx=new(window.AudioContext||window.webkitAudioContext)();
-    // Violin-like: sawtooth + lowpass + reverb-ish (multiple delays)
-    var master=atmCtx.createGain();
-    master.gain.value=0;
-    master.gain.setTargetAtTime(0.18,atmCtx.currentTime,2);
-    master.connect(atmCtx.destination);
-
-    [[196,.9],[294,.3],[392,.15],[490,.08]].forEach(function(p,i){
-      var o=atmCtx.createOscillator();
-      var g=atmCtx.createGain();
-      var f=atmCtx.createBiquadFilter();
-      o.type='sawtooth';
-      o.frequency.value=p[0];
-      // Slow vibrato
-      var lfo=atmCtx.createOscillator();
-      var lfoG=atmCtx.createGain();
-      lfo.frequency.value=5+i*0.3;
-      lfoG.gain.value=2;
-      lfo.connect(lfoG);
-      lfoG.connect(o.frequency);
-      lfo.start();
-      g.gain.value=p[1];
-      f.type='lowpass';
-      f.frequency.value=800;
-      f.Q.value=2;
-      o.connect(f);f.connect(g);g.connect(master);
-      o.start();
-      atmNodes.push({o:o,g:g,lfo:lfo});
-    });
-    // Bass drone
-    var bass=atmCtx.createOscillator();
-    var bassG=atmCtx.createGain();
-    bass.type='sine';bass.frequency.value=65;
-    bassG.gain.value=0.3;
-    bass.connect(bassG);bassG.connect(master);bass.start();
-    atmNodes.push({o:bass,g:bassG});
-    atmNodes.push({o:{stop:function(){}},g:master,isMaster:true});
+    if(!atmAudio){
+      atmAudio=new Audio('audio/atmosphere.mp3');
+      atmAudio.loop=true;
+      atmAudio.volume=0;
+    }
+    atmAudio.play().then(function(){
+      // Fade in
+      var vol=0;
+      var fi=setInterval(function(){
+        vol+=0.02;
+        if(vol>=0.6){vol=0.6;clearInterval(fi);}
+        atmAudio.volume=vol;
+      },80);
+    }).catch(function(e){console.log('Audio:',e);});
     atmOn=true;updAtm();
   }catch(e){console.log(e);}
 }
 function stopAtm(){
-  atmNodes.forEach(function(n){
-    try{
-      if(n.lfo)n.lfo.stop();
-      if(!n.isMaster){n.g.gain.setTargetAtTime(0,atmCtx.currentTime,.8);n.o.stop(atmCtx.currentTime+1.5);}
-      else{n.g.gain.setTargetAtTime(0,atmCtx.currentTime,.8);}
-    }catch(e){}
-  });
-  atmNodes=[];atmOn=false;updAtm();
+  if(!atmAudio)return;
+  // Fade out
+  var fo=setInterval(function(){
+    if(atmAudio.volume>0.05){
+      atmAudio.volume=Math.max(0,atmAudio.volume-0.03);
+    }else{
+      atmAudio.pause();
+      atmAudio.currentTime=0;
+      clearInterval(fo);
+    }
+  },80);
+  atmOn=false;updAtm();
 }
 function updAtm(){
   var b=document.getElementById('atm-btn');

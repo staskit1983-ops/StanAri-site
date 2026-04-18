@@ -298,7 +298,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 /* ── RESPONSIVE ───────────────────────────── */
 @media (max-width:1024px){
   .hero-grid{grid-template-columns:1fr}
-  .hero-photo{display:none}
+  .hero-photo{display:block;height:360px}
   .hero-copy{padding:40px 32px;border-right:none}
   .promo-grid{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
@@ -824,7 +824,7 @@ function toggleAtm(){atmOn?stopAtm():startAtm();}
 function startAtm(){
   try{
     if(!atmAudio){
-      atmAudio=new Audio('atmosphere.mp3');
+      atmAudio=new Audio('audio/atmosphere.mp3');
       atmAudio.loop=true;
       atmAudio.volume=0;
     }

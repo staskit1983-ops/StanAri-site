@@ -1158,7 +1158,7 @@ function openReadModalUnlocked(){
 }
 function openReadModal(){
   if(localStorage.getItem('stanari_book_access') === 'true'){
-    openReadModalUnlocked();
+    window.location.href = "reader.html";
   }else{
     openCleanAccessModal();
   }
@@ -1806,8 +1806,8 @@ let cleanUser = null;
 function cleanSetStatus(text){const status=document.getElementById("cleanAccessStatus"); if(status) status.textContent=text;}
 window.openCleanAccessModal=function(){const modal=document.getElementById("cleanAccessModal"); if(modal) modal.classList.add("open"); document.body.style.overflow="hidden"; if(cleanUser) cleanSetStatus("Ви увійшли: "+cleanUser.email+". Тепер введіть промокод."); else cleanSetStatus("Спочатку увійдіть через Google.");};
 window.closeCleanAccessModal=function(){const modal=document.getElementById("cleanAccessModal"); if(modal) modal.classList.remove("open"); document.body.style.overflow="";};
-window.cleanBookGoogleLogin=async function(){try{cleanSetStatus("Відкриваю Google..."); const result=await signInWithPopup(cleanAuth,cleanProvider); cleanUser=result.user; const userRef=doc(cleanDb,"users",cleanUser.uid); const userSnap=await getDoc(userRef); await setDoc(userRef,{email:cleanUser.email||"",name:cleanUser.displayName||"",lastLoginAt:serverTimestamp()},{merge:true}); if(userSnap.exists()&&userSnap.data().hasAccess===true){localStorage.setItem("stanari_book_access","true"); cleanSetStatus("✅ Доступ уже відкрито. Відкриваю книгу..."); setTimeout(()=>{closeCleanAccessModal(); if(typeof openReadModalUnlocked==="function") openReadModalUnlocked(); else window.location.href="reader.html";},700); return;} cleanSetStatus("✅ Ви увійшли: "+cleanUser.email+". Тепер введіть промокод.");}catch(e){console.error(e); cleanSetStatus("❌ Помилка входу через Google.");}};
-window.cleanActivatePromo=async function(){const input=document.getElementById("cleanPromoInput"); const code=input?input.value.trim().toLowerCase():""; if(!cleanUser){cleanSetStatus("Спочатку увійдіть через Google."); return;} if(!code){cleanSetStatus("Введіть промокод."); return;} try{cleanSetStatus("Перевіряю промокод..."); const promoRef=doc(cleanDb,"promoCodes",code); const promoSnap=await getDoc(promoRef); if(!promoSnap.exists()){cleanSetStatus("❌ Такого промокоду немає."); return;} const promo=promoSnap.data(); if(promo.used===true){cleanSetStatus("❌ Цей промокод вже використаний."); return;} if(promo.accessType!=="free_book"){cleanSetStatus("❌ Цей промокод не для безкоштовного читання."); return;} await setDoc(doc(cleanDb,"users",cleanUser.uid),{email:cleanUser.email||"",name:cleanUser.displayName||"",hasAccess:true,accessType:"free_book",promoCode:code,updatedAt:serverTimestamp()},{merge:true}); await updateDoc(promoRef,{used:true,usedByUid:cleanUser.uid,usedByEmail:cleanUser.email||"",usedAt:serverTimestamp()}); localStorage.setItem("stanari_book_access","true"); cleanSetStatus("✅ Доступ відкрито. Відкриваю книгу..."); setTimeout(()=>{closeCleanAccessModal(); if(typeof openReadModalUnlocked==="function") openReadModalUnlocked(); else window.location.href="reader.html";},700);}catch(e){console.error(e); cleanSetStatus("❌ Помилка перевірки промокоду. Перевір Firestore Rules.");}};
+window.cleanBookGoogleLogin=async function(){try{cleanSetStatus("Відкриваю Google..."); const result=await signInWithPopup(cleanAuth,cleanProvider); cleanUser=result.user; const userRef=doc(cleanDb,"users",cleanUser.uid); const userSnap=await getDoc(userRef); await setDoc(userRef,{email:cleanUser.email||"",name:cleanUser.displayName||"",lastLoginAt:serverTimestamp()},{merge:true}); if(userSnap.exists()&&userSnap.data().hasAccess===true){localStorage.setItem("stanari_book_access","true"); cleanSetStatus("✅ Доступ уже відкрито. Відкриваю книгу..."); setTimeout(()=>{closeCleanAccessModal(); if(typeof openReadModalUnlocked==="function") window.location.href = "reader.html"; else window.location.href="reader.html";},700); return;} cleanSetStatus("✅ Ви увійшли: "+cleanUser.email+". Тепер введіть промокод.");}catch(e){console.error(e); cleanSetStatus("❌ Помилка входу через Google.");}};
+window.cleanActivatePromo=async function(){const input=document.getElementById("cleanPromoInput"); const code=input?input.value.trim().toLowerCase():""; if(!cleanUser){cleanSetStatus("Спочатку увійдіть через Google."); return;} if(!code){cleanSetStatus("Введіть промокод."); return;} try{cleanSetStatus("Перевіряю промокод..."); const promoRef=doc(cleanDb,"promoCodes",code); const promoSnap=await getDoc(promoRef); if(!promoSnap.exists()){cleanSetStatus("❌ Такого промокоду немає."); return;} const promo=promoSnap.data(); if(promo.used===true){cleanSetStatus("❌ Цей промокод вже використаний."); return;} if(promo.accessType!=="free_book"){cleanSetStatus("❌ Цей промокод не для безкоштовного читання."); return;} await setDoc(doc(cleanDb,"users",cleanUser.uid),{email:cleanUser.email||"",name:cleanUser.displayName||"",hasAccess:true,accessType:"free_book",promoCode:code,updatedAt:serverTimestamp()},{merge:true}); await updateDoc(promoRef,{used:true,usedByUid:cleanUser.uid,usedByEmail:cleanUser.email||"",usedAt:serverTimestamp()}); localStorage.setItem("stanari_book_access","true"); cleanSetStatus("✅ Доступ відкрито. Відкриваю книгу..."); setTimeout(()=>{closeCleanAccessModal(); if(typeof openReadModalUnlocked==="function") window.location.href = "reader.html"; else window.location.href="reader.html";},700);}catch(e){console.error(e); cleanSetStatus("❌ Помилка перевірки промокоду. Перевір Firestore Rules.");}};
 onAuthStateChanged(cleanAuth,user=>{cleanUser=user;});
 document.addEventListener("DOMContentLoaded",()=>{const form=document.getElementById("reviewForm"),status=document.getElementById("reviewStatus"); if(!form||!status)return; form.addEventListener("submit",async(e)=>{e.preventDefault(); const name=document.getElementById("reviewName")?.value.trim()||"", email=document.getElementById("reviewEmail")?.value.trim()||"", text=document.getElementById("reviewText")?.value.trim()||""; if(!text){status.textContent="Напишіть відгук перед відправкою."; return;} status.textContent="Надсилаю відгук..."; try{await addDoc(collection(cleanDb,"reviews"),{name,email,text,source:"stanari.art",createdAt:serverTimestamp()}); status.textContent="✅ Дякую! Відгук надіслано."; form.reset();}catch(err){console.error(err); status.textContent="❌ Не вдалося надіслати. Можна написати на email: stanari.art@gmail.com";}});});
 </script>
@@ -1865,6 +1865,58 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
   };
 })();
 /* === /READER REDIRECT PATCH === */
+</script>
+
+
+<script>
+/* === HARD READER REDIRECT FIX — final override === */
+(function(){
+  function goReader(){
+    window.location.href = "reader.html";
+  }
+
+  function openGateOrReader(){
+    if(localStorage.getItem("stanari_book_access") === "true"){
+      goReader();
+      return;
+    }
+    if(typeof window.openCleanAccessModal === "function"){
+      window.openCleanAccessModal();
+      return;
+    }
+    if(typeof window.openBookAccessModal === "function"){
+      window.openBookAccessModal();
+      return;
+    }
+    goReader();
+  }
+
+  window.openReadModal = openGateOrReader;
+  window.openReadModalUnlocked = goReader;
+
+  document.addEventListener("click", function(e){
+    const el = e.target.closest("a,button");
+    if(!el) return;
+
+    const txt = (el.textContent || "").toLowerCase();
+    const oc = (el.getAttribute("onclick") || "").toLowerCase();
+
+    const isReadButton =
+      txt.includes("читати книгу") ||
+      txt.includes("читати онлайн") ||
+      txt.includes("read the book") ||
+      txt.includes("czytaj książkę") ||
+      oc.includes("openreadmodal") ||
+      oc.includes("openreadmodalunlocked");
+
+    if(isReadButton){
+      e.preventDefault();
+      e.stopPropagation();
+      openGateOrReader();
+    }
+  }, true);
+})();
+/* === /HARD READER REDIRECT FIX === */
 </script>
 
 </body>

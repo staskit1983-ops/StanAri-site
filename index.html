@@ -2,7 +2,74 @@
 <html lang="uk" translate="no">
 <head>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1HXL8E7R09"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1HXL8E7R09">
+window.activatePromo = async () => {
+  const status = document.getElementById("accessStatus") || document.getElementById("statusText");
+  const input = document.getElementById("promoInput");
+  const code = input ? input.value.trim().toLowerCase() : "";
+
+  if (!currentUser) {
+    status.textContent = "Спочатку увійди через Google.";
+    return;
+  }
+
+  if (!code) {
+    status.textContent = "Введи промокод.";
+    return;
+  }
+
+  status.textContent = "Перевіряю промокод...";
+
+  try {
+    const promoRef = doc(db, "promoCodes", code);
+    const promoSnap = await getDoc(promoRef);
+
+    if (!promoSnap.exists()) {
+      status.textContent = "❌ Такого промокоду немає.";
+      return;
+    }
+
+    const promo = promoSnap.data();
+
+    if (promo.used === true) {
+      status.textContent = "❌ Цей промокод вже використаний.";
+      return;
+    }
+
+    if (promo.accessType !== "free_book") {
+      status.textContent = "❌ Цей промокод не для безкоштовного читання.";
+      return;
+    }
+
+    await setDoc(doc(db, "users", currentUser.uid), {
+      email: currentUser.email || "",
+      name: currentUser.displayName || "",
+      hasAccess: true,
+      accessType: "free_book",
+      promoCode: code,
+      updatedAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp()
+    }, { merge: true });
+
+    await updateDoc(promoRef, {
+      used: true,
+      usedByUid: currentUser.uid,
+      usedByEmail: currentUser.email || "",
+      usedAt: serverTimestamp()
+    });
+
+    status.textContent = "✅ Доступ відкрито. Відкриваю книгу...";
+    setTimeout(() => {
+      window.location.href = "reader.html";
+    }, 900);
+
+  } catch (error) {
+    console.error(error);
+    status.textContent = "❌ Помилка перевірки промокоду. Перевір Firestore Rules.";
+  }
+};
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -405,92 +472,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 }
 @media(max-width:420px){.btn{font-size:13px;padding-left:12px;padding-right:12px}.btn-sm{font-size:12px;min-height:46px}}
 
-
-/* ACCESS FUNNEL — minimal added block */
-.access-funnel {
-  margin: 0 0 30px 0;
-  padding: 22px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.access-funnel p { opacity: .75; margin: 8px 0 16px; }
-.access-btn, .modal-btn {
-  border: 0;
-  border-radius: 999px;
-  padding: 13px 22px;
-  cursor: pointer;
-  font-weight: 700;
-  color: #111;
-  background: linear-gradient(135deg,#f5dfaa,#d8af63);
-}
-.access-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  background: rgba(0,0,0,.78);
-}
-.access-modal.open { display: flex; }
-.access-box {
-  width: min(100%, 440px);
-  padding: 26px;
-  border-radius: 20px;
-  background: #111;
-  border: 1px solid rgba(255,255,255,.12);
-}
-.google-btn {
-  width: 100%;
-  margin-top: 16px;
-  border: 0;
-  border-radius: 999px;
-  padding: 13px 18px;
-  cursor: pointer;
-  font-weight: 700;
-  background: #fff;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-.google-btn img { width: 22px; height: 22px; }
-.promo-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
-.promo-row input {
-  flex: 1;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  color: white;
-  padding: 12px;
-}
-.access-status {
-  min-height: 22px;
-  margin-top: 12px;
-  opacity: .8;
-  font-size: 14px;
-}
-.close-btn {
-  width: 100%;
-  margin-top: 14px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 999px;
-  padding: 12px;
-  cursor: pointer;
-  background: transparent;
-  color: white;
-}
-@media(max-width:520px){
-  .promo-row { flex-direction: column; }
-}
-
 </style>
 
 <style>
@@ -659,14 +640,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- ARIA + МІСІЯ -->
 <section class="section" id="mission" style="border-top:1px solid var(--border)">
   <div class="container">
-
-
-<div class="access-funnel">
-  <h2>Читати книгу</h2>
-  <p>Безкоштовне онлайн-читання відкривається після входу через Google та промокоду.</p>
-  <button class="access-btn" onclick="openAccessModal()">📖 Читати безкоштовно</button>
-</div>
-
     <div class="kicker"><span class="kicker-dot"></span><span data-t="mission_kicker">Aria &#8226; Mission</span></div>
     <div class="two-col" style="gap:0;align-items:stretch">
       <!-- Фото ліворуч -->
@@ -1796,120 +1769,6 @@ document.addEventListener('play', function(e){
     });
   }
 }, true);
-</script>
-
-
-<div class="access-modal" id="accessModal">
-  <div class="access-box">
-    <h2>Доступ до книги</h2>
-    <p>Увійди через Google. Один акаунт = постійний доступ до онлайн-читання.</p>
-
-    <button class="google-btn" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-      Увійти через Google
-    </button>
-
-    <div class="promo-row">
-      <input id="promoInput" placeholder="Введи промокод...">
-      <button class="modal-btn" onclick="activatePromo()">OK</button>
-    </div>
-
-    <div class="access-status" id="accessStatus">Спочатку увійди через Google.</div>
-
-    <button class="close-btn" onclick="closeAccessModal()">Закрити</button>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, limit, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
-  authDomain: "stanari-platform.firebaseapp.com",
-  projectId: "stanari-platform",
-  storageBucket: "stanari-platform.firebasestorage.app",
-  messagingSenderId: "1083904103961",
-  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-let currentUser = null;
-
-window.openAccessModal = () => {
-  document.getElementById("accessModal").classList.add("open");
-  if (currentUser) checkAccess(currentUser);
-};
-
-window.closeAccessModal = () => {
-  document.getElementById("accessModal").classList.remove("open");
-};
-
-window.loginWithGoogle = async () => {
-  const status = document.getElementById("accessStatus");
-  status.textContent = "Відкриваю Google...";
-  try {
-    const result = await signInWithPopup(auth, provider);
-    currentUser = result.user;
-    await checkAccess(currentUser);
-  } catch (error) {
-    console.error(error);
-    status.textContent = "Помилка входу через Google.";
-  }
-};
-
-async function checkAccess(user) {
-  const status = document.getElementById("accessStatus");
-  status.textContent = "Перевіряю доступ: " + user.email;
-
-  try {
-    const q = query(collection(db, "users"), where("email", "==", user.email), limit(1));
-    const snap = await getDocs(q);
-
-    if (!snap.empty && snap.docs[0].data().hasAccess === true) {
-      status.textContent = "✅ Доступ відкрито. Тут буде відкриватися онлайн-читання книги.";
-      return;
-    }
-
-    await setDoc(doc(db, "users", user.uid), {
-      email: user.email || "",
-      name: user.displayName || "",
-      hasAccess: false,
-      createdAt: serverTimestamp(),
-      lastLoginAt: serverTimestamp()
-    }, { merge: true });
-
-    status.textContent = "✅ Ви увійшли. Тепер введіть промокод.";
-  } catch (error) {
-    console.error(error);
-    status.textContent = "Не можу перевірити доступ. Перевір Firestore rules.";
-  }
-}
-
-window.activatePromo = () => {
-  const status = document.getElementById("accessStatus");
-  const code = document.getElementById("promoInput").value.trim();
-
-  if (!currentUser) {
-    status.textContent = "Спочатку увійди через Google.";
-    return;
-  }
-
-  if (!code) {
-    status.textContent = "Введи промокод.";
-    return;
-  }
-
-  status.textContent = "Промокод прийнято. Наступний крок — підключення бази кодів.";
-};
-
-onAuthStateChanged(auth, user => {
-  currentUser = user;
-});
 </script>
 
 </body>

@@ -1841,5 +1841,31 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
 })();
 </script>
 
+
+<script>
+/* === READER REDIRECT PATCH === */
+(function(){
+  const oldOpenReadModal = window.openReadModal;
+  window.openReadModal = function(){
+    if(localStorage.getItem("stanari_book_access") === "true"){
+      window.location.href = "reader.html";
+      return;
+    }
+    if(typeof window.openCleanAccessModal === "function"){
+      window.openCleanAccessModal();
+      return;
+    }
+    if(typeof window.openBookAccessModal === "function"){
+      window.openBookAccessModal();
+      return;
+    }
+    if(typeof oldOpenReadModal === "function"){
+      oldOpenReadModal();
+    }
+  };
+})();
+/* === /READER REDIRECT PATCH === */
+</script>
+
 </body>
 </html>

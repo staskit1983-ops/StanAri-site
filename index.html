@@ -1,116 +1,130 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <title>STAN ARI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>STAN ARI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      background: radial-gradient(circle at center, #111 0%, #000 100%);
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0b0b0f;
+  color:white;
+}
 
-    .container {
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-    }
+.container {
+  max-width:800px;
+  margin:80px auto;
+  text-align:center;
+}
 
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-    }
+button {
+  padding:15px 25px;
+  border-radius:30px;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+}
 
-    h1 {
-      margin-bottom: 10px;
-    }
+.primary {
+  background:linear-gradient(135deg,#8a2be2,#00c6ff);
+  color:white;
+}
 
-    p {
-      opacity: 0.7;
-    }
+.modal {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
 
-    button {
-      padding: 15px 25px;
-      border-radius: 30px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4285F4, #34A853);
-      color: white;
-      margin-top: 20px;
-      width: 100%;
-    }
+.modal-box {
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+  width:90%;
+  max-width:400px;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      margin-top: 15px;
-    }
-  </style>
+.google-btn {
+  background:linear-gradient(135deg,#4285F4,#34A853);
+  color:white;
+  width:100%;
+  margin-top:20px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
+  <h1>THE LIFE OPERATOR</h1>
+  <p>Книга про зміну мислення і контроль над життям</p>
 
-  <div class="card">
-    <h1>Авторизація</h1>
+  <button class="primary" onclick="openModal()">
+    📖 Отримати доступ
+  </button>
+</div>
+
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h2>Доступ до книги</h2>
     <p>Увійди через Google щоб отримати доступ</p>
 
-    <button onclick="loginWithGoogle()">
+    <button class="google-btn" onclick="loginWithGoogle()">
       🔵 Увійти через Google
     </button>
-  </div>
 
-  <div class="card">
-    <h1>Промокод</h1>
-    <input placeholder="Введи код..." />
+    <br><br>
+    <button onclick="closeModal()">Закрити</button>
   </div>
-
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
-    authDomain: "stanari-platform.firebaseapp.com",
-    projectId: "stanari-platform",
-    storageBucket: "stanari-platform.firebasestorage.app",
-    messagingSenderId: "1083904103961",
-    appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
+  authDomain: "stanari-platform.firebaseapp.com",
+  projectId: "stanari-platform",
+  storageBucket: "stanari-platform.firebasestorage.app",
+  messagingSenderId: "1083904103961",
+  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  window.loginWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+window.openModal = () => {
+  document.getElementById("loginModal").style.display = "flex";
+};
 
-      alert("Успішний вхід: " + user.email);
+window.closeModal = () => {
+  document.getElementById("loginModal").style.display = "none";
+};
 
-      console.log(user);
+window.loginWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-    } catch (error) {
-      console.error(error);
-      alert("Помилка входу");
-    }
-  };
+    alert("Доступ надано: " + user.email);
+    closeModal();
+
+  } catch (e) {
+    alert("Помилка входу");
+    console.error(e);
+  }
+};
 </script>
 
 </body>

@@ -432,7 +432,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 }
 .music-premium-card{
   display:grid;
-  grid-template-columns:minmax(210px, .8fr) minmax(280px, 1.2fr) auto;
+  grid-template-columns:minmax(220px,.8fr) minmax(280px,1.2fr) auto;
   gap:18px;
   align-items:center;
   padding:20px;
@@ -447,7 +447,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 }
 .music-author{
   color:var(--muted);
-  font-size:14px;
+  font-size:13px;
   letter-spacing:.08em;
   text-transform:uppercase;
 }
@@ -459,7 +459,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   padding:10px;
   border-radius:999px;
   border:1px solid rgba(255,224,155,.18);
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.52);
 }
 .audio-play{
   flex:0 0 42px;
@@ -479,7 +479,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   flex:1;
   border-radius:999px;
   overflow:hidden;
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.09);
   cursor:pointer;
 }
 .audio-progress{
@@ -518,6 +518,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 .like-btn.active{
   border-color:rgba(255,224,155,.35)!important;
   color:var(--gold2,#c99b3c)!important;
+}
+#illustrations .photo-full{
+  min-height:260px;
+}
+#illustrations .cover{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 @media(max-width:760px){
   .music-premium-card{
@@ -811,14 +819,12 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song1_title">Я прокидався — ніби не свій</h3>
           <p class="music-author">Автор: STAN ARI</p>
         </div>
-        <div class="audio-player" data-src="audio/ya-prokidavsya.mp3">
+        <div class="audio-player">
           <button class="audio-play" type="button" aria-label="Play">▶</button>
           <div class="audio-track"><div class="audio-progress"></div></div>
           <span class="audio-time">0:00</span>
           <a class="audio-download" href="audio/ya-prokidavsya.mp3" download>↓</a>
-          <audio preload="metadata">
-            <source src="audio/ya-prokidavsya.mp3" type="audio/mpeg">
-          </audio>
+          <audio preload="metadata" src="audio/ya-prokidavsya.mp3"></audio>
         </div>
         <button class="btn btn-ghost btn-sm like-btn" data-song="ya-prokidavsya"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
       </article>
@@ -829,16 +835,12 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song2_title">The Mirror</h3>
           <p class="music-author">Автор: STAN ARI</p>
         </div>
-        <div class="audio-player" data-src="audio/the mirror.mp3">
+        <div class="audio-player">
           <button class="audio-play" type="button" aria-label="Play">▶</button>
           <div class="audio-track"><div class="audio-progress"></div></div>
           <span class="audio-time">0:00</span>
-          <a class="audio-download" href="audio/the mirror.mp3" download>↓</a>
-          <audio preload="metadata">
-            <source src="audio/the mirror.mp3" type="audio/mpeg">
-            <source src="audio/the-mirror.mp3" type="audio/mpeg">
-            <source src="audio/The Mirror.mp3" type="audio/mpeg">
-          </audio>
+          <a class="audio-download" href="audio/the%20mirror.mp3" download>↓</a>
+          <audio preload="metadata" src="audio/the%20mirror.mp3"></audio>
         </div>
         <button class="btn btn-ghost btn-sm like-btn" data-song="the-mirror"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
       </article>
@@ -849,18 +851,65 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song3_title">Чорне Сонце</h3>
           <p class="music-author">Автор: ARIA</p>
         </div>
-        <div class="audio-player" data-src="audio/chome-sonce.mp3">
+        <div class="audio-player">
           <button class="audio-play" type="button" aria-label="Play">▶</button>
           <div class="audio-track"><div class="audio-progress"></div></div>
           <span class="audio-time">0:00</span>
           <a class="audio-download" href="audio/chome-sonce.mp3" download>↓</a>
-          <audio preload="metadata">
-            <source src="audio/chome-sonce.mp3" type="audio/mpeg">
-            <source src="audio/chorne-sonce.mp3" type="audio/mpeg">
-          </audio>
+          <audio preload="metadata" src="audio/chome-sonce.mp3"></audio>
         </div>
         <button class="btn btn-ghost btn-sm like-btn" data-song="chome-sonce"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
       </article>
+
+    </div>
+  </div>
+</section>
+<section class="section" id="music" style="border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="kicker"><span class="kicker-dot"></span><span data-t="music_kicker">Music</span></div>
+    <h2 data-t="music_title">Пісні</h2>
+    <p class="lead" style="margin-top:10px;margin-bottom:24px" data-t="music_lead">Авторські пісні можна слухати прямо на сайті.</p>
+
+    <div class="three-col">
+
+      <div class="card"><div class="card-body">
+        <span class="tag" data-t="music_card_tag">Музика</span>
+        <h3 style="margin-top:12px" data-t="song1_title">Я прокидався — ніби не свій</h3>
+        <div class="audio-player" data-src="audio/ya-prokidavsya.mp3">
+          <button class="audio-play" type="button" aria-label="Play">▶</button>
+          <div class="audio-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="audio-progress"></div></div>
+          <div class="audio-time">0:00</div>
+          <a class="audio-download" href="audio/ya-prokidavsya.mp3" download data-t="download_btn" aria-label="Download">Скачати</a>
+          <audio preload="metadata" src="audio/ya-prokidavsya.mp3"></audio>
+        </div>
+        <button class="btn btn-ghost btn-sm like-btn" style="margin-top:12px" data-song="ya-prokidavsya"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
+      </div></div>
+
+      <div class="card"><div class="card-body">
+        <span class="tag" data-t="music_card_tag">Музика</span>
+        <h3 style="margin-top:12px" data-t="song2_title">The Mirror</h3>
+        <div class="audio-player" data-src="audio/the-mirror.mp3">
+          <button class="audio-play" type="button" aria-label="Play">▶</button>
+          <div class="audio-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="audio-progress"></div></div>
+          <div class="audio-time">0:00</div>
+          <a class="audio-download" href="audio/the-mirror.mp3" download data-t="download_btn" aria-label="Download">Скачати</a>
+          <audio preload="metadata" src="audio/the-mirror.mp3"></audio>
+        </div>
+        <button class="btn btn-ghost btn-sm like-btn" style="margin-top:12px" data-song="the-mirror"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
+      </div></div>
+
+      <div class="card"><div class="card-body">
+        <span class="tag" data-t="music_card_tag">Музика</span>
+        <h3 style="margin-top:12px" data-t="song3_title">Чорне Сонце</h3>
+        <div class="audio-player" data-src="audio/chorne-sonce.mp3">
+          <button class="audio-play" type="button" aria-label="Play">▶</button>
+          <div class="audio-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="audio-progress"></div></div>
+          <div class="audio-time">0:00</div>
+          <a class="audio-download" href="audio/chorne-sonce.mp3" download data-t="download_btn" aria-label="Download">Скачати</a>
+          <audio preload="metadata" src="audio/chorne-sonce.mp3"></audio>
+        </div>
+        <button class="btn btn-ghost btn-sm like-btn" style="margin-top:12px" data-song="chorne-sonce"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
+      </div></div>
 
     </div>
   </div>
@@ -1829,14 +1878,14 @@ document.querySelectorAll('.like-btn').forEach(function(btn){
     const track = player.querySelector('.audio-track');
     const progress = player.querySelector('.audio-progress');
     const time = player.querySelector('.audio-time');
-    if(!audio || !play) return;
+    if(!audio || !play || !track || !progress || !time) return;
 
     allAudios.push(audio);
 
     play.addEventListener('click', ()=>{
       if(audio.paused){
         allAudios.forEach(a=>{ if(a!==audio) a.pause(); });
-        audio.play();
+        audio.play().catch(function(err){ console.log('Audio play error:', err); });
       }else{
         audio.pause();
       }
@@ -1844,16 +1893,12 @@ document.querySelectorAll('.like-btn').forEach(function(btn){
 
     audio.addEventListener('play', ()=>{ play.textContent = 'Ⅱ'; });
     audio.addEventListener('pause', ()=>{ play.textContent = '▶'; });
-    audio.addEventListener('ended', ()=>{ play.textContent = '▶'; });
+    audio.addEventListener('ended', ()=>{ play.textContent = '▶'; progress.style.width='0%'; time.textContent='0:00'; });
 
     audio.addEventListener('timeupdate', ()=>{
       const pct = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;
       progress.style.width = pct + '%';
       time.textContent = fmt(audio.currentTime);
-    });
-
-    audio.addEventListener('loadedmetadata', ()=>{
-      time.textContent = '0:00';
     });
 
     track.addEventListener('click', (e)=>{

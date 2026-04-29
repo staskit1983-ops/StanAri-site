@@ -2,103 +2,529 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>STAN ARI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>STAN ARI — The Life Operator</title>
 <style>
-body {
+:root{
+  --bg:#050403;
+  --panel:#0d0a07;
+  --gold:#d8af63;
+  --gold2:#ffe7ab;
+  --text:#fff7e8;
+  --muted:#b8aa91;
+  --border:rgba(255,224,155,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
   margin:0;
-  font-family: Arial;
-  background: radial-gradient(circle at center, #111 0%, #000 100%);
-  color:white;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(216,175,99,.16),transparent 30%),
+    radial-gradient(circle at 15% 35%,rgba(255,224,155,.08),transparent 25%),
+    #050403;
+  color:var(--text);
+  font-family:Georgia,serif;
+  overflow-x:hidden;
 }
-
-.container {
-  max-width:800px;
-  margin:80px auto;
-  text-align:center;
-}
-
-button {
-  padding:15px 25px;
-  border-radius:30px;
-  border:none;
-  cursor:pointer;
-  font-size:16px;
-}
-
-.primary {
-  background:linear-gradient(135deg,#8a2be2,#00c6ff);
-  color:white;
-}
-
-.modal {
+body::before{
+  content:"";
   position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle,rgba(255,218,139,.65) 0 1px,transparent 1.6px);
+  background-size:90px 90px;
+  opacity:.28;
+  z-index:-1;
+}
+a{color:inherit;text-decoration:none}
+.header{
+  position:sticky;
   top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.85);
-  display:none;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px 5vw;
+  background:rgba(5,4,3,.86);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px);
+}
+.logo{
+  font-weight:900;
+  letter-spacing:.18em;
+  font-size:18px;
+  color:var(--gold2);
+}
+.nav{
+  display:flex;
+  gap:22px;
+  align-items:center;
+  font-weight:700;
+  color:#fff2d8;
+}
+.nav a{opacity:.86}
+.nav a:hover{opacity:1;color:var(--gold2)}
+.langs{display:flex;gap:8px}
+.langs button{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:999px;
+  padding:8px 12px;
+  cursor:pointer;
+  font-weight:800;
+}
+.langs button.active{
+  background:linear-gradient(135deg,#ffe7ab,#c8953f);
+  color:#160f07;
+}
+.section{
+  width:min(1180px,92vw);
+  margin:0 auto;
+  padding:72px 0;
+}
+.hero{
+  min-height:78vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:42px;
+}
+.badge{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--gold2);
+  border-radius:999px;
+  padding:9px 14px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:12px;
+  font-weight:900;
+}
+h1{
+  font-size:clamp(44px,7vw,92px);
+  line-height:.92;
+  margin:22px 0 18px;
+}
+h2{
+  font-size:clamp(34px,5vw,58px);
+  line-height:1;
+  margin:0 0 18px;
+}
+p{
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.6;
+}
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:24px;
+}
+.btn{
+  display:inline-flex;
   justify-content:center;
   align-items:center;
+  gap:10px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.045);
+  color:var(--text);
+  padding:14px 20px;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:900;
+  font-family:Georgia,serif;
+  font-size:16px;
 }
-
-.modal-box {
-  background:#111;
-  padding:30px;
-  border-radius:20px;
-  text-align:center;
-  width:90%;
-  max-width:400px;
+.btn.gold{
+  border:0;
+  background:linear-gradient(135deg,#ffe7ab,#d8af63,#b77a28);
+  color:#120d07;
+  box-shadow:0 18px 60px rgba(216,175,99,.22);
 }
-
-.google-btn {
+.btn:hover{transform:translateY(-1px)}
+.hero-card,.book-card,.glass{
+  border:1px solid var(--border);
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.018));
+  box-shadow:0 24px 80px rgba(0,0,0,.38);
+  overflow:hidden;
+}
+.hero-card img,.book-image{
+  width:100%;
+  display:block;
+  object-fit:cover;
+}
+.hero-card img{aspect-ratio:4/5}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+}
+.book-card{
+  display:grid;
+  grid-template-columns:42% 1fr;
+  min-height:440px;
+}
+.book-card img{
+  height:100%;
+  object-fit:cover;
+}
+.book-info{padding:28px}
+.book-info h3{
+  font-size:32px;
+  margin:0 0 8px;
+}
+.book-info em{
+  color:var(--gold2);
+  font-size:20px;
+}
+.specs{
+  display:grid;
+  gap:12px;
+  margin:24px 0;
+}
+.spec{
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.035);
+}
+.spec small{
+  color:var(--gold);
+  letter-spacing:.14em;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.music-list{
+  display:grid;
+  gap:14px;
+}
+.track{
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:rgba(255,255,255,.035);
+  padding:18px;
+  display:grid;
+  grid-template-columns:220px 1fr auto;
+  gap:18px;
+  align-items:center;
+}
+.track h3{margin:0;font-size:24px}
+.track small{color:var(--gold2);font-weight:900;letter-spacing:.08em}
+.track audio{width:100%;filter:invert(1) sepia(.3) saturate(.7)}
+.illustrations{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.illu{
+  border:1px solid var(--border);
+  border-radius:22px;
+  overflow:hidden;
+  background:rgba(255,255,255,.035);
+}
+.illu img{
+  width:100%;
+  display:block;
+  aspect-ratio:16/10;
+  object-fit:cover;
+}
+.illu p{padding:0 14px 14px;margin:10px 0 0;font-size:15px}
+.news{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.news .glass{padding:26px}
+.footer{
+  border-top:1px solid var(--border);
+  padding:44px 5vw;
+}
+.footer-grid{
+  width:min(1180px,92vw);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:28px;
+}
+.socials{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.fund{color:#d8d0be;font-size:14px;margin-top:28px}
+.float-atmo{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:45;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(10px);
+  z-index:100;
+}
+.modal.show{display:flex}
+.modal-box{
+  width:min(100%,470px);
+  border:1px solid var(--border);
+  border-radius:28px;
+  background:linear-gradient(135deg,#13100c,#070605);
+  padding:28px;
+  box-shadow:0 34px 100px rgba(0,0,0,.65);
+}
+.modal-box h3{font-size:34px;margin:0 0 10px}
+.google-btn{
+  width:100%;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  background:white;
-  color:black;
-  width:100%;
-  margin-top:20px;
+  gap:12px;
+  padding:15px 18px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:#fff;
+  color:#171717;
+  font-weight:900;
+  cursor:pointer;
+  font-size:16px;
+  margin-top:18px;
 }
-
-.google-btn img {
-  width:20px;
+.google-btn img{width:22px;height:22px}
+.promo-row{display:flex;gap:10px;margin-top:18px}
+.promo-row input{
+  flex:1;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  outline:none;
+}
+.status{min-height:22px;margin-top:12px;color:var(--gold2)}
+.close{
+  margin-top:14px;
+  width:100%;
+}
+.hidden{display:none!important}
+@media(max-width:860px){
+  .header{gap:10px;padding:14px 4vw}
+  .nav{display:none}
+  .logo{font-size:15px}
+  .section{padding:46px 0}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-card{order:-1}
+  .grid,.news{grid-template-columns:1fr}
+  .book-card{grid-template-columns:1fr}
+  .book-card img{height:auto}
+  .track{grid-template-columns:1fr}
+  .illustrations{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .socials{grid-template-columns:1fr}
+  .float-atmo{right:12px;bottom:12px}
 }
 </style>
 </head>
-
 <body>
 
-<div class="container">
-  <h1>THE LIFE OPERATOR</h1>
-  <p>Книга про зміну мислення і контроль над життям</p>
+<header class="header">
+  <a class="logo" href="#top">STAN ARI</a>
+  <nav class="nav">
+    <a href="#mission">Місія</a>
+    <a href="#books">Книги</a>
+    <a href="#music">Музика</a>
+    <a href="#illustrations">Ілюстрації</a>
+    <a href="#news">Новини</a>
+  </nav>
+  <div class="langs">
+    <button class="active">UA</button><button>EN</button><button>PL</button>
+  </div>
+</header>
 
-  <button class="primary" onclick="openModal()">
-    📖 Читати книгу
-  </button>
-</div>
+<main id="top">
+  <section class="section hero">
+    <div>
+      <span class="badge">● авторський всесвіт</span>
+      <h1>THE LIFE OPERATOR</h1>
+      <p>Книга, музика й образи про внутрішній код людини: вибір, пам’ять, свідомість і силу переписати себе.</p>
+      <div class="actions">
+        <button class="btn gold" onclick="openAccessModal()">📖 Читати безкоштовно</button>
+        <a class="btn" href="#books">Книги</a>
+        <a class="btn" href="#music">Музика</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <img src="book1-mockup.jpg" onerror="this.src='book1-cover.jpg'" alt="The Life Operator Book One mockup">
+    </div>
+  </section>
 
-<div class="modal" id="loginModal">
+  <section class="section" id="mission">
+    <span class="badge">● місія</span>
+    <h2>Rewrite Your Inner Code</h2>
+    <p>Це не просто книга. Це авторський простір, де текст, музика й візуальні образи працюють разом, щоб людина відчула: вона не лише бачить результат — вона його створює.</p>
+  </section>
+
+  <section class="section" id="books">
+    <span class="badge">● books</span>
+    <h2>Книги</h2>
+    <div class="grid">
+      <article class="book-card">
+        <img src="book1-mockup.jpg" onerror="this.src='book1-cover.jpg'" alt="The Life Operator Book One">
+        <div class="book-info">
+          <h3>The Life Operator</h3>
+          <em>Том 1 — Rewrite Your Inner Code</em>
+          <p>Книга про те, що людина бачить результат — але не бачить, що його створює.</p>
+          <div class="specs">
+            <div class="spec"><small>мови</small><br>UA • EN • PL</div>
+            <div class="spec"><small>формат</small><br>Online Reader • PDF / EPUB / MOBI після покупки</div>
+          </div>
+          <div class="actions">
+            <button class="btn gold" onclick="openAccessModal()">📖 Читати безкоштовно</button>
+            <a class="btn" href="#buy">Купити PDF</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <img src="book2-mockup.jpg" onerror="this.src='book2-cover.jpg'" alt="The Life Operator Book Two">
+        <div class="book-info">
+          <h3>Том 2</h3>
+          <em>Your Consciousness Is the Key</em>
+          <p>Продовження великої лінії — глибше, сильніше, ближче до ядра вибору.</p>
+          <div class="specs">
+            <div class="spec"><small>статус</small><br>У процесі народження</div>
+            <div class="spec"><small>доступ</small><br>Незабаром</div>
+          </div>
+          <a class="btn" href="#news">Стежити за виходом</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="music">
+    <span class="badge">● music</span>
+    <h2>Пісні</h2>
+    <p>Авторські пісні можна слухати прямо на сайті.</p>
+    <div class="music-list">
+      <div class="track">
+        <div><small>MUSIC</small><h3>Я прокидався — ніби не свій</h3><small>АВТОР: STAN ARI</small></div>
+        <audio controls preload="metadata" src="audio/ya-prokidavsya.mp3"></audio>
+        <a class="btn" href="audio/ya-prokidavsya.mp3" download>↓ Скачать</a>
+      </div>
+      <div class="track">
+        <div><small>MUSIC</small><h3>The Mirror</h3><small>АВТОР: STAN ARI</small></div>
+        <audio controls preload="metadata" src="audio/the mirror.mp3"></audio>
+        <a class="btn" href="audio/the mirror.mp3" download>↓ Скачать</a>
+      </div>
+      <div class="track">
+        <div><small>MUSIC</small><h3>Чорне Сонце</h3><small>АВТОР: ARIA</small></div>
+        <audio controls preload="metadata" src="audio/chorne-sonce.mp3"></audio>
+        <a class="btn" href="audio/chorne-sonce.mp3" download>↓ Скачать</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="illustrations">
+    <span class="badge">● illustrations</span>
+    <h2>Ілюстрації</h2>
+    <div class="illustrations">
+      <div class="illu"><img src="img1.jpg" alt="Ілюстрація 1"><p>Ілюстрація 1</p></div>
+      <div class="illu"><img src="img2.jpg" alt="Ілюстрація 2"><p>Ілюстрація 2</p></div>
+      <div class="illu"><img src="img3.jpg" alt="Ілюстрація 3"><p>Ілюстрація 3</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="news">
+    <span class="badge">● news</span>
+    <h2>Конкурси та новини</h2>
+    <div class="news">
+      <div class="glass">
+        <small>КВІТЕНЬ 2026</small>
+        <h3>🎁 Розіграш Тому 1</h3>
+        <p>Введи промокод з TikTok або YouTube і отримай доступ до онлайн-читання безкоштовно.</p>
+        <button class="btn gold" onclick="openAccessModal()">Отримати зараз</button>
+      </div>
+      <div class="glass">
+        <small>НЕЗАБАРОМ</small>
+        <h3>📘 Вихід Тому 2</h3>
+        <p>Підписуйся на Telegram, щоб не пропустити дату виходу.</p>
+        <a class="btn" href="#">Telegram</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="buy">
+    <span class="badge">● where to buy</span>
+    <h2>Де знайти книгу</h2>
+    <p>Книгу можна буде купити у форматах PDF / EPUB / MOBI, а аудіокнигу — MP3 / MP4. Безкоштовний доступ — тільки онлайн-читання.</p>
+    <div class="actions">
+      <a class="btn" href="#">Amazon</a>
+      <a class="btn" href="#">Apple Books</a>
+      <a class="btn" href="#">Google Play Books</a>
+      <a class="btn" href="#">Telegram Bot</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="logo">STAN ARI</div>
+      <p>Авторський світ книг, музики та місії.</p>
+      <p>Email: stanari.art@gmail.com</p>
+      <div class="socials">
+        <a class="btn" href="#">Telegram</a>
+        <a class="btn" href="#">TikTok</a>
+        <a class="btn" href="#">YouTube</a>
+      </div>
+      <p class="fund">33% від прибутку з книги йде на створення фонду “Aria” та майбутнього притулку для тварин.</p>
+    </div>
+    <div>
+      <h3>Навігація</h3>
+      <p><a href="#mission">Місія</a></p>
+      <p><a href="#books">Книги</a></p>
+      <p><a href="#illustrations">Ілюстрації</a></p>
+      <p><a href="#news">Новини</a></p>
+    </div>
+  </div>
+</footer>
+
+<button class="btn float-atmo" onclick="toggleAtmosphere()">🎵 Атмосфера</button>
+<audio id="atmo" src="audio/atmosphere.mp3" loop preload="metadata"></audio>
+
+<div class="modal" id="accessModal">
   <div class="modal-box">
-    <h2>Безкоштовний доступ</h2>
-    <p>Увійди через Google щоб читати книгу</p>
+    <h3>Безкоштовне читання</h3>
+    <p>Увійди через Google, введи промокод і читай книгу онлайн у доступних мовах: UA / EN / PL.</p>
 
     <button class="google-btn" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
       Увійти через Google
     </button>
 
-    <br><br>
-    <button onclick="closeModal()">Закрити</button>
+    <div class="promo-row">
+      <input id="promoInput" placeholder="Введи промокод...">
+      <button class="btn gold" onclick="activatePromo()">OK</button>
+    </div>
+
+    <div class="status" id="statusText"></div>
+
+    <button class="btn close" onclick="closeAccessModal()">Закрити</button>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
@@ -113,26 +539,50 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-window.openModal = () => {
-  document.getElementById("loginModal").style.display = "flex";
+let currentUser = null;
+
+window.openAccessModal = () => {
+  document.getElementById("accessModal").classList.add("show");
 };
 
-window.closeModal = () => {
-  document.getElementById("loginModal").style.display = "none";
+window.closeAccessModal = () => {
+  document.getElementById("accessModal").classList.remove("show");
 };
 
 window.loginWithGoogle = async () => {
+  const status = document.getElementById("statusText");
   try {
     const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    alert("Успішний вхід: " + user.email);
-    closeModal();
-
+    currentUser = result.user;
+    status.textContent = "✅ Ви увійшли: " + currentUser.email + ". Тепер введіть промокод.";
   } catch (e) {
-    alert("Помилка входу");
+    status.textContent = "❌ Помилка входу через Google.";
     console.error(e);
   }
+};
+
+window.activatePromo = () => {
+  const code = document.getElementById("promoInput").value.trim();
+  const status = document.getElementById("statusText");
+  if (!currentUser) {
+    status.textContent = "Спочатку увійдіть через Google.";
+    return;
+  }
+  if (!code) {
+    status.textContent = "Введіть промокод.";
+    return;
+  }
+  status.textContent = "Наступний крок: підключимо перевірку коду в Firebase.";
+};
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+});
+
+window.toggleAtmosphere = () => {
+  const audio = document.getElementById("atmo");
+  if (audio.paused) audio.play();
+  else audio.pause();
 };
 </script>
 

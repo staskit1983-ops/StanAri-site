@@ -1,162 +1,554 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" translate="no">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STAN ARI — Online Reader</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="google" content="notranslate">
+<title>STAN ARI — Reader</title>
 <style>
-:root{--bg:#050403;--gold:#d8af63;--gold2:#ffe3a3;--text:#fff7e8;--muted:#b8aa91;--border:rgba(255,224,155,.18)}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif}
-body{min-height:100vh;overflow-x:hidden}
-.lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
-.reader-shell{min-height:100vh;background:radial-gradient(circle at 50% 0%,rgba(216,175,99,.15),transparent 32%),linear-gradient(180deg,#0c0906,#030303)}
-.reader-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(6,5,4,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}
-.brand{font-weight:800;letter-spacing:.08em;color:var(--gold2);font-size:13px;text-transform:uppercase}
-.reader-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.reader-btn,.lang-btn{border:1px solid var(--border);background:rgba(255,237,188,.055);color:var(--text);border-radius:999px;padding:9px 12px;cursor:pointer;font-size:13px;text-decoration:none}
-.reader-btn.gold,.lang-btn.active{background:linear-gradient(135deg,#f4d997,#c8953f);color:#140f08;font-weight:800}
-.reader-status{color:var(--muted);font-size:13px;min-width:82px;text-align:center}
-.reader-main{padding:22px 12px 48px}
-.lang-panel{width:min(100%,860px);margin:0 auto 18px;padding:16px;border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.035)}
-.lang-panel h1{margin:0 0 8px;font-size:clamp(24px,5vw,40px)}
-.lang-panel p{margin:0 0 14px;color:var(--muted);line-height:1.45}
-.lang-row{display:flex;gap:10px;flex-wrap:wrap}
-.mobile-scroll{width:min(100%,860px);margin:0 auto;display:flex;flex-direction:column;gap:18px}
-.page-img{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.65);border:1px solid rgba(255,224,155,.08);background:#111;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
-.desktop-reader{display:none}
-.watermark{pointer-events:none;position:fixed;inset:0;z-index:30;opacity:.12;background-image:repeating-linear-gradient(-28deg,transparent 0 120px,rgba(216,175,99,.22) 121px 122px,transparent 123px 245px)}
-.watermark-text{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-28deg);z-index:31;pointer-events:none;color:rgba(255,224,155,.18);font-size:clamp(28px,7vw,92px);font-weight:900;letter-spacing:.08em;white-space:nowrap;text-transform:uppercase}
-@media (min-width:900px){
-.reader-main{padding:34px 18px 54px}.mobile-scroll{display:none}.desktop-reader{display:flex;flex-direction:column;align-items:center;gap:18px}
-.book-stage{width:min(78vw,760px);min-height:72vh;display:flex;align-items:center;justify-content:center;perspective:1800px}
-.page-card{width:min(68vw,610px);max-height:78vh;transform-origin:left center;transition:transform .45s ease,opacity .25s ease}
-.page-card.flip-next{animation:flipNext .55s ease}.page-card.flip-prev{animation:flipPrev .55s ease}
-.page-card img{max-height:78vh;width:auto;max-width:100%;display:block;border-radius:12px;box-shadow:0 30px 90px rgba(0,0,0,.82);border:1px solid rgba(255,224,155,.12);user-select:none;-webkit-user-drag:none}
-.desktop-controls{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
-@keyframes flipNext{0%{transform:rotateY(0deg);opacity:1}45%{transform:rotateY(-42deg);opacity:.55}100%{transform:rotateY(0deg);opacity:1}}
-@keyframes flipPrev{0%{transform:rotateY(0deg);opacity:1}45%{transform:rotateY(38deg);opacity:.55}100%{transform:rotateY(0deg);opacity:1}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#d8af63;
+  --gold2:#f2d99d;
+  --bg:#070605;
+  --text:#fff7ea;
+  --muted:#c8bca7;
+  --muted2:#8f806d;
+  --border:rgba(255,224,155,.16);
+  --panel:rgba(255,255,255,.045);
 }
-@media print{body{display:none!important}}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:Georgia,serif;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(circle at 50% 10%, rgba(216,175,99,.16), transparent 32%),
+    radial-gradient(circle at 15% 75%, rgba(90,55,22,.18), transparent 38%),
+    linear-gradient(180deg,#110d0a 0%,#070605 52%,#030302 100%);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.42;
+  background-image:
+    radial-gradient(circle, rgba(255,224,155,.36) 0 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.14) 0 1px, transparent 1px);
+  background-size:74px 74px, 123px 123px;
+  background-position:0 0, 30px 40px;
+  mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 78%,transparent 100%);
+}
+a{color:inherit;text-decoration:none}
+button,input{font-family:inherit}
+button{cursor:pointer}
+.container{width:min(calc(100% - 32px),1180px);margin:0 auto}
+.topbar{
+  position:sticky;top:0;z-index:50;height:72px;
+  display:flex;align-items:center;
+  background:rgba(7,6,5,.86);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{font-size:13px;letter-spacing:.28em;text-transform:uppercase;font-weight:900;color:#fff9ef}
+.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.btn{
+  min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);font-weight:800;font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:.22s;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(255,224,155,.34)}
+.btn-gold{background:linear-gradient(135deg,#f8e7b4,#d8af63,#a87531);color:#120d07;border-color:transparent}
+.btn-danger{background:rgba(140,35,35,.14);border-color:rgba(255,120,120,.22);color:#ffd9d9}
+.hero{
+  min-height:calc(100vh - 72px);
+  display:grid;grid-template-columns:.84fr 1.16fr;gap:34px;align-items:center;
+  padding:44px 0 58px;
+}
+.reader-card{
+  position:relative;border:1px solid var(--border);border-radius:30px;
+  padding:34px;background:linear-gradient(180deg,rgba(22,18,13,.92),rgba(9,8,6,.96));
+  box-shadow:0 34px 120px rgba(0,0,0,.45);
+  overflow:hidden;
+}
+.reader-card::before{
+  content:"";position:absolute;inset:0 0 auto;height:2px;
+  background:linear-gradient(90deg,transparent,#f8e7b4,#d8af63,transparent);
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 13px;border-radius:99px;background:rgba(255,237,188,.07);
+  border:1px solid rgba(255,229,171,.13);color:var(--gold2);
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;margin-bottom:18px;
+}
+.kicker-dot{width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,#ffedbb,#d6a957)}
+h1{font-size:clamp(42px,6vw,78px);line-height:.9;letter-spacing:.03em;color:#fff9ef}
+.lead{font-size:16px;line-height:1.75;color:var(--muted);margin-top:16px}
+.status{margin-top:16px;font-size:14px;color:var(--gold2);min-height:22px;line-height:1.5}
+.access-panel{margin-top:24px;display:grid;gap:12px}
+.google-btn{
+  width:100%;min-height:58px;border-radius:999px;border:1px solid rgba(255,255,255,.28);
+  background:#fff;color:#16130f;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.google-btn img{width:23px;height:23px}
+.promo-row{display:flex;gap:10px}
+.promo-row input{
+  flex:1;min-height:54px;border-radius:18px;border:1px solid var(--border);
+  background:rgba(255,255,255,.055);color:var(--text);padding:0 16px;font-size:15px;outline:none;
+}
+.promo-row input::placeholder{color:rgba(200,188,167,.52)}
+.promo-row .btn{min-height:54px}
+.reader-shell{display:none}
+.reader-shell.open{display:block}
+.stage-wrap{
+  perspective:1800px;display:flex;align-items:center;justify-content:center;min-height:620px;
+  position:relative;
+}
+.book-stage{
+  width:min(92vw,760px);height:min(76vh,590px);max-height:640px;
+  position:relative;transform-style:preserve-3d;
+  filter:drop-shadow(0 50px 70px rgba(0,0,0,.72));
+}
+.book-base{
+  position:absolute;inset:0;border-radius:18px;
+  background:linear-gradient(90deg,#1d130b 0%,#5a3b1d 3%,#100c08 5%,#efe0c4 6%,#fff8eb 49%,#e9d6b4 50%,#fff8eb 51%,#f8ecd6 94%,#7a5126 97%,#19110a 100%);
+  transform:rotateX(6deg) rotateY(-9deg);
+  box-shadow:inset 0 0 70px rgba(90,48,14,.26), 0 18px 90px rgba(0,0,0,.55);
+  border:1px solid rgba(255,224,155,.22);
+  overflow:hidden;
+}
+.book-base::after{
+  content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(70,45,20,.45),transparent);
+  box-shadow:0 0 38px rgba(0,0,0,.45);
+}
+.page{
+  position:absolute;top:5%;bottom:5%;width:44%;background:#fbf1dd;color:#1c1309;
+  border-radius:12px;box-shadow:inset 0 0 30px rgba(120,77,25,.12);
+  padding:34px 34px 26px;overflow:hidden;
+}
+.page.left{left:5%;transform:rotateY(2deg)}
+.page.right{right:5%;transform:rotateY(-2deg)}
+.page::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(80,44,13,.12),transparent 14%,transparent 86%,rgba(80,44,13,.07)),
+    radial-gradient(circle at 30% 20%,rgba(216,175,99,.08),transparent 35%);
+}
+.page-title{font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#704a1e;margin-bottom:18px}
+.page h2{font-size:30px;line-height:1.05;margin-bottom:18px;color:#1d1207}
+.page p{font-size:17px;line-height:1.74;margin-bottom:14px;color:#2d2115}
+.page-num{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:12px;color:#8a7352}
+.flip-page{
+  position:absolute;top:5%;bottom:5%;right:5%;width:44%;border-radius:12px;
+  background:#fbf1dd;color:#1c1309;transform-origin:left center;transform-style:preserve-3d;
+  transition:transform .72s cubic-bezier(.22,.76,.19,1);
+  box-shadow:0 18px 48px rgba(0,0,0,.25);
+  display:none;z-index:5;
+}
+.book-stage.flipping .flip-page{display:block;transform:rotateY(-178deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;padding:34px;overflow:hidden;border-radius:12px;background:#fbf1dd}
+.flip-back{transform:rotateY(180deg)}
+.book-controls{
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px;
+}
+.progress{
+  width:min(100%,440px);height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,224,155,.08);
+}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#f8e7b4,#d8af63,#a87531);border-radius:99px}
+.chapter-pill{font-size:12px;color:var(--muted2);margin-top:10px;text-align:center}
+.mobile-reader{
+  display:none;border:1px solid var(--border);border-radius:24px;padding:22px;
+  background:linear-gradient(180deg,rgba(22,18,13,.94),rgba(9,8,6,.98));
+}
+.mobile-page{
+  background:#fbf1dd;color:#1c1309;border-radius:16px;padding:24px;min-height:420px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.mobile-page h2{font-size:28px;margin-bottom:16px}
+.mobile-page p{font-size:17px;line-height:1.75;margin-bottom:14px}
+.lock-note{
+  margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid rgba(255,224,155,.16);
+  background:rgba(255,237,188,.055);font-size:13px;color:var(--muted);line-height:1.55;
+}
+.loading{opacity:.65;pointer-events:none}
+@media(max-width:920px){
+  .hero{grid-template-columns:1fr;align-items:start;padding-top:24px}
+  .stage-wrap{min-height:auto}
+  .book-stage{display:none}
+  .mobile-reader{display:block}
+  .reader-card{padding:24px}
+}
+@media(max-width:560px){
+  .topbar{height:auto;min-height:64px;padding:10px 0}
+  .topbar-inner{display:grid;grid-template-columns:1fr;gap:10px}
+  .top-actions{justify-content:flex-start}
+  .promo-row{display:grid}
+  h1{font-size:44px}
+  .reader-card{padding:20px;border-radius:24px}
+}
 </style>
 </head>
-<body oncontextmenu="return false">
-<div id="lockScreen" class="lock">Перевіряю доступ...</div>
-
-<div id="reader" class="reader-shell" style="display:none">
-  <div class="watermark"></div>
-  <div class="watermark-text" id="wmText">STAN ARI · FREE ACCESS</div>
-
-  <header class="reader-top">
-    <div class="brand">STAN ARI · THE LIFE OPERATOR</div>
-    <div class="reader-actions">
-      <button class="reader-btn" onclick="window.location.href='access.html'">← Кабінет</button>
-      <span class="reader-status" id="pageStatus">1 / 1</span>
-      <button class="reader-btn gold" id="continueBtn">Продовжити</button>
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="index.html">STAN ARI</a>
+    <div class="top-actions">
+      <button class="btn btn-gold" id="loginTopBtn">Увійти через Google</button>
+      <button class="btn btn-danger" id="logoutBtn" style="display:none">Вийти</button>
+      <a class="btn" href="index.html">← На сайт</a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="reader-main">
-    <section class="lang-panel">
-      <h1>THE LIFE OPERATOR · TOM 1 FREE</h1>
-      <p>Один доступ відкриває всі доступні мови. PDF / EPUB / MOBI залишаються тільки для покупки.</p>
-      <div class="lang-row">
-        <button class="lang-btn" data-lang="uk">🇺🇦 Українська</button>
-        <button class="lang-btn" data-lang="en">🇬🇧 English</button>
-        <button class="lang-btn" data-lang="pl">🇵🇱 Polski</button>
+<main class="container">
+  <section class="hero">
+    <div class="reader-card">
+      <div class="kicker"><span class="kicker-dot"></span><span>THE LIFE OPERATOR · TOM I FREE</span></div>
+      <h1>Кабінет читача</h1>
+      <p class="lead">Активуй промокод один раз. Доступ прив’язується до Google/email акаунта назавжди. Безкоштовна версія доступна тільки для онлайн-читання.</p>
+      <div class="status" id="authStatus">Перевіряю доступ...</div>
+
+      <div class="access-panel" id="accessPanel">
+        <button class="google-btn" id="googleBtn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+          Увійти через Google
+        </button>
+
+        <div class="promo-row">
+          <input id="promoInput" placeholder="Наприклад: aria2026" autocapitalize="none" autocorrect="off" spellcheck="false">
+          <button class="btn btn-gold" id="activateBtn">Активувати</button>
+        </div>
+
+        <div class="lock-note">Після активації книга відкриється в 3D-режимі. Якщо ти вже маєш доступ — достатньо увійти через Google.</div>
       </div>
-    </section>
+    </div>
 
-    <section class="mobile-scroll" id="mobilePages"></section>
+    <div class="reader-shell" id="readerShell">
+      <div class="stage-wrap">
+        <div class="book-stage" id="bookStage">
+          <div class="book-base"></div>
+          <div class="page left" id="leftPage"></div>
+          <div class="page right" id="rightPage"></div>
+          <div class="flip-page" id="flipPage">
+            <div class="flip-face" id="flipFront"></div>
+            <div class="flip-face flip-back" id="flipBack"></div>
+          </div>
+        </div>
 
-    <section class="desktop-reader">
-      <div class="book-stage"><div class="page-card" id="pageCard"><img id="desktopPage" src="" alt="Page 1"></div></div>
-      <div class="desktop-controls">
-        <button class="reader-btn" id="prevBtn">← Попередня</button>
-        <span class="reader-status" id="desktopStatus">1 / 1</span>
-        <button class="reader-btn gold" id="nextBtn">Наступна →</button>
+        <div class="mobile-reader">
+          <div class="mobile-page" id="mobilePage"></div>
+        </div>
       </div>
-    </section>
-  </main>
-</div>
+
+      <div class="book-controls">
+        <button class="btn" id="prevBtn">← Назад</button>
+        <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        <button class="btn btn-gold" id="nextBtn">Далі →</button>
+      </div>
+      <div class="chapter-pill" id="chapterInfo"></div>
+    </div>
+  </section>
+</main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
+  authDomain: "stanari-platform.firebaseapp.com",
+  projectId: "stanari-platform",
+  storageBucket: "stanari-platform.firebasestorage.app",
+  messagingSenderId: "1083904103961",
+  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-const BOOK = {
-  uk:{label:"Українська",pages:138,path:"books/tom1-free/uk/"},
-  en:{label:"English",pages:172,path:"books/tom1-free/en/"},
-  pl:{label:"Polski",pages:184,path:"books/tom1-free/pl/"}
-};
+const statusEl = document.getElementById("authStatus");
+const accessPanel = document.getElementById("accessPanel");
+const readerShell = document.getElementById("readerShell");
+const googleBtn = document.getElementById("googleBtn");
+const loginTopBtn = document.getElementById("loginTopBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const activateBtn = document.getElementById("activateBtn");
+const promoInput = document.getElementById("promoInput");
 
-const params = new URLSearchParams(location.search);
-let currentLang = params.get("lang") || localStorage.getItem("stanari_reader_lang") || "uk";
-if(!BOOK[currentLang]) currentLang = "uk";
-let currentPage = Number(localStorage.getItem("stanari_reader_page_" + currentLang) || 1);
+const bookStage = document.getElementById("bookStage");
+const leftPage = document.getElementById("leftPage");
+const rightPage = document.getElementById("rightPage");
+const mobilePage = document.getElementById("mobilePage");
+const flipFront = document.getElementById("flipFront");
+const flipBack = document.getElementById("flipBack");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const progressFill = document.getElementById("progressFill");
+const chapterInfo = document.getElementById("chapterInfo");
 
-function pageSrc(n){return BOOK[currentLang].path + "page-" + String(n).padStart(3,"0") + ".webp"}
-function totalPages(){return BOOK[currentLang].pages}
-function saveProgress(){localStorage.setItem("stanari_reader_lang",currentLang);localStorage.setItem("stanari_reader_page_"+currentLang,String(currentPage))}
-function updateStatus(){
-  currentPage=Math.min(Math.max(currentPage,1),totalPages());
-  document.getElementById("pageStatus").textContent=currentPage+" / "+totalPages();
-  const ds=document.getElementById("desktopStatus"); if(ds) ds.textContent=currentPage+" / "+totalPages();
-  document.querySelectorAll(".lang-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.lang===currentLang));
-}
-function showDesktopPage(direction){
-  const img=document.getElementById("desktopPage"); const card=document.getElementById("pageCard");
-  img.src=pageSrc(currentPage); img.alt="Page "+currentPage;
-  card.classList.remove("flip-next","flip-prev"); void card.offsetWidth;
-  if(direction) card.classList.add(direction==="next"?"flip-next":"flip-prev");
-  saveProgress(); updateStatus();
-}
-function buildMobilePages(){
-  const root=document.getElementById("mobilePages"); root.innerHTML="";
-  const frag=document.createDocumentFragment();
-  for(let i=1;i<=totalPages();i++){
-    const img=document.createElement("img"); img.className="page-img"; img.src=pageSrc(i); img.alt="Page "+i; img.loading=i<4?"eager":"lazy"; img.dataset.page=i; frag.appendChild(img);
+let currentUser = null;
+let pageIndex = 0;
+let isFlipping = false;
+
+const pages = [
+  {
+    title:"THE LIFE OPERATOR",
+    heading:"Точка входу",
+    body:[
+      "Це не просто книга. Це двері в іншу систему мислення.",
+      "Ти не читаєш сторінки — ти поступово згадуєш себе. Там, де життя перестало бути випадковістю, починається оператор.",
+      "Ця безкоштовна онлайн-версія відкриває перший рівень знайомства зі світом STAN ARI."
+    ]
+  },
+  {
+    title:"ПРОЛОГ",
+    heading:"Еміграція як перезавантаження",
+    body:[
+      "Є два види втечі. Перша — коли тебе щось виганяє. Війна. Бідність. Небезпека. Ти йдеш, бо інакше не можеш.",
+      "Друга — коли всередині просто звучить: час.",
+      "Без катастрофи. Без пояснення. Просто одного ранку ти розумієш: це не моє життя."
+    ]
+  },
+  {
+    title:"БЛОК I",
+    heading:"Перша тиша",
+    body:[
+      "Тиша приходить не тоді, коли навколо немає звуків. Вона приходить тоді, коли перестають працювати старі відповіді.",
+      "У цій тиші народжується не страх. У ній народжується нова точка входу.",
+      "Ти більше не питаєш, чому світ такий. Ти питаєш: хто всередині мене дозволив йому таким бути?"
+    ]
+  },
+  {
+    title:"БЛОК II",
+    heading:"Релігія",
+    body:[
+      "Людина шукає не правила. Людина шукає опору.",
+      "Іноді вона знаходить її в словах. Іноді — в системах. Іноді — в болю, який змушує дивитися вище.",
+      "Але справжня віра починається там, де страх перестає керувати вибором."
+    ]
+  },
+  {
+    title:"БЛОК II",
+    heading:"Первородний гріх",
+    body:[
+      "Перший гріх — не помилка. Це момент, коли людина забула, що має право бачити.",
+      "Їй сказали, що вона винна. Вона повірила. І з того часу навчилась жити так, ніби повинна заслужити власне існування.",
+      "Оператор повертає не ідеальність. Він повертає відповідальність."
+    ]
+  },
+  {
+    title:"БЛОК III",
+    heading:"Код",
+    body:[
+      "Код — це не програма в машині. Це повтор, який став долею.",
+      "Слова батьків. Страхи роду. Вибори, які ми називаємо характером, хоча часто це лише стара інструкція.",
+      "Переписати код — не означає зрадити минуле. Це означає перестати бути його полоненим."
+    ]
+  },
+  {
+    title:"ARIA",
+    heading:"Місія",
+    body:[
+      "33% прибутку з книги спрямовується на фонд Aria та майбутній притулок для тварин.",
+      "Бо світ змінюється не тоді, коли ми багато говоримо про світло. А тоді, коли хтось стає світлом для тих, хто не може попросити допомоги.",
+      "Це не додаток до книги. Це частина її серця."
+    ]
+  },
+  {
+    title:"ДАЛІ",
+    heading:"Повна версія",
+    body:[
+      "Це демо онлайн-читання. Повна версія книги доступна через покупку PDF / EPUB / MOBI або майбутні платформи.",
+      "Якщо текст відгукнувся — повернись на сайт, залиш відгук, поділись з кимось, кому це може бути потрібно.",
+      "STAN ARI — Rewrite Your Inner Code."
+    ]
   }
-  root.appendChild(frag);
-  const obs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){currentPage=Number(entry.target.dataset.page);saveProgress();updateStatus();}})},{threshold:.55});
-  root.querySelectorAll("img").forEach(img=>obs.observe(img));
-}
-function switchLang(lang){
-  if(!BOOK[lang])return; currentLang=lang; currentPage=Number(localStorage.getItem("stanari_reader_page_"+currentLang)||1);
-  buildMobilePages(); showDesktopPage(); updateStatus(); window.scrollTo({top:0,behavior:"smooth"});
-}
-function nextPage(){if(currentPage<totalPages()){currentPage++;showDesktopPage("next")}}
-function prevPage(){if(currentPage>1){currentPage--;showDesktopPage("prev")}}
-function continueReading(){
-  if(window.matchMedia("(max-width:899px)").matches){
-    const el=document.querySelector('[data-page="'+currentPage+'"]'); if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
-  } else showDesktopPage();
-}
-document.querySelectorAll(".lang-btn").forEach(btn=>btn.addEventListener("click",()=>switchLang(btn.dataset.lang)));
-document.getElementById("nextBtn")?.addEventListener("click",nextPage);
-document.getElementById("prevBtn")?.addEventListener("click",prevPage);
-document.getElementById("continueBtn").addEventListener("click",continueReading);
-document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")nextPage(); if(e.key==="ArrowLeft")prevPage()});
-document.addEventListener("copy",e=>e.preventDefault()); document.addEventListener("cut",e=>e.preventDefault()); document.addEventListener("dragstart",e=>e.preventDefault());
+];
 
-onAuthStateChanged(auth, async user=>{
-  if(!user){location.href="access.html";return}
-  const snap=await getDoc(doc(db,"users",user.uid));
-  const data=snap.exists()?snap.data():{};
-  if(!data.access || data.access["tom1-free"]!==true){
-    document.getElementById("lockScreen").innerHTML="<div><h1>Доступ закрито</h1><p>Активуйте промокод у кабінеті.</p><a class='reader-btn gold' href='access.html'>До кабінету</a></div>";
+function pageHTML(page, num){
+  return `
+    <div class="page-title">${page.title}</div>
+    <h2>${page.heading}</h2>
+    ${page.body.map(p => `<p>${p}</p>`).join("")}
+    <div class="page-num">${num}</div>
+  `;
+}
+
+function renderPages(skipFlip=false){
+  const left = pages[pageIndex] || pages[0];
+  const right = pages[pageIndex + 1] || {title:"",heading:"Кінець фрагмента",body:["Повна книга відкривається в наступних версіях онлайн-читання."]};
+
+  leftPage.innerHTML = pageHTML(left, pageIndex + 1);
+  rightPage.innerHTML = pageHTML(right, pageIndex + 2);
+  mobilePage.innerHTML = pageHTML(left, pageIndex + 1);
+
+  const progress = Math.min(100, ((pageIndex + 1) / pages.length) * 100);
+  progressFill.style.width = progress + "%";
+  chapterInfo.textContent = `Сторінка ${pageIndex + 1} з ${pages.length}`;
+
+  prevBtn.disabled = pageIndex === 0;
+  nextBtn.disabled = pageIndex >= pages.length - 1;
+}
+
+function flipTo(nextIndex){
+  if(isFlipping || nextIndex < 0 || nextIndex >= pages.length) return;
+
+  if(window.matchMedia("(max-width: 920px)").matches){
+    pageIndex = nextIndex;
+    renderPages(true);
     return;
   }
-  document.getElementById("wmText").textContent=(user.email||"STAN ARI")+" · FREE ACCESS";
-  document.getElementById("lockScreen").style.display="none";
-  document.getElementById("reader").style.display="block";
-  buildMobilePages(); showDesktopPage(); updateStatus();
+
+  isFlipping = true;
+  flipFront.innerHTML = pageHTML(pages[pageIndex + 1] || pages[pageIndex], pageIndex + 2);
+  flipBack.innerHTML = pageHTML(pages[nextIndex] || pages[0], nextIndex + 1);
+  bookStage.classList.add("flipping");
+
+  setTimeout(() => {
+    pageIndex = nextIndex;
+    renderPages(true);
+    bookStage.classList.remove("flipping");
+    isFlipping = false;
+  }, 740);
+}
+
+prevBtn.addEventListener("click", () => flipTo(Math.max(0, pageIndex - 1)));
+nextBtn.addEventListener("click", () => flipTo(Math.min(pages.length - 1, pageIndex + 1)));
+
+function showReader(){
+  accessPanel.style.display = "none";
+  readerShell.classList.add("open");
+  statusEl.textContent = currentUser ? "✅ Доступ відкрито для: " + currentUser.email : "✅ Доступ відкрито.";
+  renderPages(true);
+}
+
+function showAccess(msg){
+  accessPanel.style.display = "grid";
+  readerShell.classList.remove("open");
+  statusEl.textContent = msg || "Увійди через Google і введи промокод.";
+}
+
+async function checkUserAccess(user){
+  currentUser = user;
+  if(!user){
+    logoutBtn.style.display = "none";
+    loginTopBtn.style.display = "inline-flex";
+    showAccess("Ви ще не увійшли.");
+    return;
+  }
+
+  logoutBtn.style.display = "inline-flex";
+  loginTopBtn.style.display = "none";
+
+  statusEl.textContent = "Перевіряю доступ для " + user.email + "...";
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  await setDoc(userRef, {
+    email: user.email || "",
+    name: user.displayName || "",
+    lastLoginAt: serverTimestamp()
+  }, { merge:true });
+
+  if(snap.exists() && snap.data().hasAccess === true){
+    localStorage.setItem("stanari_book_access","true");
+    showReader();
+  }else{
+    showAccess("✅ Ви увійшли: " + user.email + ". Тепер введіть промокод.");
+  }
+}
+
+async function googleLogin(){
+  try{
+    statusEl.textContent = "Відкриваю Google...";
+    const result = await signInWithPopup(auth, provider);
+    await checkUserAccess(result.user);
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = "❌ Google-вхід не спрацював. Перевір домен у Firebase Authorized domains.";
+  }
+}
+
+async function activatePromo(){
+  if(!currentUser){
+    statusEl.textContent = "Спочатку увійдіть через Google.";
+    return;
+  }
+
+  const code = promoInput.value.trim().toLowerCase();
+  if(!code){
+    statusEl.textContent = "Введіть промокод.";
+    return;
+  }
+
+  try{
+    activateBtn.classList.add("loading");
+    statusEl.textContent = "Перевіряю промокод...";
+
+    const promoRef = doc(db, "promoCodes", code);
+    const promoSnap = await getDoc(promoRef);
+
+    if(!promoSnap.exists()){
+      statusEl.textContent = "❌ Такого промокоду немає.";
+      return;
+    }
+
+    const promo = promoSnap.data();
+
+    if(promo.used === true){
+      statusEl.textContent = "❌ Цей промокод вже використаний.";
+      return;
+    }
+
+    if(promo.accessType !== "free_book"){
+      statusEl.textContent = "❌ Цей промокод не для безкоштовного онлайн-читання.";
+      return;
+    }
+
+    await setDoc(doc(db, "users", currentUser.uid), {
+      email: currentUser.email || "",
+      name: currentUser.displayName || "",
+      hasAccess: true,
+      accessType: "free_book",
+      promoCode: code,
+      updatedAt: serverTimestamp()
+    }, { merge:true });
+
+    await updateDoc(promoRef, {
+      used: true,
+      usedByUid: currentUser.uid,
+      usedByEmail: currentUser.email || "",
+      usedAt: serverTimestamp()
+    });
+
+    localStorage.setItem("stanari_book_access","true");
+    statusEl.textContent = "✅ Доступ відкрито. Відкриваю книгу...";
+    setTimeout(showReader, 500);
+
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = "❌ Помилка активації. Перевір Firestore Rules.";
+  }finally{
+    activateBtn.classList.remove("loading");
+  }
+}
+
+googleBtn.addEventListener("click", googleLogin);
+loginTopBtn.addEventListener("click", googleLogin);
+activateBtn.addEventListener("click", activatePromo);
+promoInput.addEventListener("keydown", e => {
+  if(e.key === "Enter") activatePromo();
+});
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+  localStorage.removeItem("stanari_book_access");
+});
+
+onAuthStateChanged(auth, user => {
+  checkUserAccess(user).catch(err => {
+    console.error(err);
+    showAccess("❌ Не вдалося перевірити доступ.");
+  });
 });
 </script>
 </body>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAN ARI — Online Reader</title>
+<style>
+:root{--bg:#050403;--gold:#d8af63;--gold2:#ffe3a3;--text:#fff7e8;--muted:#b8aa91;--border:rgba(255,224,155,.18)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif}
+body{min-height:100vh;overflow-x:hidden}
+.lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.reader-shell{min-height:100vh;background:radial-gradient(circle at 50% 0%,rgba(216,175,99,.15),transparent 32%),linear-gradient(180deg,#0c0906,#030303)}
+.reader-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(6,5,4,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}
+.brand{font-weight:800;letter-spacing:.08em;color:var(--gold2);font-size:13px;text-transform:uppercase}
+.reader-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.reader-btn,.lang-btn{border:1px solid var(--border);background:rgba(255,237,188,.055);color:var(--text);border-radius:999px;padding:9px 12px;cursor:pointer;font-size:13px;text-decoration:none}
+.reader-btn.gold,.lang-btn.active{background:linear-gradient(135deg,#f4d997,#c8953f);color:#140f08;font-weight:800}
+.reader-status{color:var(--muted);font-size:13px;min-width:82px;text-align:center}
+.reader-main{padding:22px 12px 48px}
+.lang-panel{width:min(100%,860px);margin:0 auto 18px;padding:16px;border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.035)}
+.lang-panel h1{margin:0 0 8px;font-size:clamp(24px,5vw,40px)}
+.lang-panel p{margin:0 0 14px;color:var(--muted);line-height:1.45}
+.lang-row{display:flex;gap:10px;flex-wrap:wrap}
+.mobile-scroll{width:min(100%,860px);margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.page-img{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.65);border:1px solid rgba(255,224,155,.08);background:#111;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
+.desktop-reader{display:none}
+.watermark{pointer-events:none;position:fixed;inset:0;z-index:30;opacity:.12;background-image:repeating-linear-gradient(-28deg,transparent 0 120px,rgba(216,175,99,.22) 121px 122px,transparent 123px 245px)}
+.watermark-text{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-28deg);z-index:31;pointer-events:none;color:rgba(255,224,155,.18);font-size:clamp(28px,7vw,92px);font-weight:900;letter-spacing:.08em;white-space:nowrap;text-transform:uppercase}
+@media (min-width:900px){
+.reader-main{padding:34px 18px 54px}.mobile-scroll{display:none}.desktop-reader{display:flex;flex-direction:column;align-items:center;gap:18px}
+.book-stage{width:min(78vw,760px);min-height:72vh;display:flex;align-items:center;justify-content:center;perspective:1800px}
+.page-card{width:min(68vw,610px);max-height:78vh;transform-origin:left center;transition:transform .45s ease,opacity .25s ease}
+.page-card.flip-next{animation:flipNext .55s ease}.page-card.flip-prev{animation:flipPrev .55s ease}
+.page-card img{max-height:78vh;width:auto;max-width:100%;display:block;border-radius:12px;box-shadow:0 30px 90px rgba(0,0,0,.82);border:1px solid rgba(255,224,155,.12);user-select:none;-webkit-user-drag:none}
+.desktop-controls{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+@keyframes flipNext{0%{transform:rotateY(0deg);opacity:1}45%{transform:rotateY(-42deg);opacity:.55}100%{transform:rotateY(0deg);opacity:1}}
+@keyframes flipPrev{0%{transform:rotateY(0deg);opacity:1}45%{transform:rotateY(38deg);opacity:.55}100%{transform:rotateY(0deg);opacity:1}}
+}
+@media print{body{display:none!important}}
+</style>
+</head>
+<body oncontextmenu="return false">
+<div id="lockScreen" class="lock">Перевіряю доступ...</div>
+
+<div id="reader" class="reader-shell" style="display:none">
+  <div class="watermark"></div>
+  <div class="watermark-text" id="wmText">STAN ARI · FREE ACCESS</div>
+
+  <header class="reader-top">
+    <div class="brand">STAN ARI · THE LIFE OPERATOR</div>
+    <div class="reader-actions">
+      <button class="reader-btn" onclick="window.location.href='access.html'">← Кабінет</button>
+      <span class="reader-status" id="pageStatus">1 / 1</span>
+      <button class="reader-btn gold" id="continueBtn">Продовжити</button>
+    </div>
+  </header>
+
+  <main class="reader-main">
+    <section class="lang-panel">
+      <h1>THE LIFE OPERATOR · TOM 1 FREE</h1>
+      <p>Один доступ відкриває всі доступні мови. PDF / EPUB / MOBI залишаються тільки для покупки.</p>
+      <div class="lang-row">
+        <button class="lang-btn" data-lang="uk">🇺🇦 Українська</button>
+        <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+        <button class="lang-btn" data-lang="pl">🇵🇱 Polski</button>
+      </div>
+    </section>
+
+    <section class="mobile-scroll" id="mobilePages"></section>
+
+    <section class="desktop-reader">
+      <div class="book-stage"><div class="page-card" id="pageCard"><img id="desktopPage" src="" alt="Page 1"></div></div>
+      <div class="desktop-controls">
+        <button class="reader-btn" id="prevBtn">← Попередня</button>
+        <span class="reader-status" id="desktopStatus">1 / 1</span>
+        <button class="reader-btn gold" id="nextBtn">Наступна →</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const BOOK = {
+  uk:{label:"Українська",pages:138,path:"books/tom1-free/uk/"},
+  en:{label:"English",pages:172,path:"books/tom1-free/en/"},
+  pl:{label:"Polski",pages:184,path:"books/tom1-free/pl/"}
+};
+
+const params = new URLSearchParams(location.search);
+let currentLang = params.get("lang") || localStorage.getItem("stanari_reader_lang") || "uk";
+if(!BOOK[currentLang]) currentLang = "uk";
+let currentPage = Number(localStorage.getItem("stanari_reader_page_" + currentLang) || 1);
+
+function pageSrc(n){return BOOK[currentLang].path + "page-" + String(n).padStart(3,"0") + ".webp"}
+function totalPages(){return BOOK[currentLang].pages}
+function saveProgress(){localStorage.setItem("stanari_reader_lang",currentLang);localStorage.setItem("stanari_reader_page_"+currentLang,String(currentPage))}
+function updateStatus(){
+  currentPage=Math.min(Math.max(currentPage,1),totalPages());
+  document.getElementById("pageStatus").textContent=currentPage+" / "+totalPages();
+  const ds=document.getElementById("desktopStatus"); if(ds) ds.textContent=currentPage+" / "+totalPages();
+  document.querySelectorAll(".lang-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.lang===currentLang));
+}
+function showDesktopPage(direction){
+  const img=document.getElementById("desktopPage"); const card=document.getElementById("pageCard");
+  img.src=pageSrc(currentPage); img.alt="Page "+currentPage;
+  card.classList.remove("flip-next","flip-prev"); void card.offsetWidth;
+  if(direction) card.classList.add(direction==="next"?"flip-next":"flip-prev");
+  saveProgress(); updateStatus();
+}
+function buildMobilePages(){
+  const root=document.getElementById("mobilePages"); root.innerHTML="";
+  const frag=document.createDocumentFragment();
+  for(let i=1;i<=totalPages();i++){
+    const img=document.createElement("img"); img.className="page-img"; img.src=pageSrc(i); img.alt="Page "+i; img.loading=i<4?"eager":"lazy"; img.dataset.page=i; frag.appendChild(img);
+  }
+  root.appendChild(frag);
+  const obs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){currentPage=Number(entry.target.dataset.page);saveProgress();updateStatus();}})},{threshold:.55});
+  root.querySelectorAll("img").forEach(img=>obs.observe(img));
+}
+function switchLang(lang){
+  if(!BOOK[lang])return; currentLang=lang; currentPage=Number(localStorage.getItem("stanari_reader_page_"+currentLang)||1);
+  buildMobilePages(); showDesktopPage(); updateStatus(); window.scrollTo({top:0,behavior:"smooth"});
+}
+function nextPage(){if(currentPage<totalPages()){currentPage++;showDesktopPage("next")}}
+function prevPage(){if(currentPage>1){currentPage--;showDesktopPage("prev")}}
+function continueReading(){
+  if(window.matchMedia("(max-width:899px)").matches){
+    const el=document.querySelector('[data-page="'+currentPage+'"]'); if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+  } else showDesktopPage();
+}
+document.querySelectorAll(".lang-btn").forEach(btn=>btn.addEventListener("click",()=>switchLang(btn.dataset.lang)));
+document.getElementById("nextBtn")?.addEventListener("click",nextPage);
+document.getElementById("prevBtn")?.addEventListener("click",prevPage);
+document.getElementById("continueBtn").addEventListener("click",continueReading);
+document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")nextPage(); if(e.key==="ArrowLeft")prevPage()});
+document.addEventListener("copy",e=>e.preventDefault()); document.addEventListener("cut",e=>e.preventDefault()); document.addEventListener("dragstart",e=>e.preventDefault());
+
+onAuthStateChanged(auth, async user=>{
+  if(!user){location.href="access.html";return}
+  const snap=await getDoc(doc(db,"users",user.uid));
+  const data=snap.exists()?snap.data():{};
+  if(!data.access || data.access["tom1-free"]!==true){
+    document.getElementById("lockScreen").innerHTML="<div><h1>Доступ закрито</h1><p>Активуйте промокод у кабінеті.</p><a class='reader-btn gold' href='access.html'>До кабінету</a></div>";
+    return;
+  }
+  document.getElementById("wmText").textContent=(user.email||"STAN ARI")+" · FREE ACCESS";
+  document.getElementById("lockScreen").style.display="none";
+  document.getElementById("reader").style.display="block";
+  buildMobilePages(); showDesktopPage(); updateStatus();
+});
+</script>
+</body>
+</html>

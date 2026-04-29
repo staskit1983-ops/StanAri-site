@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STAN ARI — Admin</title>
+<style>
+:root{--bg:#050403;--panel:#0d0a07;--gold:#d8af63;--gold2:#ffe7ab;--text:#fff7e8;--muted:#b8aa91;--border:rgba(255,224,155,.18)}
+*{box-sizing:border-box}
+body{margin:0;background:#050403;color:var(--text);font-family:Georgia,serif}
+.wrap{width:min(100%,1180px);margin:0 auto;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.logo{font-weight:900;letter-spacing:.16em}
+.card{border:1px solid var(--border);border-radius:24px;background:rgba(255,255,255,.035);padding:20px;margin-bottom:16px}
+h1{font-size:clamp(34px,6vw,64px);margin:0 0 12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.04);color:var(--text);text-decoration:none;padding:11px 14px;cursor:pointer;font-weight:800}
+.btn.gold{background:linear-gradient(135deg,#ffe7ab,#c8953f);color:#130e07;border:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{border:1px solid var(--border);border-radius:18px;padding:16px;background:rgba(0,0,0,.24)}
+.stat b{font-size:32px;color:var(--gold2)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid rgba(255,224,155,.12);padding:10px;text-align:left;vertical-align:top}
+th{color:var(--gold2)}
+input,select{width:100%;padding:12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text)}
+.small{color:var(--muted);font-size:14px}
+.hidden{display:none!important}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr} table{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">STAN ARI · ADMIN</div>
+    <div><a class="btn" href="access.html">Кабінет</a> <button class="btn" id="logoutBtn">Вийти</button></div>
+  </div>
+
+  <div id="lock" class="card">Перевіряю доступ адміністратора...</div>
+
+  <main id="admin" class="hidden">
+    <section class="card">
+      <h1>Адмін-кабінет</h1>
+      <p class="small">Доступ тільки для: stanari.art@gmail.com</p>
+    </section>
+
+    <section class="grid">
+      <div class="stat"><div>Всього кодів</div><b id="totalCodes">0</b></div>
+      <div class="stat"><div>Використано</div><b id="usedCodes">0</b></div>
+      <div class="stat"><div>Вільно</div><b id="unusedCodes">0</b></div>
+      <div class="stat"><div>Користувачів</div><b id="usersCount">0</b></div>
+    </section>
+
+    <section class="card">
+      <h2>Останні активації</h2>
+      <table>
+        <thead><tr><th>Код</th><th>Email</th><th>Книга</th><th>Дата</th></tr></thead>
+        <tbody id="activationsTable"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Промокоди</h2>
+      <p class="small">Показуються перші 100 кодів. Повний список краще дивитись у Firebase.</p>
+      <table>
+        <thead><tr><th>Код</th><th>Канал</th><th>Статус</th><th>Користувач</th></tr></thead>
+        <tbody id="codesTable"></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, limit, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { firebaseConfig, ADMIN_EMAIL } from "./firebase-config.js";
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const provider=new GoogleAuthProvider();
+
+document.getElementById("logoutBtn").onclick=()=>signOut(auth);
+
+async function loadAdmin(){
+  const codesSnap=await getDocs(collection(db,"promoCodes"));
+  let total=0, used=0, unused=0;
+  const rows=[];
+  codesSnap.forEach(d=>{
+    total++;
+    const c=d.data();
+    if(c.status==="used") used++; else unused++;
+    if(rows.length<100) rows.push({id:d.id,...c});
+  });
+  document.getElementById("totalCodes").textContent=total;
+  document.getElementById("usedCodes").textContent=used;
+  document.getElementById("unusedCodes").textContent=unused;
+  document.getElementById("codesTable").innerHTML=rows.map(c=>`<tr><td>${c.id}</td><td>${c.channel||""}</td><td>${c.status||""}</td><td>${c.usedByEmail||""}</td></tr>`).join("");
+
+  const usersSnap=await getDocs(collection(db,"users"));
+  document.getElementById("usersCount").textContent=usersSnap.size;
+
+  const actsSnap=await getDocs(query(collection(db,"activations"), limit(50)));
+  const acts=[];
+  actsSnap.forEach(d=>acts.push({id:d.id,...d.data()}));
+  document.getElementById("activationsTable").innerHTML=acts.map(a=>`<tr><td>${a.code||a.id}</td><td>${a.email||""}</td><td>${a.book||""}</td><td>${a.activatedAt?.toDate ? a.activatedAt.toDate().toLocaleString() : ""}</td></tr>`).join("");
+}
+
+onAuthStateChanged(auth, async user=>{
+  if(!user){
+    document.getElementById("lock").innerHTML='<button class="btn gold" id="loginAdmin">Увійти через Google</button>';
+    document.getElementById("loginAdmin").onclick=()=>signInWithPopup(auth,provider);
+    return;
+  }
+  if((user.email||"").toLowerCase()!==ADMIN_EMAIL){
+    document.getElementById("lock").innerHTML="Немає доступу. Увійдіть як stanari.art@gmail.com.";
+    return;
+  }
+  document.getElementById("lock").classList.add("hidden");
+  document.getElementById("admin").classList.remove("hidden");
+  await loadAdmin();
+});
+</script>
+</body>
+</html>

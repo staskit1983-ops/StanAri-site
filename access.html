@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STAN ARI — Reader Access</title>
+<style>
+:root{--bg:#050403;--panel:#0d0a07;--gold:#d8af63;--gold2:#ffe7ab;--text:#fff7e8;--muted:#b8aa91;--border:rgba(255,224,155,.18)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% 0%,rgba(216,175,99,.18),transparent 32%),#050403;color:var(--text);font-family:Georgia,serif;min-height:100vh}
+.wrap{width:min(100%,980px);margin:0 auto;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px}
+.logo{font-weight:900;letter-spacing:.16em}
+.card{border:1px solid var(--border);border-radius:28px;background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.015));padding:24px;box-shadow:0 26px 80px rgba(0,0,0,.42);margin-bottom:18px}
+h1{font-size:clamp(34px,7vw,68px);margin:8px 0 12px;line-height:.95}
+h2{font-size:clamp(26px,5vw,44px);margin:0 0 12px}
+p{color:var(--muted);font-size:18px;line-height:1.55}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.04);color:var(--text);text-decoration:none;padding:13px 18px;cursor:pointer;font-weight:800}
+.btn.gold{background:linear-gradient(135deg,#ffe7ab,#c8953f);color:#140f08;border:0}
+.btn.full{width:100%}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+input{width:100%;padding:16px 18px;border-radius:18px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-size:18px;outline:none}
+.status{margin-top:12px;color:var(--gold2);min-height:24px}
+.hidden{display:none!important}
+.lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.lang-card{border:1px solid var(--border);border-radius:20px;padding:18px;background:rgba(0,0,0,.22)}
+.small{font-size:14px;color:var(--muted)}
+@media(max-width:700px){.top{align-items:flex-start}.lang-grid{grid-template-columns:1fr}.row .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">STAN ARI</div>
+    <div class="row">
+      <button class="btn" id="loginBtn">Увійти через Google</button>
+      <button class="btn hidden" id="logoutBtn">Вийти</button>
+      <a class="btn hidden" id="adminBtn" href="admin.html">Admin</a>
+    </div>
+  </div>
+
+  <section class="card">
+    <p class="small">THE LIFE OPERATOR · TOM 1 FREE</p>
+    <h1>Кабінет читача</h1>
+    <p>Активуй промокод один раз. Доступ прив’язується до Google/email акаунта назавжди. Безкоштовна версія доступна тільки для онлайн-читання.</p>
+    <div id="userBox" class="small">Ви ще не увійшли.</div>
+  </section>
+
+  <section class="card" id="promoBox">
+    <h2>Активувати промокод</h2>
+    <p>Введи код з TikTok / YouTube / Telegram.</p>
+    <div class="row">
+      <input id="promoInput" placeholder="Наприклад: TT-8KDJ92MA" />
+      <button class="btn gold" id="activateBtn">Активувати</button>
+    </div>
+    <div class="status" id="promoStatus"></div>
+  </section>
+
+  <section class="card hidden" id="libraryBox">
+    <h2>Ваша бібліотека</h2>
+    <p>Доступ відкрито: <b>THE LIFE OPERATOR · TOM 1 FREE</b></p>
+    <div class="lang-grid">
+      <div class="lang-card"><h3>🇺🇦 Українська</h3><p class="small">Онлайн-читання</p><a class="btn gold full" href="reader.html?book=tom1-free&lang=uk">Читати</a></div>
+      <div class="lang-card"><h3>🇬🇧 English</h3><p class="small">Online reading</p><a class="btn gold full" href="reader.html?book=tom1-free&lang=en">Read</a></div>
+      <div class="lang-card"><h3>🇵🇱 Polski</h3><p class="small">Czytanie online</p><a class="btn gold full" href="reader.html?book=tom1-free&lang=pl">Czytaj</a></div>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { firebaseConfig, ADMIN_EMAIL } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const adminBtn = document.getElementById("adminBtn");
+const userBox = document.getElementById("userBox");
+const promoBox = document.getElementById("promoBox");
+const libraryBox = document.getElementById("libraryBox");
+const promoInput = document.getElementById("promoInput");
+const promoStatus = document.getElementById("promoStatus");
+const activateBtn = document.getElementById("activateBtn");
+
+let currentUser = null;
+
+loginBtn.onclick = () => signInWithPopup(auth, provider);
+logoutBtn.onclick = () => signOut(auth);
+
+async function refreshAccess(user){
+  if(!user){return}
+  const uref = doc(db, "users", user.uid);
+  const snap = await getDoc(uref);
+  if(!snap.exists()){
+    await setDoc(uref, {
+      uid:user.uid,
+      email:(user.email || "").toLowerCase(),
+      displayName:user.displayName || "",
+      createdAt:serverTimestamp(),
+      access:{}
+    }, {merge:true});
+  }
+  const fresh = await getDoc(uref);
+  const data = fresh.data() || {};
+  const hasAccess = data.access && data.access["tom1-free"] === true;
+  libraryBox.classList.toggle("hidden", !hasAccess);
+  promoBox.classList.toggle("hidden", hasAccess);
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  currentUser = user;
+  loginBtn.classList.toggle("hidden", !!user);
+  logoutBtn.classList.toggle("hidden", !user);
+  if(user){
+    userBox.textContent = "Увійшли як: " + user.email;
+    adminBtn.classList.toggle("hidden", (user.email || "").toLowerCase() !== ADMIN_EMAIL);
+    await refreshAccess(user);
+  } else {
+    userBox.textContent = "Ви ще не увійшли.";
+    adminBtn.classList.add("hidden");
+    libraryBox.classList.add("hidden");
+    promoBox.classList.remove("hidden");
+  }
+});
+
+activateBtn.onclick = async ()=>{
+  promoStatus.textContent = "";
+  const code = promoInput.value.trim().toUpperCase();
+  if(!currentUser){
+    promoStatus.textContent = "Спочатку увійдіть через Google.";
+    return;
+  }
+  if(!code){
+    promoStatus.textContent = "Введіть промокод.";
+    return;
+  }
+
+  try{
+    await runTransaction(db, async (tx)=>{
+      const codeRef = doc(db, "promoCodes", code);
+      const userRef = doc(db, "users", currentUser.uid);
+      const codeSnap = await tx.get(codeRef);
+      if(!codeSnap.exists()) throw new Error("CODE_NOT_FOUND");
+      const c = codeSnap.data();
+      if(c.status === "used") throw new Error("CODE_USED");
+      if(c.status === "blocked") throw new Error("CODE_BLOCKED");
+
+      tx.set(userRef, {
+        uid: currentUser.uid,
+        email: (currentUser.email || "").toLowerCase(),
+        displayName: currentUser.displayName || "",
+        access: {"tom1-free": true},
+        updatedAt: serverTimestamp()
+      }, {merge:true});
+
+      tx.update(codeRef, {
+        status:"used",
+        usedByUid:currentUser.uid,
+        usedByEmail:(currentUser.email || "").toLowerCase(),
+        usedAt:serverTimestamp(),
+        book:"tom1-free"
+      });
+
+      const actRef = doc(db, "activations", code);
+      tx.set(actRef, {
+        code,
+        uid:currentUser.uid,
+        email:(currentUser.email || "").toLowerCase(),
+        book:"tom1-free",
+        activatedAt:serverTimestamp()
+      });
+    });
+
+    promoStatus.textContent = "✅ Код активовано. Доступ відкрито назавжди.";
+    await refreshAccess(currentUser);
+  }catch(e){
+    if(e.message === "CODE_NOT_FOUND") promoStatus.textContent = "❌ Код не знайдено.";
+    else if(e.message === "CODE_USED") promoStatus.textContent = "⚠️ Код уже використаний.";
+    else if(e.message === "CODE_BLOCKED") promoStatus.textContent = "🚫 Код заблокований.";
+    else promoStatus.textContent = "Помилка: " + e.message;
+  }
+};
+</script>
+</body>
+</html>

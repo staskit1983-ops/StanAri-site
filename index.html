@@ -578,7 +578,33 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #stas-row { display: flex !important; flex-direction: column !important; }
   #stas-row > div:nth-child(2) { order: -1; }
 }
-</style></head>
+</style>
+<script>
+// Auto-detect browser language on first visit
+(function() {
+  try {
+    var saved = localStorage.getItem('sl');
+    if (saved) return; // user already chose manually — respect their choice
+
+    var nav = (navigator.language || navigator.userLanguage || 'uk').toLowerCase();
+    var lang = 'uk'; // default
+
+    if (nav.startsWith('en')) lang = 'en';
+    else if (nav.startsWith('pl')) lang = 'pl';
+    else if (nav.startsWith('de')) lang = 'de';
+    else if (nav.startsWith('es')) lang = 'es';
+    else if (nav.startsWith('uk') || nav.startsWith('ru')) lang = 'uk';
+
+    if (lang !== 'uk') {
+      // Apply after page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof setLang === 'function') setLang(lang);
+      });
+    }
+  } catch(e) {}
+})();
+</script>
+</head>
 <body>
 
 <!-- LIGHTBOX -->
@@ -1068,10 +1094,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <p>Автор: STAN ARI</p>
         </div>
         <audio controls preload="metadata">
-          <source src="audio/Violin-Threaded_Silence__Remastered_.mp3" type="audio/mpeg">
+          <source src="audio/Violin-Threaded%20Silence%20(Remastered).mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/Violin-Threaded_Silence__Remastered_.mp3" download data-t="download_btn">↓ Скачати</a>
+          <a class="btn btn-ghost btn-sm" href="audio/Violin-Threaded%20Silence%20(Remastered).mp3" download data-t="download_btn">↓ Скачати</a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="threaded-silence" data-track="threaded-silence" onclick="toggleLike('threaded-silence')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1081,10 +1107,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <p>Автор: STAN ARI</p>
         </div>
         <audio controls preload="metadata">
-          <source src="audio/%D0%A2%D0%B8_%D0%BC%D1%96%D0%B9_%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82_.mp3" type="audio/mpeg">
+          <source src="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/%D0%A2%D0%B8_%D0%BC%D1%96%D0%B9_%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82_.mp3" download data-t="download_btn">↓ Скачати</a>
+          <a class="btn btn-ghost btn-sm" href="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" download data-t="download_btn">↓ Скачати</a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="ty-miy-vsesvit" data-track="ty-miy-vsesvit" onclick="toggleLike('ty-miy-vsesvit')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1452,6 +1478,7 @@ Object.keys(EXTRA_T).forEach(function(k){T[k]=Object.assign(T[k]||{},EXTRA_T[k])
 
 function setLang(l){
   lang=l;
+  try{localStorage.setItem('sl',l);}catch(e){}
   document.querySelectorAll('.lbtn').forEach(function(b){
     var oc=b.getAttribute('onclick')||'';
     b.classList.toggle('on',oc.indexOf("'"+l+"'")>-1);

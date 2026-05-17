@@ -1009,7 +1009,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <section class="section" id="reviews" style="border-top:1px solid var(--border)">
   <div class="container">
     <div class="kicker"><span class="kicker-dot"></span><span data-t="reviews_kicker">Відгуки</span></div>
-    <h2 style="margin-top:8px" data-t="support_title">Що думають читачі</h2>
+    <h2 style="margin-top:8px" data-t="support_title">Що думають читачі <span id="reviewsCount" style="font-size:0.6em;color:var(--gold2);font-weight:400;opacity:.7"></span></h2>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;align-items:start">
 
@@ -1386,6 +1386,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     const snap = await getDocs(q);
     const all = [];
     snap.forEach(d => all.push(d.data()));
+    // Оновлюємо лічильник відгуків
+    const reviewCountEl = document.getElementById('reviewsCount');
+    if (reviewCountEl) reviewCountEl.textContent = all.length > 0 ? '(' + all.length + ')' : '';
 
     // Preview (3 max)
     const preview = document.getElementById('reviewsPreview');
@@ -1487,19 +1490,41 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   };
 
   // ── Music Likes ─────────────────────────────────────────
-  async function updateLikeButtons(user) {
-    if (!user) return;
-    const docs = await getDocs(collection(db, 'music_likes'));
-    docs.forEach(d => {
-      const data = d.data();
-      if (data.users && data.users[user.uid]) {
+  async function loadAllLikeCounts() {
+    try {
+      const snap = await getDocs(collection(db, 'music_likes'));
+      snap.forEach(d => {
+        const data = d.data();
         const btn = document.querySelector(`[data-track="${d.id}"].like-btn`);
-        if (btn) btn.classList.add('active');
+        if (btn) {
+          const countEl = btn.querySelector('.like-count');
+          if (countEl) countEl.textContent = data.count || 0;
+        }
+      });
+    } catch(e) { console.error('loadAllLikeCounts', e); }
+  }
+  loadAllLikeCounts();
+
+  async function updateLikeButtons(user) {
+    const snap = await getDocs(collection(db, 'music_likes'));
+    snap.forEach(d => {
+      const data = d.data();
+      const btn = document.querySelector(`[data-track="${d.id}"].like-btn`);
+      if (!btn) return;
+      // завжди оновлюємо лічильник
+      const countEl = btn.querySelector('.like-count');
+      if (countEl) countEl.textContent = data.count || 0;
+      // активний стан — тільки для авторизованого
+      if (user && data.users && data.users[user.uid]) {
+        btn.classList.add('active');
       }
     });
   }
 
   // ── Track Downloads ─────────────────────────────────────────────
+  // Ініціалізуємо всі dl-count в 0 одразу
+  document.querySelectorAll(".dl-count").forEach(el => { el.textContent = "0"; });
+
   async function loadDownloadCounts() {
     const snap = await getDocs(collection(db, 'music_downloads'));
     snap.forEach(d => {

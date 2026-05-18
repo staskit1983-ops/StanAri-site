@@ -8,7 +8,24 @@
   <meta name="keywords" content="Stan Ari, stanari, The Life Operator, книга свідомість, філософська проза, саморозвиток, трансформація, українська книга, audiobook"/>
   <meta name="author" content="Stan Ari"/>
   <meta name="robots" content="index, follow"/>
-  <link rel="canonical" href="https://stanari.art"/>
+  <link rel="canonical" href="https://stanari.art/"/>
+
+  <!-- Hreflang for multilingual -->
+  <link rel="alternate" hreflang="uk" href="https://stanari.art/"/>
+  <link rel="alternate" hreflang="en" href="https://stanari.art/"/>
+  <link rel="alternate" hreflang="pl" href="https://stanari.art/"/>
+  <link rel="alternate" hreflang="de" href="https://stanari.art/"/>
+  <link rel="alternate" hreflang="es" href="https://stanari.art/"/>
+  <link rel="alternate" hreflang="x-default" href="https://stanari.art/"/>
+
+  <!-- Block non-canonical domains (e.g. Firebase *.web.app) from indexing -->
+  <script>
+    if (location.hostname !== 'stanari.art') {
+      var m = document.createElement('meta');
+      m.name = 'robots'; m.content = 'noindex, nofollow';
+      document.head.appendChild(m);
+    }
+  </script>
 
   <!-- Open Graph (Facebook, Telegram, WhatsApp) -->
   <meta property="og:type" content="website"/>
@@ -1021,7 +1038,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
             <div style="text-align:center">
               <div id="avgRating" style="font-size:52px;font-weight:800;color:#fff8ed;line-height:1">—</div>
               <div id="starsDisplay" style="font-size:22px;color:#d8af63;margin:6px 0">☆☆☆☆☆</div>
-              <div id="totalRatings" style="font-size:12px;color:var(--muted)" data-t="ratings_count">0 оцінок</div>
+              <div id="totalRatings" style="font-size:12px;color:var(--muted)">0 оцінок</div>
             </div>
             <div style="flex:1">
               <div id="ratingBars"></div>
@@ -1138,7 +1155,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/KOSMOS%20ARIA%20-%20Code%20Of%20Cold.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/KOSMOS%20ARIA%20-%20Code%20Of%20Cold.mp3" download data-t="download_btn" data-download="code-of-cold" onclick="trackDownload('code-of-cold')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/KOSMOS%20ARIA%20-%20Code%20Of%20Cold.mp3" download data-t="download_btn" data-download="code-of-cold" onclick="trackDownload('code-of-cold')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="code-of-cold" data-track="code-of-cold" onclick="toggleLike('code-of-cold')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1152,7 +1169,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/chorne-sonce.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/chome-sonce.mp3" download data-t="download_btn" data-download="chome-sonce" onclick="trackDownload('chome-sonce')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/chome-sonce.mp3" download data-t="download_btn" data-download="chome-sonce" onclick="trackDownload('chome-sonce')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="chome-sonce" data-track="chome-sonce" onclick="toggleLike('chome-sonce')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article>
@@ -1174,7 +1191,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/Violin-Threaded%20Silence%20(Remastered).mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/Violin-Threaded%20Silence%20(Remastered).mp3" download data-t="download_btn" data-download="threaded-silence" onclick="trackDownload('threaded-silence')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/Violin-Threaded%20Silence%20(Remastered).mp3" download data-t="download_btn" data-download="threaded-silence" onclick="trackDownload('threaded-silence')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="threaded-silence" data-track="threaded-silence" onclick="toggleLike('threaded-silence')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1187,7 +1204,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" download data-t="download_btn" data-download="ty-miy-vsesvit" onclick="trackDownload('ty-miy-vsesvit')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" download data-t="download_btn" data-download="ty-miy-vsesvit" onclick="trackDownload('ty-miy-vsesvit')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="ty-miy-vsesvit" data-track="ty-miy-vsesvit" onclick="toggleLike('ty-miy-vsesvit')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1201,7 +1218,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/the mirror.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/the%20mirror.mp3" download data-t="download_btn" data-download="the-mirror" onclick="trackDownload('the-mirror')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/the%20mirror.mp3" download data-t="download_btn" data-download="the-mirror" onclick="trackDownload('the-mirror')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="the-mirror" data-track="the-mirror" onclick="toggleLike('the-mirror')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1214,7 +1231,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <source src="audio/ya-prokidavsya.mp3" type="audio/mpeg">
         </audio>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/ya-prokidavsya.mp3" download data-t="download_btn" data-download="ya-prokidavsya" onclick="trackDownload('ya-prokidavsya')">↓ Скачати <span class="dl-count" style="font-size:10px;opacity:.6;margin-left:4px"></span></a>
+          <a class="btn btn-ghost btn-sm" href="audio/ya-prokidavsya.mp3" download data-t="download_btn" data-download="ya-prokidavsya" onclick="trackDownload('ya-prokidavsya')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="ya-prokidavsya" data-track="ya-prokidavsya" onclick="toggleLike('ya-prokidavsya')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article>
@@ -1261,7 +1278,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <div style="text-align:center;padding:20px 0">
       <div class="footer-brand">STAN ARI</div>
       <p style="font-size:13px;color:var(--muted);margin-top:8px" data-t="footer_text">Авторський світ книг, музики та місії.</p>
-      <p style="font-size:13px;color:var(--muted);margin-top:6px"><span data-t="email_label">Email</span>: <a href="mailto:stanari.art@gmail.com" style="color:var(--gold2)">stanari.art@gmail.com</a></p>
       <p style="font-size:12px;color:var(--muted2);margin-top:16px" data-t="footer_copy">&copy; 2026 Stan Ari. All rights reserved.</p>
     </div>
   </div>
@@ -1364,7 +1380,16 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     const btn = document.getElementById('reviewSubmitBtn');
     btn.disabled = true;
     try {
-      await addDoc(collection(db, 'reviews'), {
+      // Один відгук на юзера — використовуємо UID як ID документа
+      const reviewRef = doc(db, 'reviews', currentUser.uid);
+      const existing = await getDoc(reviewRef);
+      if (existing.exists()) {
+        // Вже є відгук — показуємо повідомлення і виходимо
+        btn.textContent = '✓ Відгук вже надіслано';
+        setTimeout(() => { btn.textContent = 'Надіслати відгук'; btn.disabled = false; }, 2500);
+        return;
+      }
+      await setDoc(reviewRef, {
         uid: currentUser.uid,
         name: (currentUser.displayName || 'Читач').split(' ')[0],
         photo: currentUser.photoURL || '',
@@ -1436,7 +1461,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     const totalEl = document.getElementById('totalRatings');
     if (avgEl) avgEl.textContent = avg.toFixed(1);
     if (starsEl) starsEl.textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
-    if (totalEl) { const label = window.FINAL_I18N?.[window.lang||'uk']?.ratings_count?.replace('0','') || ' оцінок'; totalEl.textContent = total + label; }
+    if (totalEl) { const langNow = window.lang||'uk'; const suffixes = {uk:' оцінок',pl:' ocen',en:' ratings',de:' Bewertungen',es:' valoraciones'}; totalEl.textContent = total + (suffixes[langNow]||' оцінок'); }
 
     const barsEl = document.getElementById('ratingBars');
     if (barsEl) {
@@ -1565,11 +1590,12 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       const data = snap.data();
       const liked = data.users && data.users[currentUser.uid];
       if (liked) {
-        await updateDoc(ref, { count: increment(-1), [`users.${currentUser.uid}`]: false });
-        if (btn) { btn.classList.remove('active'); if (countEl) countEl.textContent = (data.count||1)-1; }
+        // Лайк вже поставлено — нічого не робимо (незворотній)
+        return;
       } else {
         await updateDoc(ref, { count: increment(1), [`users.${currentUser.uid}`]: true });
-        if (btn) { btn.classList.add('active'); if (countEl) countEl.textContent = (data.count||0)+1; }
+        const newCount = (data.count || 0) + 1;
+        if (btn) { btn.classList.add('active'); if (countEl) countEl.textContent = newCount; }
       }
     }
   };

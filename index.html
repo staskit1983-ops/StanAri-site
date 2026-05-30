@@ -2462,7 +2462,7 @@ document.addEventListener('play', function(e){
 
 
 <!-- CLEAN BOOK ACCESS MODAL -->
-<div class="clean-access-modal" id="cleanAccessModal">
+<div class="clean-access-modal" id="cleanAccessModal" style="display:none!important">
   <div class="clean-access-box">
     <h3 data-t="clean_modal_title">Доступ до книги</h3>
     <p data-t="clean_modal_text">Увійди через Google. Один акаунт = постійний доступ до онлайн-читання. Потім введи промокод.</p>
@@ -2763,22 +2763,10 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
   }
 
   function openGateOrReader(){
-    if(localStorage.getItem("stanari_book_access") === "true"){
-      goReader();
-      return;
-    }
-    if(typeof window.openCleanAccessModal === "function"){
-      window.openCleanAccessModal();
-      return;
-    }
-    if(typeof window.openBookAccessModal === "function"){
-      window.openBookAccessModal();
-      return;
-    }
     goReader();
   }
 
-  window.openReadModal = openGateOrReader;
+  window.openReadModal = goReader;
   window.openReadModalUnlocked = goReader;
 
   document.addEventListener("click", function(e){
@@ -2799,7 +2787,7 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
     if(isReadButton){
       e.preventDefault();
       e.stopPropagation();
-      openGateOrReader();
+      window.location.href = "reader.html";
     }
   }, true);
 })();

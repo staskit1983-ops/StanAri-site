@@ -93,6 +93,9 @@
   gtag('config', 'G-1HXL8E7R09');
 </script>
 <meta charset="UTF-8">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d8af63">
+  <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="google" content="notranslate">
 <meta name="description" content="STAN ARI — Creator of Inner Worlds. Книги, музика, місія.">
@@ -540,6 +543,58 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 }
 /* === /AUTHOR PHOTO FRAME FIX === */
 
+
+
+/* Desktop Install Banner */
+#desktop-install-banner {
+  display:none;
+  position:fixed;
+  top:16px;right:16px;
+  background:#1a1610;
+  border:1px solid #d8af63;
+  border-radius:14px;
+  padding:14px 16px;
+  z-index:9999;
+  align-items:center;
+  gap:12px;
+  box-shadow:0 4px 24px rgba(216,175,99,.25);
+  max-width:320px;
+}
+#desktop-install-banner img { width:40px;height:40px;border-radius:10px; }
+#desktop-install-banner .di-text { flex:1;font-size:13px;color:#e8d5a0;line-height:1.4; }
+#desktop-install-banner .di-text b { color:#d8af63; }
+#desktop-install-banner .di-btn {
+  background:linear-gradient(135deg,#f5dfaa,#d8af63);
+  color:#1a1610;border:none;border-radius:8px;
+  padding:8px 14px;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;
+}
+#desktop-install-banner .di-close {
+  background:none;border:none;color:#888;font-size:20px;
+  cursor:pointer;padding:0 2px;line-height:1;
+  position:absolute;top:8px;right:10px;
+}
+
+/* iOS Install Banner */
+#ios-install-banner {
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:#1a1610;
+  border-top:1px solid #d8af63;
+  padding:14px 16px;
+  z-index:9999;
+  align-items:center;
+  gap:12px;
+}
+#ios-install-banner img { width:44px;height:44px;border-radius:10px; }
+#ios-install-banner .ios-text { flex:1;font-size:13px;color:#e8d5a0;line-height:1.4; }
+#ios-install-banner .ios-text b { color:#d8af63; }
+#ios-install-banner .ios-close {
+  background:none;border:none;color:#888;font-size:22px;
+  cursor:pointer;padding:0 4px;line-height:1;
+}
+
 </style>
 
 <style>
@@ -880,7 +935,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           
           <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase" data-t="also_available">Також доступно на</p>
       <div style="display:flex;gap:8px;margin-top:10px">
-            <a href="#" class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+            <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
               <svg width="26" height="16" viewBox="0 0 120 36" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="26" font-family="Arial,sans-serif" font-weight="900" font-size="28" fill="#FF9900">amazon</text>
               </svg>
@@ -889,15 +944,15 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
                 <path d="M68 8 L76 14 L68 20" fill="none" stroke="#FF9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               <span style="font-size:10px">Amazon</span>
-            </a>
-            <a href="#" class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+            </div>
+            <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
               <img src="https://cdn.simpleicons.org/googleplay/ffffff" width="26" height="26" alt="Google Play"/>
               <span style="font-size:10px">Google Play</span>
-            </a>
-            <a href="#" class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+            </div>
+            <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
               <img src="https://cdn.simpleicons.org/apple/ffffff" width="26" height="26" alt="Apple Books"/>
               <span style="font-size:10px">Apple Books</span>
-            </a>
+            </div>
           </div>
 
 
@@ -965,7 +1020,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     </div>
     <p class="lead" style="text-align:center;margin-bottom:28px;color:var(--muted)" data-t="audiobook_lead">Слухай книгу де зручно — у дорозі, вдома, в будь-який момент.</p>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <a href="#" class="btn btn-gold" style="width:100%;justify-content:center;font-size:17px;padding:18px 20px;font-weight:800;box-shadow:0 4px 24px rgba(216,175,99,.35)" data-t="audiobook_btn">&#127911; Купити аудіокнигу — 14.99 EUR</a>
+      <a href="#" class="btn btn-gold" style="width:100%;justify-content:center;font-size:17px;padding:18px 20px;font-weight:800;box-shadow:0 4px 24px rgba(216,175,99,.35);opacity:.35;pointer-events:none;cursor:default" data-t="audiobook_btn">&#127911; Незабаром — Аудіокнига</a>
       <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;font-size:16px;padding:16px 20px;border-color:rgba(216,175,99,.6);color:#d8af63;font-weight:700" data-t="audiobook_bundle_btn">eBook + Audio — 19.99 EUR</a>
     </div>
     <div style="margin-top:16px">
@@ -979,16 +1034,16 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
                 <path d="M4 10 Q25 20 45 14 Q60 8 74 14" stroke="#FF9900" stroke-width="3.5" fill="none" stroke-linecap="round"/>
                 <path d="M68 8 L76 14 L68 20" fill="none" stroke="#FF9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-          <span style="font-size:10px">Amazon</span>
-        </a>
-        <a href="#" class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+          <span style="font-size:10px">Незабаром</span>
+        </div>
+        <div class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <img src="https://cdn.simpleicons.org/googleplay/ffffff" width="26" height="26" alt="Google Play"/>
-          <span style="font-size:10px">Google Play</span>
-        </a>
-        <a href="#" class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+          <span style="font-size:10px">Незабаром</span>
+        </div>
+        <div class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <img src="https://cdn.simpleicons.org/apple/ffffff" width="26" height="26" alt="Apple Books"/>
-          <span style="font-size:10px">Apple Books</span>
-        </a>
+          <span style="font-size:10px">Незабаром</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1751,6 +1806,7 @@ function setLang(l){
   updAtm();
   document.documentElement.lang=l;
   try{localStorage.setItem('sl',l);}catch(e){}
+  if(typeof updateInstallBanners==='function') updateInstallBanners(l);
   // Update modal heading lang
   var mh=document.getElementById('modalHeading');
   // Update TOC headings for PL
@@ -2862,5 +2918,105 @@ function switchGalleryLang(l) {
     <button onclick="closeReadLangModal()" style="margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer">✕ Закрити</button>
   </div>
 </div>
+<script>
+
+/* PATCH: install banner translations */
+const installT = {
+  uk:{ios_title:'<b>Встановити Stan Ari</b>',ios_text:'Натисни <b>⎙</b> → <b>"На екран «Домівка»"</b>',desktop_text:'<b>Stan Ari</b> — встанови як додаток',desktop_btn:'⬇ Встановити'},
+  en:{ios_title:'<b>Install Stan Ari</b>',ios_text:'Tap <b>⎙</b> → <b>"Add to Home Screen"</b>',desktop_text:'<b>Stan Ari</b> — install as an app',desktop_btn:'⬇ Install'},
+  pl:{ios_title:'<b>Zainstaluj Stan Ari</b>',ios_text:'Stuknij <b>⎙</b> → <b>"Dodaj do ekranu głównego"</b>',desktop_text:'<b>Stan Ari</b> — zainstaluj jako aplikację',desktop_btn:'⬇ Zainstaluj'},
+  de:{ios_title:'<b>Stan Ari installieren</b>',ios_text:'Tippe <b>⎙</b> → <b>"Zum Home-Bildschirm"</b>',desktop_text:'<b>Stan Ari</b> — als App installieren',desktop_btn:'⬇ Installieren'},
+  es:{ios_title:'<b>Instalar Stan Ari</b>',ios_text:'Toca <b>⎙</b> → <b>"Añadir a pantalla de inicio"</b>',desktop_text:'<b>Stan Ari</b> — instalar como aplicación',desktop_btn:'⬇ Instalar'}
+};
+function updateInstallBanners(lang){
+  var t = installT[lang]||installT.en;
+  var iosTitle = document.querySelector('#ios-install-banner .ios-title');
+  var iosText = document.querySelector('#ios-install-banner .ios-text-body');
+  var dtText = document.querySelector('#desktop-install-banner .di-text');
+  var dtBtn = document.getElementById('desktop-install-btn');
+  if(iosTitle) iosTitle.innerHTML = t.ios_title;
+  if(iosText) iosText.innerHTML = t.ios_text;
+  if(dtText) dtText.innerHTML = t.desktop_text;
+  if(dtBtn) dtBtn.innerHTML = t.desktop_btn;
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+
+<!-- Desktop Install Banner -->
+<div id="desktop-install-banner">
+  <img src="icon-192.png" alt="Stan Ari">
+  <div class="di-text">
+    <b>Stan Ari</b> — встанови як додаток
+  </div>
+  <button class="di-btn" id="desktop-install-btn">⬇ Встановити</button>
+  <button class="di-close" onclick="document.getElementById('desktop-install-banner').style.display='none';localStorage.setItem('pwa_banner_closed','1')">✕</button>
+</div>
+
+<script>
+// Desktop PWA install prompt
+(function(){
+  var deferredPrompt;
+  var closed = localStorage.getItem('pwa_banner_closed');
+  if(closed) return;
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    var banner = document.getElementById('desktop-install-banner');
+    if(banner) banner.style.display = 'flex';
+  });
+
+  var btn = document.getElementById('desktop-install-btn');
+  if(btn){
+    btn.addEventListener('click', function(){
+      var banner = document.getElementById('desktop-install-banner');
+      if(banner) banner.style.display = 'none';
+      if(deferredPrompt){
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(r){
+          deferredPrompt = null;
+          if(r.outcome === 'accepted'){
+            localStorage.setItem('pwa_banner_closed','1');
+          }
+        });
+      }
+    });
+  }
+
+  window.addEventListener('appinstalled', function(){
+    var banner = document.getElementById('desktop-install-banner');
+    if(banner) banner.style.display = 'none';
+    localStorage.setItem('pwa_banner_closed','1');
+  });
+})();
+</script>
+
+<!-- iOS Install Banner -->
+<div id="ios-install-banner">
+  <img src="icon-192.png" alt="Stan Ari">
+  <div class="ios-text">
+    <span class="ios-title"><b>Встановити Stan Ari</b></span><br>
+    <span class="ios-text-body">Натисни <b>⎙</b> → <b>"На екран «Домівка»"</b></span>
+  </div>
+  <button class="ios-close" onclick="document.getElementById('ios-install-banner').style.display='none';localStorage.setItem('ios_banner_closed','1')">✕</button>
+</div>
+
+<script>
+// Show iOS install banner
+(function(){
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+  var isStandalone = window.navigator.standalone;
+  var closed = localStorage.getItem('ios_banner_closed');
+  if(isIOS && isSafari && !isStandalone && !closed){
+    document.getElementById('ios-install-banner').style.display = 'flex';
+  }
+})();
+</script>
+
 </body>
 </html>

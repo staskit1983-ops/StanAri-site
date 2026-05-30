@@ -1916,11 +1916,7 @@ function openReadModalUnlocked(){
   if(m){m.classList.add('open');document.body.style.overflow='hidden';showTOC();}
 }
 function openReadModal(){
-  if(localStorage.getItem('stanari_book_access') === 'true'){
-    window.location.href = "reader.html";
-  }else{
-    openCleanAccessModal();
-  }
+  window.location.href = "reader.html";
 }
 function closeReadModal(){
   var m=document.getElementById('readModal');

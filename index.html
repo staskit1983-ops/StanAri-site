@@ -2750,23 +2750,9 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
 <script>
 /* === READER REDIRECT PATCH === */
 (function(){
-  const oldOpenReadModal = window.openReadModal;
+  // Reader opens directly - no auth required
   window.openReadModal = function(){
-    if(localStorage.getItem("stanari_book_access") === "true"){
-      window.location.href = "reader.html";
-      return;
-    }
-    if(typeof window.openCleanAccessModal === "function"){
-      window.openCleanAccessModal();
-      return;
-    }
-    if(typeof window.openBookAccessModal === "function"){
-      window.openBookAccessModal();
-      return;
-    }
-    if(typeof oldOpenReadModal === "function"){
-      oldOpenReadModal();
-    }
+    window.location.href = "reader.html";
   };
 })();
 /* === /READER REDIRECT PATCH === */

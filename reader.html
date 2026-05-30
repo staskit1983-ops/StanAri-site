@@ -1,190 +1,576 @@
 <!DOCTYPE html>
-<html lang="uk" translate="no">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="google" content="notranslate">
-<title>STAN ARI — Online Reader</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Life Operator — Читалка</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#050403;
-  --gold:#d8af63;
-  --gold2:#f4d996;
-  --text:#fff8ec;
-  --border:rgba(216,175,99,.22);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,sans-serif;touch-action:none}
+
+/* ══ INTRO VIDEO ══ */
+#introScreen{
+  position:fixed;inset:0;z-index:300;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:Georgia,serif;overflow:hidden}
-body{background:radial-gradient(circle at 50% 0%,rgba(216,175,99,.12),transparent 35%),linear-gradient(180deg,#100b07,#050403 65%)}
-button,a{font-family:Georgia,serif;text-decoration:none}
-.app{height:100%;display:grid;grid-template-rows:auto auto 1fr auto}
+#introVideo{
+  width:100%;height:100%;
+  object-fit:contain;
+  background:#000;
+}
+#introFade{
+  position:absolute;inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.5s ease-in;
+}
+#introFade.fading{opacity:1;}
+#skipBtn{
+  position:absolute;bottom:30px;right:24px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.6);
+  padding:8px 18px;border-radius:20px;
+  font-size:11px;letter-spacing:.1em;
+  cursor:pointer;
+  font-family:system-ui,sans-serif;
+}
+
+/* ══ READER ══ */
+#readerScreen{
+  position:fixed;inset:0;
+  background:#1a1a1a;
+  opacity:0;transition:opacity 1s;
+  pointer-events:none;
+}
+#readerScreen.visible{opacity:1;pointer-events:all;}
+
+/* ── BARS ── */
 .topbar{
-  min-height:64px;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:12px 22px;
-  background:rgba(6,4,3,.94);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(12px);
+  position:fixed;top:0;left:0;right:0;height:48px;
+  background:rgba(0,0,0,.88);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:100;
+  border-bottom:1px solid rgba(216,175,99,.12);
+  transform:translateY(0);opacity:1;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
 }
-.logo{font-size:13px;letter-spacing:.28em;font-weight:900;white-space:nowrap}
-.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.btn{
-  min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--border);
-  background:rgba(255,255,255,.045);color:var(--text);font-weight:900;cursor:pointer;
+.topbar.hidden{transform:translateY(-100%);opacity:0;}
+.topbar-left{display:flex;flex-direction:column;}
+.topbar-title{color:rgba(216,175,99,.7);font-size:10px;letter-spacing:.2em;text-transform:uppercase;}
+.topbar-chapter{color:rgba(255,255,255,.35);font-size:9px;letter-spacing:.1em;margin-top:1px;}
+.top-btns{display:flex;gap:6px;align-items:center;}
+.top-btn{
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.18);
+  color:#d8af63;width:32px;height:32px;border-radius:8px;
+  font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
 }
-.btn.active,.btn.gold{background:linear-gradient(135deg,#fff0bc,#d8af63,#a87531);color:#120c06;border-color:transparent}
-.status{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  min-height:42px;padding:8px 22px;background:rgba(5,4,3,.72);
-  color:var(--gold2);font-size:13px;border-bottom:1px solid rgba(216,175,99,.13)
+.top-btn:hover{background:rgba(216,175,99,.18);}
+.atmo-btn{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.18);
+  color:#d8af63;padding:5px 12px;border-radius:16px;
+  font-size:10px;letter-spacing:.1em;cursor:pointer;
+  transition:background .2s;
 }
-.reader-wrap{min-height:0;overflow:auto;padding:26px 20px 34px;scroll-behavior:smooth}
-.reader-wrap::-webkit-scrollbar{width:11px}
-.reader-wrap::-webkit-scrollbar-track{background:#0a0705}
-.reader-wrap::-webkit-scrollbar-thumb{background:rgba(216,175,99,.45);border-radius:999px}
-.page-shell{
-  margin:0 auto 28px;
-  width:min(100%, var(--page-width, 1120px));
-  border-radius:18px;
-  background:#111;
-  box-shadow:0 28px 90px rgba(0,0,0,.58);
-  border:1px solid rgba(216,175,99,.12);
-  overflow:hidden;
+.atmo-btn:hover{background:rgba(216,175,99,.18);}
+.atmo-dot{width:5px;height:5px;border-radius:50%;background:#d8af63;opacity:.3;transition:opacity .3s;}
+.atmo-btn.on .atmo-dot{opacity:1;animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.7);opacity:.5}}
+
+.bottombar{
+  position:fixed;bottom:0;left:0;right:0;height:58px;
+  background:rgba(0,0,0,.88);
+  display:flex;align-items:center;justify-content:center;gap:20px;z-index:100;
+  border-top:1px solid rgba(216,175,99,.1);
+  transform:translateY(0);opacity:1;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
 }
-.page-shell img{
-  width:100%;
-  height:auto;
-  display:block;
-  user-select:none;
-  -webkit-user-drag:none;
-  background:#f5ead6;
+.bottombar.hidden{transform:translateY(100%);opacity:0;}
+.nav-btn{
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.2);
+  color:#d8af63;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
 }
-.bottom{
-  min-height:70px;display:flex;align-items:center;justify-content:center;gap:12px;
-  padding:12px 18px;background:rgba(5,4,3,.96);border-top:1px solid var(--border)
+.nav-btn:hover{background:rgba(216,175,99,.15);}
+.nav-btn:disabled{opacity:.2;cursor:default;}
+.pg-info{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.12em;min-width:60px;text-align:center;}
+
+/* Progress */
+.progress{
+  position:fixed;bottom:58px;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.05);z-index:100;
+  transition:bottom .35s cubic-bezier(.4,0,.2,1);
 }
-.progress{width:min(42vw,520px);height:7px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
-.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#fff0bc,#d8af63,#a87531)}
-@media(max-width:760px){
-  html,body{overflow:auto;height:auto;min-height:100%}
-  .app{height:auto;min-height:100vh;display:block}
-  .topbar{display:grid;grid-template-columns:1fr;align-items:start;padding:10px 12px}
-  .controls{justify-content:flex-start}
-  .status{padding:8px 12px;display:grid}
-  .reader-wrap{padding:12px 8px 90px;overflow:visible}
-  .bottom{position:fixed;left:0;right:0;bottom:0;z-index:10;min-height:66px}
-  .progress{width:28vw}
-  .btn{min-height:36px;padding:0 12px;font-size:13px}
+.progress.bars-hidden{bottom:0;}
+.progress-fill{height:100%;background:#d8af63;opacity:.6;transition:width .4s;}
+
+/* ── VIEWER ── */
+.viewer{
+  position:fixed;top:48px;bottom:58px;left:0;right:0;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:#1a1a1a;
+  transition:top .35s cubic-bezier(.4,0,.2,1),bottom .35s cubic-bezier(.4,0,.2,1);
+}
+.viewer.expanded{top:0;bottom:0;}
+
+.page-wrap{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .5s cubic-bezier(.77,0,.175,1),opacity .4s;
+}
+.page-wrap.active{transform:translateX(0);opacity:1;z-index:2;}
+.page-wrap.prev{transform:translateX(-100%);opacity:0;z-index:1;}
+.page-wrap.next{transform:translateX(100%);opacity:0;z-index:1;}
+.page-img{
+  max-height:100%;max-width:100%;
+  object-fit:contain;display:block;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);
+  user-select:none;-webkit-user-select:none;
+  transition:transform .15s;
+}
+
+/* ── LOCK PAGE ── */
+.lock-wrap{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(10,8,6,.95);
+  backdrop-filter:blur(4px);
+}
+.lock-box{
+  text-align:center;padding:40px 28px;max-width:320px;
+}
+.lock-icon{font-size:44px;margin-bottom:16px;opacity:.6;}
+.lock-title{
+  font-family:Georgia,serif;
+  color:#d8af63;font-size:18px;margin-bottom:8px;
+}
+.lock-text{
+  color:rgba(255,255,255,.45);font-size:13px;line-height:1.7;margin-bottom:24px;
+}
+.lock-btn{
+  background:#d8af63;color:#1a1408;border:none;
+  padding:14px 32px;border-radius:30px;
+  font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(216,175,99,.3);
+  transition:transform .15s,box-shadow .15s;
+}
+.lock-btn:active{transform:scale(.97);}
+
+/* ── LANG SELECTOR (показується якщо мова не обрана) ── */
+#langModal{
+  position:fixed;inset:0;z-index:400;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+}
+.lang-btns{
+  display:flex;gap:16px;align-items:center;justify-content:center;
+  flex-wrap:wrap;padding:20px;
+}
+.lang-flag{
+  background:rgba(216,175,99,.08);
+  border:2px solid rgba(216,175,99,.3);
+  color:#d8af63;
+  font-size:22px;font-weight:800;
+  letter-spacing:.08em;
+  padding:18px 28px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;gap:10px;
+}
+.lang-flag:hover{
+  background:rgba(216,175,99,.15);
+  border-color:#d8af63;
+  transform:scale(1.05);
+}
+
+/* ── FINALE VIDEO ── */
+#finaleScreen{
+  position:fixed;inset:0;z-index:300;
+  background:#000;
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;
+}
+#finaleScreen.show{display:flex;}
+#finaleVideo{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;}
+.finale-close{
+  position:absolute;top:20px;right:20px;z-index:10;
+  background:rgba(255,255,255,.1);border:none;
+  color:#fff;width:40px;height:40px;border-radius:50%;
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="logo">STAN ARI</div>
-    <div class="controls">
-      <button class="btn active" data-lang="ua">UA</button>
-      <button class="btn" disabled title="Підключимо після перевірки UA">EN</button>
-      <button class="btn" disabled title="Підключимо після перевірки UA">PL</button>
-      <button class="btn" id="fitBtn">Fit</button>
-      <button class="btn active" id="wideBtn">Wide</button>
-      <button class="btn" id="bigBtn">Big</button>
-      <a class="btn" href="index.html">← На сайт</a>
-    </div>
-  </header>
 
-  <div class="status">
-    <div id="statusText">THE LIFE OPERATOR · UA · сторінка 1 / 138</div>
-    <div>Сторінки з PDF · без Google Drive · без кнопки скачування</div>
+<!-- ══ LANG MODAL ══ -->
+<div id="langModal">
+  <div class="lang-btns">
+    <button class="lang-flag" onclick="startReader('uk')">🇺🇦 UA</button>
+    <button class="lang-flag" onclick="startReader('en')">🇬🇧 EN</button>
+    <button class="lang-flag" onclick="startReader('pl')">🇵🇱 PL</button>
+  </div>
+</div>
+
+<!-- ══ INTRO VIDEO ══ -->
+<div id="introScreen" style="display:none;">
+  <video id="introVideo" playsinline webkit-playsinline autoplay muted>
+    <source src="video/book_intro.mp4" type="video/mp4">
+  </video>
+  <div id="introFade"></div>
+  <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
+</div>
+
+<!-- ══ READER ══ -->
+<div id="readerScreen">
+  <div class="topbar" id="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">The Life Operator · Tom 1</span>
+      <span class="topbar-chapter" id="chapterLabel"></span>
+    </div>
+    <div class="top-btns">
+      <button class="top-btn" onclick="zoom(-0.2)" title="Зменшити">−</button>
+      <button class="top-btn" onclick="zoom(0.2)" title="Збільшити">+</button>
+      <button class="atmo-btn" id="atmoBtn" onclick="toggleAtmo()">
+        <span class="atmo-dot"></span> 🎵
+      </button>
+    </div>
   </div>
 
-  <main class="reader-wrap" id="reader">
-    <div class="page-shell" id="pageShell">
-      <img id="pageImg" src="pages/ua/page-001.jpg" alt="THE LIFE OPERATOR page" draggable="false">
-    </div>
-  </main>
+  <div class="viewer" id="viewer">
+    <!-- Pages injected by JS -->
+  </div>
 
-  <footer class="bottom">
-    <button class="btn" id="prevBtn">← Назад</button>
-    <div class="progress"><span id="bar"></span></div>
-    <button class="btn gold" id="nextBtn">Далі →</button>
-  </footer>
+  <div class="progress" id="progressBar">
+    <div class="progress-fill" id="pFill"></div>
+  </div>
+
+  <div class="bottombar" id="bottombar">
+    <button class="nav-btn" id="btnPrev" onclick="go(-1)" disabled>←</button>
+    <span class="pg-info" id="pgInfo">1 / —</span>
+    <button class="nav-btn" id="btnNext" onclick="go(1)">→</button>
+  </div>
+</div>
+
+<!-- ══ AUDIO ══ -->
+<audio id="atmoAudio" loop>
+  <source src="audio/Black_Gold_Threshold.mp3" type="audio/mpeg">
+</audio>
+<audio id="finaleAudio">
+  <source src="audio/STAN_ARI-ECHOES_OF_ARIA.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ══ FINALE ══ -->
+<div id="finaleScreen">
+  <button class="finale-close" onclick="closeFinale()">✕</button>
+  <video id="finaleVideo" controls playsinline>
+    <!-- Якщо є відеокліп — src="video/finale_clip.mp4" -->
+  </video>
 </div>
 
 <script>
-const TOTAL = 138;
-let page = Number(localStorage.getItem("stanari_ua_page") || 1);
-const reader = document.getElementById("reader");
-const img = document.getElementById("pageImg");
-const statusText = document.getElementById("statusText");
-const bar = document.getElementById("bar");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
+// ── Config
+const LANG_CONFIG = {
+  uk: { total: 133, free: 43,  folder: 'img/reader/ua', label: 'Українська' },
+  en: { total: 209, free: 64,  folder: 'img/reader/en', label: 'English' },
+  pl: { total: 181, free: 64,  folder: 'img/reader/pl', label: 'Polski' },
+};
 
-function pagePath(n){
-  return "pages/ua/page-" + String(n).padStart(3,"0") + ".jpg";
+const CHAPTER_LABELS = {
+  uk: {1:'Пролог',5:'Блок II · Шум',7:'Глава 1 · Релігія',15:'Глава 2 · Первородний гріх',22:'Глава 3 · Дисонанс',30:'Глава 4 · Молитва'},
+  en: {1:'Prologue',7:'Block II · Noise',10:'Chapter 1 · Religion',20:'Chapter 2 · Original Sin',35:'Chapter 3 · Dissonance',50:'Chapter 4 · Prayer'},
+  pl: {1:'Prolog',7:'Blok II · Szum',10:'Rozdział 1 · Religia',20:'Rozdział 2 · Grzech pierworodny',35:'Rozdział 3 · Dysonans',50:'Rozdział 4 · Modlitwa'},
+};
+
+let lang = null;
+let cur = 0;
+let scale = 1;
+let barsVisible = true;
+let hideTimer = null;
+let atmoOn = false;
+let hasAccess = localStorage.getItem('stanari_book_access') === 'true';
+let pages = [];
+
+// ── Check saved language
+const savedLang = localStorage.getItem('readerLang');
+if (savedLang && LANG_CONFIG[savedLang]) {
+  startReader(savedLang);
+} else {
+  // Show lang modal
+  document.getElementById('langModal').style.display = 'flex';
 }
 
-function setMode(mode){
-  document.querySelectorAll("#fitBtn,#wideBtn,#bigBtn").forEach(b=>b.classList.remove("active"));
-  if(mode === "fit"){
-    document.documentElement.style.setProperty("--page-width","860px");
-    document.getElementById("fitBtn").classList.add("active");
+// ── Start reader with chosen language
+function startReader(l) {
+  lang = l;
+  localStorage.setItem('readerLang', l);
+  document.getElementById('langModal').style.display = 'none';
+
+  // Update buy button language in parent if exists
+  try {
+    const buyUrls = {
+      uk: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=uk',
+      en: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en',
+      pl: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=pl',
+    };
+    if (window.opener) {
+      const buyBtn = window.opener.document.querySelector('[data-t="buy_main_btn"]');
+      if (buyBtn) buyBtn.href = buyUrls[l];
+    }
+  } catch(e) {}
+
+  // Play intro video
+  playIntro();
+}
+
+// ── Intro video
+function playIntro() {
+  const intro = document.getElementById('introScreen');
+  intro.style.display = 'flex';
+  const video = document.getElementById('introVideo');
+  video.play().catch(() => skipIntro());
+
+  video.addEventListener('ended', () => {
+    fadeAndStart();
+  });
+
+  // Safety timeout
+  setTimeout(() => {
+    if (document.getElementById('introScreen').style.display !== 'none') {
+      fadeAndStart();
+    }
+  }, 10000);
+}
+
+function fadeAndStart() {
+  document.getElementById('introFade').classList.add('fading');
+  setTimeout(() => {
+    document.getElementById('introScreen').style.display = 'none';
+    initReader();
+  }, 1500);
+}
+
+function skipIntro() {
+  fadeAndStart();
+}
+
+// ── Init reader
+function initReader() {
+  const cfg = LANG_CONFIG[lang];
+  const viewer = document.getElementById('viewer');
+  viewer.innerHTML = '';
+  pages = [];
+
+  // Build all pages
+  for (let i = 1; i <= cfg.total; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'page-wrap' + (i === 1 ? ' active' : ' next');
+    wrap.dataset.page = i;
+
+    const isLocked = !hasAccess && i > cfg.free;
+
+    if (isLocked) {
+      wrap.innerHTML = `
+        <div class="lock-wrap">
+          <div class="lock-box">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
+            <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
+            <button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</button>
+          </div>
+        </div>`;
+      // Only one lock page needed
+      pages.push(wrap);
+      break;
+    } else {
+      const img = document.createElement('img');
+      img.className = 'page-img';
+      img.src = `${cfg.folder}/p-${String(i).padStart(3,'0')}.png`;
+      img.loading = i <= 3 ? 'eager' : 'lazy';
+      img.draggable = false;
+      wrap.appendChild(img);
+      pages.push(wrap);
+    }
   }
-  if(mode === "wide"){
-    document.documentElement.style.setProperty("--page-width","1120px");
-    document.getElementById("wideBtn").classList.add("active");
+
+  pages.forEach(p => viewer.appendChild(p));
+
+  document.getElementById('readerScreen').classList.add('visible');
+  updateUI();
+  startHideTimer();
+
+  // Start atmosphere music
+  setTimeout(() => {
+    const audio = document.getElementById('atmoAudio');
+    audio.volume = 0.35;
+    audio.play().then(() => {
+      atmoOn = true;
+      document.getElementById('atmoBtn').classList.add('on');
+    }).catch(() => {});
+  }, 500);
+}
+
+// ── Navigation
+function go(dir) {
+  const next = cur + dir;
+  if (next < 0 || next >= pages.length) return;
+  scale = 1; applyScale();
+  pages[cur].className = 'page-wrap ' + (dir > 0 ? 'prev' : 'next');
+  cur = next;
+  pages[cur].className = 'page-wrap active';
+  updateUI();
+  showBars();
+
+  // Check if last page — play finale
+  const cfg = LANG_CONFIG[lang];
+  if (hasAccess && cur === pages.length - 1) {
+    setTimeout(() => playFinale(), 1500);
   }
-  if(mode === "big"){
-    document.documentElement.style.setProperty("--page-width","1320px");
-    document.getElementById("bigBtn").classList.add("active");
+}
+
+function updateUI() {
+  const cfg = LANG_CONFIG[lang];
+  const pgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
+  const total = hasAccess ? cfg.total : cfg.free + 1;
+
+  document.getElementById('pgInfo').textContent = `${pgNum} / ${cfg.total}`;
+  document.getElementById('pFill').style.width = (pgNum / cfg.total * 100) + '%';
+  document.getElementById('btnPrev').disabled = cur === 0;
+  document.getElementById('btnNext').disabled = cur === pages.length - 1;
+
+  // Chapter label
+  const labels = CHAPTER_LABELS[lang] || {};
+  let chLabel = '';
+  const nums = Object.keys(labels).map(Number).sort((a,b) => a-b);
+  for (const n of nums) {
+    if (pgNum >= n) chLabel = labels[n];
   }
-  localStorage.setItem("stanari_reader_mode",mode);
+  document.getElementById('chapterLabel').textContent = chLabel;
 }
 
-function render(){
-  if(page < 1) page = 1;
-  if(page > TOTAL) page = TOTAL;
-  img.src = pagePath(page);
-  statusText.textContent = "THE LIFE OPERATOR · UA · сторінка " + page + " / " + TOTAL;
-  bar.style.width = ((page / TOTAL) * 100) + "%";
-  prevBtn.disabled = page <= 1;
-  nextBtn.disabled = page >= TOTAL;
-  localStorage.setItem("stanari_ua_page", page);
-  reader.scrollTo({top:0, behavior:"smooth"});
-  preload(page+1);
-  preload(page-1);
+// ── Zoom
+function zoom(d) {
+  scale = Math.min(3, Math.max(0.5, scale + d));
+  applyScale();
+}
+function applyScale() {
+  const img = pages[cur]?.querySelector('.page-img');
+  if (img) img.style.transform = `scale(${scale})`;
 }
 
-function preload(n){
-  if(n < 1 || n > TOTAL) return;
-  const im = new Image();
-  im.src = pagePath(n);
+// ── Auto-hide bars
+function showBars() {
+  if (!barsVisible) {
+    barsVisible = true;
+    document.getElementById('topbar').classList.remove('hidden');
+    document.getElementById('bottombar').classList.remove('hidden');
+    document.getElementById('progressBar').classList.remove('bars-hidden');
+    document.getElementById('viewer').classList.remove('expanded');
+  }
+  startHideTimer();
+}
+function hideBars() {
+  barsVisible = false;
+  document.getElementById('topbar').classList.add('hidden');
+  document.getElementById('bottombar').classList.add('hidden');
+  document.getElementById('progressBar').classList.add('bars-hidden');
+  document.getElementById('viewer').classList.add('expanded');
+}
+function startHideTimer() {
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(hideBars, 3000);
 }
 
-prevBtn.onclick = () => { page--; render(); };
-nextBtn.onclick = () => { page++; render(); };
-document.getElementById("fitBtn").onclick = () => setMode("fit");
-document.getElementById("wideBtn").onclick = () => setMode("wide");
-document.getElementById("bigBtn").onclick = () => setMode("big");
-
-document.addEventListener("keydown", e => {
-  if(e.key === "ArrowRight") { page++; render(); }
-  if(e.key === "ArrowLeft") { page--; render(); }
+['touchstart','mousemove','click'].forEach(ev => {
+  document.addEventListener(ev, () => {
+    if (document.getElementById('readerScreen').classList.contains('visible')) showBars();
+  }, {passive: true});
 });
 
-let startX = null;
-document.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, {passive:true});
-document.addEventListener("touchend", e => {
-  if(startX === null) return;
-  const dx = e.changedTouches[0].clientX - startX;
-  if(dx < -60) { page++; render(); }
-  if(dx > 60) { page--; render(); }
-  startX = null;
-}, {passive:true});
+// ── Atmosphere
+function toggleAtmo() {
+  const audio = document.getElementById('atmoAudio');
+  atmoOn = !atmoOn;
+  if (atmoOn) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+  document.getElementById('atmoBtn').classList.toggle('on', atmoOn);
+}
 
-setMode(localStorage.getItem("stanari_reader_mode") || "wide");
-render();
+// ── Buy access
+function buyAccess() {
+  const urls = {
+    uk: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=uk',
+    en: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en',
+    pl: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=pl',
+  };
+  window.open(urls[lang], '_blank');
+}
+
+// ── Finale
+function playFinale() {
+  const audio = document.getElementById('atmoAudio');
+  audio.pause();
+  const finaleAudio = document.getElementById('finaleAudio');
+  finaleAudio.volume = 0.8;
+  finaleAudio.play().catch(() => {});
+  document.getElementById('finaleScreen').classList.add('show');
+}
+function closeFinale() {
+  document.getElementById('finaleScreen').classList.remove('show');
+  document.getElementById('finaleAudio').pause();
+}
+
+// ── Pinch zoom
+let initDist = 0, initScale = 1;
+const viewer = document.getElementById('viewer');
+viewer.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    initDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    initScale = scale;
+  }
+}, {passive: true});
+viewer.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.min(3, Math.max(0.5, initScale * (d / initDist)));
+    applyScale();
+    e.preventDefault();
+  }
+}, {passive: false});
+
+// ── Swipe
+let tsx = 0, tsy = 0, startScale = 1;
+viewer.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) { tsx = e.touches[0].clientX; tsy = e.touches[0].clientY; startScale = scale; }
+}, {passive: true});
+viewer.addEventListener('touchend', e => {
+  if (e.changedTouches.length === 1 && scale < 1.1) {
+    const dx = e.changedTouches[0].clientX - tsx;
+    const dy = e.changedTouches[0].clientY - tsy;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+    else showBars();
+  }
+}, {passive: true});
+
+// ── Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft') go(-1);
+  if (e.key === '+') zoom(0.2);
+  if (e.key === '-') zoom(-0.2);
+  if (e.key === 'Escape') window.history.back();
+});
 </script>
 </body>
 </html>

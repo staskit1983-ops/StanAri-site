@@ -590,6 +590,15 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 .music-final-info p{color:var(--muted);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
 .music-final-card audio{width:100%;filter:invert(1) hue-rotate(180deg) contrast(1.05)}
 .music-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stream-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.stream-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-decoration:none;transition:all .2s;border:1px solid transparent}
+.stream-btn.spotify{background:#1DB954;color:#000;border-color:#1DB954}
+.stream-btn.spotify:hover{background:#1ed760}
+.stream-btn.youtube{background:#FF0000;color:#fff;border-color:#FF0000}
+.stream-btn.youtube:hover{background:#cc0000}
+.stream-btn.apple{background:#FC3C44;color:#fff;border-color:#FC3C44}
+.stream-btn.apple:hover{background:#e0353d}
+.stream-btn svg{width:14px;height:14px;flex-shrink:0}
 .music-actions .btn{white-space:nowrap}
 .like-count{display:inline-flex;min-width:22px;justify-content:center;margin-left:6px;color:var(--gold2)}
 #books img[src*="book1-mockup"],#books img[src*="book2-mockup"]{
@@ -666,8 +675,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     var saved = localStorage.getItem('sl');
     if (saved) return; // user already chose manually — respect their choice
 
-    var nav = (navigator.language || navigator.userLanguage || 'uk').toLowerCase();
-    var lang = 'uk'; // default
+    var nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    var lang = 'en'; // default
 
     if (nav.startsWith('en')) lang = 'en';
     else if (nav.startsWith('pl')) lang = 'pl';
@@ -857,10 +866,13 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
             <div class="chip"><div class="chip-t" data-t="genre_label">Жанр</div><div class="chip-v" data-t="genre_value">Саморозвиток · Особиста трансформація · Філософія · Свідомість</div></div>
           </div>
 
-          <!-- Головна кнопка -->
-          <div style="margin-top:20px">
-            <a href="https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en" target="_blank" class="btn btn-gold" style="width:100%;justify-content:center;font-size:17px;padding:18px 20px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" data-t="buy_main_btn">
-              &#128722; Купити — 9.99 EUR
+          <!-- Кнопки читати / купити -->
+          <div style="margin-top:20px;display:flex;gap:10px">
+            <button onclick="openReadLangModal()" class="btn btn-ghost" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63" data-t="read_free_btn">
+              &#128214; <span data-t="read_free_label">Читати безкоштовно</span>
+            </button>
+            <a href="https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en" target="_blank" class="btn btn-gold" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" data-t="buy_main_btn">
+              &#128722; <span data-t="buy_label">Купити — 9.99 EUR</span>
             </a>
           </div>
 
@@ -1151,11 +1163,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3>Code Of Cold</h3>
           <p><span data-t="author_label">Автор</span>: KOSMOS ARIA</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/KOSMOS%20ARIA%20-%20Code%20Of%20Cold.mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/KOSMOS%20ARIA%20-%20Code%20Of%20Cold.mp3" download data-t="download_btn" data-download="code-of-cold" onclick="trackDownload('code-of-cold')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="code-of-cold" data-track="code-of-cold" onclick="toggleLike('code-of-cold')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1164,12 +1186,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song3_title">Чорне Сонце</h3>
           <p><span data-t="author_label">Автор</span>: KOSMOS ARIA</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/chome-sonce.mp3" type="audio/mpeg">
-          <source src="audio/chorne-sonce.mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/chome-sonce.mp3" download data-t="download_btn" data-download="chome-sonce" onclick="trackDownload('chome-sonce')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="chome-sonce" data-track="chome-sonce" onclick="toggleLike('chome-sonce')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article>
@@ -1187,11 +1218,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3>Threaded Silence</h3>
           <p><span data-t="author_label">Автор</span>: STAN ARI</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/Violin-Threaded%20Silence%20(Remastered).mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/Violin-Threaded%20Silence%20(Remastered).mp3" download data-t="download_btn" data-download="threaded-silence" onclick="trackDownload('threaded-silence')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="threaded-silence" data-track="threaded-silence" onclick="toggleLike('threaded-silence')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1200,11 +1241,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3>Ти мій Всесвіт</h3>
           <p><span data-t="author_label">Автор</span>: STAN ARI</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/%D0%A2%D0%B8%20%D0%BC%D1%96%D0%B9%20%D0%92%D1%81%D0%B5%D1%81%D0%B2%D1%96%D1%82%20.mp3" download data-t="download_btn" data-download="ty-miy-vsesvit" onclick="trackDownload('ty-miy-vsesvit')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="ty-miy-vsesvit" data-track="ty-miy-vsesvit" onclick="toggleLike('ty-miy-vsesvit')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1213,12 +1264,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song2_title">The Mirror</h3>
           <p><span data-t="author_label">Автор</span>: STAN ARI</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/the%20mirror.mp3" type="audio/mpeg">
-          <source src="audio/the mirror.mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/the%20mirror.mp3" download data-t="download_btn" data-download="the-mirror" onclick="trackDownload('the-mirror')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="the-mirror" data-track="the-mirror" onclick="toggleLike('the-mirror')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article><article class="music-final-card">
@@ -1227,11 +1287,21 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
           <h3 data-t="song1_title">Я прокидався — ніби не свій</h3>
           <p><span data-t="author_label">Автор</span>: STAN ARI</p>
         </div>
-        <audio controls preload="metadata">
-          <source src="audio/ya-prokidavsya.mp3" type="audio/mpeg">
-        </audio>
+        <div class="stream-btns">
+          <a href="#" target="_blank" class="stream-btn spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="#" target="_blank" class="stream-btn youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+          <a href="#" target="_blank" class="stream-btn apple">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"/></svg>
+            Apple Music
+          </a>
+        </div>
         <div class="music-actions">
-          <a class="btn btn-ghost btn-sm" href="audio/ya-prokidavsya.mp3" download data-t="download_btn" data-download="ya-prokidavsya" onclick="trackDownload('ya-prokidavsya')">↓ Скачати <span class="dl-count">0</span></a>
           <button class="btn btn-ghost btn-sm like-btn" data-song="ya-prokidavsya" data-track="ya-prokidavsya" onclick="toggleLike('ya-prokidavsya')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
         </div>
       </article>
@@ -1559,6 +1629,30 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     });
   }
   loadDownloadCounts();
+
+  // ── Book language modal ────────────────────────────────────────
+  const bookLangUrls = {
+    uk: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=uk',
+    en: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en',
+    pl: 'https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=pl',
+  };
+
+  window.openReadLangModal = function() {
+    document.getElementById('readLangModal').style.display = 'flex';
+  };
+  window.closeReadLangModal = function() {
+    document.getElementById('readLangModal').style.display = 'none';
+  };
+  window.chooseReadLang = function(lang) {
+    closeReadLangModal();
+    // Save chosen language
+    try { localStorage.setItem('readerLang', lang); } catch(e) {}
+    // Update buy button language
+    const buyBtn = document.querySelector('[data-t="buy_main_btn"]');
+    if (buyBtn) buyBtn.href = bookLangUrls[lang];
+    // Open reader with chosen language
+    if (typeof openReadModal === 'function') openReadModal(lang);
+  };
 
   window.trackDownload = async function(trackId) {
     try {
@@ -2637,7 +2731,15 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
     applyFinalLang(lang);
   };
   document.addEventListener("DOMContentLoaded", function(){
-    let lang = localStorage.getItem("stanari_lang") || document.documentElement.lang || "uk";
+    let lang = localStorage.getItem("stanari_lang") || localStorage.getItem("sl") || (function(){
+      var n = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+      if(n.startsWith('en')) return 'en';
+      if(n.startsWith('pl')) return 'pl';
+      if(n.startsWith('de')) return 'de';
+      if(n.startsWith('es')) return 'es';
+      if(n.startsWith('uk')) return 'uk';
+      return 'en';
+    })();
     if(!FINAL_I18N[lang]) lang = "uk";
     applyFinalLang(lang);
   });
@@ -2770,5 +2872,25 @@ function switchGalleryLang(l) {
   }
 }
 </script>
+<!-- Модальне вікно вибору мови читалки -->
+<div id="readLangModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#1a1408;border:1px solid #d8af63;border-radius:16px;padding:32px 24px;max-width:340px;width:100%;text-align:center">
+    <p style="color:#d8af63;font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">THE LIFE OPERATOR</p>
+    <h3 style="color:#fff;font-size:20px;font-weight:800;margin-bottom:6px">Оберіть мову читання</h3>
+    <p style="color:rgba(255,255,255,.5);font-size:13px;margin-bottom:24px">Choose language / Wybierz język</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="chooseReadLang('uk')" style="width:100%;padding:14px;border-radius:10px;border:2px solid #d8af63;background:transparent;color:#d8af63;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+        🇺🇦 <span>Українська</span>
+      </button>
+      <button onclick="chooseReadLang('en')" style="width:100%;padding:14px;border-radius:10px;border:2px solid rgba(216,175,99,.3);background:transparent;color:#d8af63;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+        🇬🇧 <span>English</span>
+      </button>
+      <button onclick="chooseReadLang('pl')" style="width:100%;padding:14px;border-radius:10px;border:2px solid rgba(216,175,99,.3);background:transparent;color:#d8af63;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+        🇵🇱 <span>Polski</span>
+      </button>
+    </div>
+    <button onclick="closeReadLangModal()" style="margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer">✕ Закрити</button>
+  </div>
+</div>
 </body>
 </html>

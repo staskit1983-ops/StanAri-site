@@ -232,9 +232,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 <!-- ══ READER ══ -->
 <div id="readerScreen">
   <div class="topbar" id="topbar">
-    <div class="topbar-left">
-      <span class="topbar-title">The Life Operator · Tom 1</span>
-      <span class="topbar-chapter" id="chapterLabel"></span>
+    <div class="topbar-left" style="display:flex;align-items:center;gap:12px">
+      <button onclick="window.location.href='index.html'" style="background:transparent;border:none;color:rgba(216,175,99,.6);font-size:18px;cursor:pointer;padding:0;line-height:1">←</button>
+      <div>
+        <span class="topbar-title">The Life Operator · Tom 1</span>
+        <span class="topbar-chapter" id="chapterLabel"></span>
+      </div>
     </div>
     <div class="top-btns">
       <button class="top-btn" onclick="zoom(-0.2)" title="Зменшити">−</button>
@@ -296,7 +299,12 @@ let scale = 1;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
-let hasAccess = localStorage.getItem('stanari_book_access') === 'true';
+// Check access - only grant if valid purchase token exists
+let hasAccess = false;
+const accessToken = localStorage.getItem('stanari_book_access');
+const accessLang = localStorage.getItem('stanari_access_lang');
+// Only grant access if token is exactly 'true' AND was set by payment system
+if (accessToken === 'granted_by_lemon') hasAccess = true;
 let pages = [];
 
 // ── Check saved language

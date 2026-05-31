@@ -748,6 +748,27 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   } catch(e) {}
 })();
 </script>
+
+<style id="final-hard-fix-2026-05-31">
+/* HARD FIX: gallery and audiobook must not inherit broken flex/anchor layout */
+#audiobook .container{max-width:560px!important;margin-left:auto!important;margin-right:auto!important}
+#audiobook .btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+#audiobook div[style*="display:flex;gap:8px"]{display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:stretch!important;gap:8px!important;flex-wrap:nowrap!important}
+#audiobook div[style*="display:flex;gap:8px"] > .btn,
+#audiobook div[style*="display:flex;gap:8px"] > a.btn{width:90px!important;max-width:120px!important;flex:0 0 90px!important}
+#gallery{clear:both!important;position:relative!important;z-index:1!important}
+#gallery .kicker{justify-content:flex-start!important;margin-bottom:20px!important}
+#gallery .three-col{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px!important;align-items:start!important}
+#gallery .gallery-item{display:block!important;width:100%!important;overflow:hidden!important}
+#gallery .gallery-item img{display:block!important;width:100%!important;height:320px!important;object-fit:cover!important;object-position:center!important}
+@media(max-width:760px){
+  #audiobook div[style*="display:flex;gap:8px"]{gap:6px!important}
+  #audiobook div[style*="display:flex;gap:8px"] > .btn,
+  #audiobook div[style*="display:flex;gap:8px"] > a.btn{flex:1 1 0!important;width:auto!important;min-width:0!important}
+  #gallery .three-col{grid-template-columns:1fr!important}
+  #gallery .gallery-item img{height:auto!important;object-fit:contain!important}
+}
+</style>
 </head>
 <body>
 
@@ -1026,7 +1047,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <div style="margin-top:16px">
       <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase" data-t="also_available">Також доступно на</p>
       <div style="display:flex;gap:8px;justify-content:center">
-        <a href="#" class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center">
+        <a href="#" class="btn btn-ghost btn-sm" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <svg width="26" height="16" viewBox="0 0 120 36" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="26" font-family="Arial,sans-serif" font-weight="900" font-size="28" fill="#FF9900">amazon</text>
               </svg>
@@ -1035,7 +1056,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
                 <path d="M68 8 L76 14 L68 20" fill="none" stroke="#FF9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
           <span style="font-size:10px">Незабаром</span>
-        </div>
+        </a>
         <div class="btn btn-ghost btn-sm" style="flex:none;width:90px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <img src="https://cdn.simpleicons.org/googleplay/ffffff" width="26" height="26" alt="Google Play"/>
           <span style="font-size:10px">Незабаром</span>

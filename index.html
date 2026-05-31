@@ -93,7 +93,10 @@
   gtag('config', 'G-1HXL8E7R09');
 </script>
 <meta charset="UTF-8">
-  <link rel="manifest" href="manifest.json">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+  <link rel="manifest" href="manifest.json?v=20260531-2">
   <meta name="theme-color" content="#d8af63">
   <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -545,55 +548,30 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 
 
 
-/* Desktop Install Banner */
-#desktop-install-banner {
-  display:none;
-  position:fixed;
-  bottom:24px;left:50%;transform:translateX(-50%);
-  background:#1a1610;
-  border:1px solid #d8af63;
-  border-radius:14px;
-  padding:14px 16px;
-  z-index:9999;
-  align-items:center;
-  gap:12px;
-  box-shadow:0 4px 24px rgba(216,175,99,.25);
-  max-width:320px;
+/* PWA Install Banner — compact, does not cover language selector */
+#desktop-install-banner{
+  display:none;position:fixed;right:18px;bottom:18px;left:auto;transform:none;
+  width:min(300px,calc(100vw - 32px));background:rgba(26,22,16,.96);
+  border:1px solid rgba(216,175,99,.65);border-radius:18px;padding:12px 42px 12px 12px;
+  z-index:80;align-items:center;gap:10px;box-shadow:0 10px 36px rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
 }
-#desktop-install-banner img { width:40px;height:40px;border-radius:10px; }
-#desktop-install-banner .di-text { flex:1;font-size:13px;color:#e8d5a0;line-height:1.4; }
-#desktop-install-banner .di-text b { color:#d8af63; }
-#desktop-install-banner .di-btn {
-  background:linear-gradient(135deg,#f5dfaa,#d8af63);
-  color:#1a1610;border:none;border-radius:8px;
-  padding:8px 14px;font-size:12px;font-weight:700;
-  cursor:pointer;white-space:nowrap;
+#desktop-install-banner img{width:34px;height:34px;border-radius:9px;flex:0 0 auto}
+#desktop-install-banner .di-text{flex:1;font-size:12px;color:#e8d5a0;line-height:1.35;min-width:0}
+#desktop-install-banner .di-text b{color:#d8af63}
+#desktop-install-banner .di-btn{background:linear-gradient(135deg,#f5dfaa,#d8af63);color:#1a1610;border:none;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+#desktop-install-banner .di-close{position:absolute;top:8px;right:10px;background:none;border:none;color:#9f9178;font-size:18px;cursor:pointer;padding:0 2px;line-height:1}
+#ios-install-banner{
+  display:none;position:fixed;right:12px;bottom:12px;left:auto;width:min(330px,calc(100vw - 24px));
+  background:rgba(26,22,16,.96);border:1px solid rgba(216,175,99,.65);border-radius:18px;
+  padding:12px 42px 12px 12px;z-index:80;align-items:center;gap:10px;box-shadow:0 10px 36px rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
 }
-#desktop-install-banner .di-close {
-  background:none;border:none;color:#888;font-size:20px;
-  cursor:pointer;padding:0 2px;line-height:1;
-  position:absolute;top:8px;right:10px;
-}
-
-/* iOS Install Banner */
-#ios-install-banner {
-  display:none;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  background:#1a1610;
-  border-top:1px solid #d8af63;
-  padding:14px 16px;
-  z-index:9999;
-  align-items:center;
-  gap:12px;
-}
-#ios-install-banner img { width:44px;height:44px;border-radius:10px; }
-#ios-install-banner .ios-text { flex:1;font-size:13px;color:#e8d5a0;line-height:1.4; }
-#ios-install-banner .ios-text b { color:#d8af63; }
-#ios-install-banner .ios-close {
-  background:none;border:none;color:#888;font-size:22px;
-  cursor:pointer;padding:0 4px;line-height:1;
-}
+#ios-install-banner img{width:36px;height:36px;border-radius:9px;flex:0 0 auto}
+#ios-install-banner .ios-text{flex:1;font-size:12px;color:#e8d5a0;line-height:1.35;min-width:0}
+#ios-install-banner .ios-text b{color:#d8af63}
+#ios-install-banner .ios-close{position:absolute;top:8px;right:10px;background:none;border:none;color:#9f9178;font-size:20px;cursor:pointer;padding:0 2px;line-height:1}
+@media(max-width:768px){#desktop-install-banner,#ios-install-banner{bottom:76px;right:10px;width:min(310px,calc(100vw - 20px));z-index:80}.hdr{z-index:100}}
 
 </style>
 
@@ -2962,7 +2940,19 @@ function updateInstallBanners(lang){
 }
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js');
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js?v=20260531-2').then(function(reg){
+      reg.update();
+    }).catch(function(err){
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+  var refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if(refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
 }
 </script>
 

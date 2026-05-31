@@ -747,6 +747,28 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #gallery .gallery-item img{height:auto!important;object-fit:contain!important}
 }
 </style>
+
+<style id="app-install-inline-patch">
+.install-app-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  border-color:rgba(216,175,99,.34)!important;
+  color:var(--gold2)!important;
+  background:rgba(255,237,188,.055)!important;
+  font-weight:800!important;
+}
+.install-app-btn:hover{
+  color:#140f08!important;
+  background:linear-gradient(135deg,#f5dfaa,#d8af63)!important;
+  border-color:transparent!important;
+}
+.hdr-mobile .install-app-btn{padding:6px 8px!important;font-size:10px!important}
+.mobile-card .install-app-btn{padding:7px 10px!important}
+#desktop-install-banner,#ios-install-banner{display:none!important}
+</style>
+
 </head>
 <body>
 
@@ -772,6 +794,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       
     </nav>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+      <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
       <button class="lbtn on" onclick="setLang('uk');closeMenu()">UA</button>
       <button class="lbtn" onclick="setLang('en');closeMenu()">EN</button>
       <button class="lbtn" onclick="setLang('pl');closeMenu()">PL</button>
@@ -794,6 +817,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       
     </nav>
     <div class="lang-bar">
+      <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
       <button class="lbtn on" onclick="setLang('uk')">UA</button>
       <button class="lbtn" onclick="setLang('en')">EN</button>
       <button class="lbtn" onclick="setLang('pl')">PL</button>
@@ -802,7 +826,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     </div>
     
     <div class="hdr-mobile">
-      <div style="display:flex;gap:4px">
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+        <button class="lbtn install-app-btn" data-t="install_app_short" onclick="installApp();return false;" style="padding:6px 8px;font-size:10px">📲</button>
         <button class="lbtn on" id="mlbUA" onclick="setLang('uk')" style="padding:6px 9px;font-size:10px">UA</button>
         <button class="lbtn" id="mlbEN" onclick="setLang('en')" style="padding:6px 9px;font-size:10px">EN</button>
         <button class="lbtn" id="mlbPL" onclick="setLang('pl')" style="padding:6px 9px;font-size:10px">PL</button>
@@ -922,7 +947,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 
           <!-- Кнопки читати / купити -->
           <div style="margin-top:20px;display:flex;gap:10px">
-            <button onclick="openReadLangModal()" class="btn btn-ghost" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63" data-t="read_free_btn">
+            <button onclick="openReadLangModal()" class="btn btn-ghost" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63">
               &#128214; <span data-t="read_free_label">Читати безкоштовно</span>
             </button>
             <a href="https://stanari.lemonsqueezy.com/checkout/buy/c7f5da3e-ae8f-41f2-af6e-b3db1a56017a?locale=en" target="_blank" class="btn btn-gold" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" data-t="buy_main_btn">
@@ -1498,129 +1523,197 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   // ── Submit Review ───────────────────────────────────────
   window.submitReview = async function(e) {
     e.preventDefault();
-    if (!currentUser) return;
-    const text = document.getElementById('reviewText').value.trim();
-    if (!text) return;
+
+    const textarea = document.getElementById('reviewText');
     const btn = document.getElementById('reviewSubmitBtn');
-    btn.disabled = true;
+    const msg = document.getElementById('reviewSuccessMsg');
+    const text = textarea ? textarea.value.trim() : '';
+
+    if (!currentUser) {
+      await signInWithGoogle();
+      return;
+    }
+    if (!text) return;
+
+    const oldText = btn ? btn.textContent : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Надсилаю...';
+    }
+
     try {
-      // Один відгук на юзера — використовуємо UID як ID документа
-      const reviewRef = doc(db, 'reviews', currentUser.uid);
-      const existing = await getDoc(reviewRef);
-      if (existing.exists()) {
-        // Вже є відгук — показуємо повідомлення і виходимо
-        btn.textContent = '✓ Відгук вже надіслано';
-        setTimeout(() => { btn.textContent = 'Надіслати відгук'; btn.disabled = false; }, 2500);
-        return;
-      }
-      await setDoc(reviewRef, {
+      // КОЖЕН відгук зберігається окремим документом.
+      // Так кнопка "читати всі відгуки" зʼявиться, коли у Firebase буде більше 3 відгуків.
+      await addDoc(collection(db, 'reviews'), {
         uid: currentUser.uid,
-        name: (currentUser.displayName || 'Читач').split(' ')[0],
+        name: (currentUser.displayName || currentUser.email || 'Читач').split(' ')[0],
+        email: currentUser.email || '',
         photo: currentUser.photoURL || '',
-        text,
+        text: text,
+        source: 'stanari.art',
         createdAt: serverTimestamp()
       });
-      document.getElementById('reviewText').value = '';
-      loadReviews();
-      btn.textContent = '✓ Надіслано!';
-      const msg = document.getElementById('reviewSuccessMsg');
-      if (msg) msg.style.display = 'block';
-      setTimeout(() => { btn.textContent = 'Надіслати відгук'; btn.disabled = false; }, 2500);
-    } catch(err) { console.error(err); btn.disabled = false; }
+
+      if (textarea) textarea.value = '';
+      if (msg) {
+        msg.style.display = 'block';
+        msg.textContent = '✓ Відгук збережено. Дякуємо!';
+      }
+      await loadReviews();
+
+      if (btn) {
+        btn.textContent = '✓ Збережено!';
+        setTimeout(() => {
+          btn.textContent = oldText || 'Надіслати відгук';
+          btn.disabled = false;
+        }, 2200);
+      }
+    } catch(err) {
+      console.error('submitReview error:', err);
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.color = '#ffb4a8';
+        msg.style.borderColor = 'rgba(255,120,100,.35)';
+        msg.style.background = 'rgba(255,120,100,.08)';
+        msg.textContent = '❌ Відгук не зберігся. Перевір Firebase Rules / Authorized domains.';
+      }
+      if (btn) {
+        btn.textContent = oldText || 'Надіслати відгук';
+        btn.disabled = false;
+      }
+    }
   };
 
   // ── Load Reviews ────────────────────────────────────────
   async function loadReviews() {
-    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
-    const snap = await getDocs(q);
-    const all = [];
-    snap.forEach(d => all.push(d.data()));
-    // Оновлюємо лічильник відгуків
-    const reviewCountEl = document.getElementById('reviewsCount');
-    if (reviewCountEl) reviewCountEl.textContent = all.length > 0 ? '(' + all.length + ')' : '';
-
-    // Preview (3 max)
     const preview = document.getElementById('reviewsPreview');
     const showBtn = document.getElementById('showAllBtn');
-    if (preview) {
-      preview.innerHTML = '';
-      all.slice(0, 3).forEach(r => {
-        const date = r.createdAt?.toDate?.()?.toLocaleDateString('uk-UA') || '';
-        const el = document.createElement('div');
-        el.className = 'review-card';
-        el.innerHTML = `<div class="review-card-text">&#8220;${r.text}&#8221;</div><div class="review-card-footer">${(r.name||'').split(' ')[0]}${date ? ' &bull; ' + date : ''}</div>`;
-        preview.appendChild(el);
-      });
-    }
-    if (showBtn) showBtn.style.display = all.length > 3 ? 'block' : 'none';
-
-    // Modal list
     const modal = document.getElementById('reviewsModalList');
-    if (modal) {
-      modal.innerHTML = '';
-      all.forEach(r => {
+    const reviewCountEl = document.getElementById('reviewsCount');
+
+    try {
+      const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      const all = [];
+      snap.forEach(d => all.push({ id: d.id, ...d.data() }));
+
+      if (reviewCountEl) reviewCountEl.textContent = all.length > 0 ? '(' + all.length + ')' : '';
+
+      const makeReviewCard = (r) => {
         const date = r.createdAt?.toDate?.()?.toLocaleDateString('uk-UA') || '';
+        const name = (r.name || 'Читач').split(' ')[0];
+        const cleanText = String(r.text || '')
+          .replaceAll('&','&amp;')
+          .replaceAll('<','&lt;')
+          .replaceAll('>','&gt;')
+          .replaceAll('"','&quot;')
+          .replaceAll("'", '&#039;');
+
         const el = document.createElement('div');
         el.className = 'review-card';
-        el.innerHTML = `<div class="review-card-text">&#8220;${r.text}&#8221;</div><div class="review-card-footer">${(r.name||'').split(' ')[0]}${date ? ' &bull; ' + date : ''}</div>`;
-        modal.appendChild(el);
-      });
+        el.innerHTML = `<div class="review-card-text">&#8220;${cleanText}&#8221;</div><div class="review-card-footer">${name}${date ? ' &bull; ' + date : ''}</div>`;
+        return el;
+      };
+
+      if (preview) {
+        preview.innerHTML = '';
+        all.slice(0, 3).forEach(r => preview.appendChild(makeReviewCard(r)));
+        if (!all.length) {
+          preview.innerHTML = '<div class="review-card"><div class="review-card-text">Поки немає відгуків. Будьте першими ✨</div></div>';
+        }
+      }
+
+      if (showBtn) {
+        showBtn.style.display = all.length > 3 ? 'block' : 'none';
+        showBtn.textContent = (window.FINAL_I18N?.[window.lang || 'uk']?.reviews_see_all || 'Дивитися всі відгуки →');
+      }
+
+      if (modal) {
+        modal.innerHTML = '';
+        all.forEach(r => modal.appendChild(makeReviewCard(r)));
+      }
+    } catch(err) {
+      console.error('loadReviews error:', err);
+      if (preview) {
+        preview.innerHTML = '<div class="review-card"><div class="review-card-text">❌ Відгуки не завантажились. Перевір Firebase Rules / Authorized domains.</div></div>';
+      }
+      if (showBtn) showBtn.style.display = 'none';
+      if (reviewCountEl) reviewCountEl.textContent = '';
     }
   }
   loadReviews();
 
   // ── Ratings ─────────────────────────────────────────────────────────
   async function loadRatings() {
-    const ref = doc(db, 'ratings', 'book1');
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return;
-    const data = snap.data();
-    const counts = data.counts || {1:0,2:0,3:0,4:0,5:0};
-    const total = Object.values(counts).reduce((a,b) => a+b, 0);
-    if (!total) return;
-    const avg = Object.entries(counts).reduce((a,[s,c]) => a + Number(s)*c, 0) / total;
+    try {
+      const ref = doc(db, 'ratings', 'book1');
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
+      const counts = data.counts || {1:0,2:0,3:0,4:0,5:0};
+      const total = [1,2,3,4,5].reduce((a,s) => a + (Number(counts[s]) || 0), 0);
+      const avg = total ? [1,2,3,4,5].reduce((a,s) => a + s * (Number(counts[s]) || 0), 0) / total : 0;
 
-    const avgEl = document.getElementById('avgRating');
-    const starsEl = document.getElementById('starsDisplay');
-    const totalEl = document.getElementById('totalRatings');
-    if (avgEl) avgEl.textContent = avg.toFixed(1);
-    if (starsEl) starsEl.textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
-    if (totalEl) { const langNow = window.lang||'uk'; const suffixes = {uk:' оцінок',pl:' ocen',en:' ratings',de:' Bewertungen',es:' valoraciones'}; totalEl.textContent = total + (suffixes[langNow]||' оцінок'); }
+      const avgEl = document.getElementById('avgRating');
+      const starsEl = document.getElementById('starsDisplay');
+      const totalEl = document.getElementById('totalRatings');
+      if (avgEl) avgEl.textContent = total ? avg.toFixed(1) : '—';
+      if (starsEl) starsEl.textContent = total ? ('★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg))) : '☆☆☆☆☆';
+      if (totalEl) {
+        const langNow = window.lang || 'uk';
+        const suffixes = {uk:' оцінок',pl:' ocen',en:' ratings',de:' Bewertungen',es:' valoraciones'};
+        totalEl.textContent = total + (suffixes[langNow] || ' оцінок');
+      }
 
-    const barsEl = document.getElementById('ratingBars');
-    if (barsEl) {
-      barsEl.innerHTML = '';
-      [5,4,3,2,1].forEach(s => {
-        const c = counts[s] || 0;
-        const pct = total ? Math.round(c/total*100) : 0;
-        barsEl.innerHTML += `<div class="rating-bar-row"><span style="font-size:12px;color:var(--muted);width:16px">${s}</span><span style="font-size:11px;color:#d8af63">★</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted);width:26px;text-align:right">${c}</span></div>`;
-      });
-    }
+      const barsEl = document.getElementById('ratingBars');
+      if (barsEl) {
+        barsEl.innerHTML = '';
+        [5,4,3,2,1].forEach(s => {
+          const c = Number(counts[s]) || 0;
+          const pct = total ? Math.round(c / total * 100) : 0;
+          barsEl.innerHTML += `<div class="rating-bar-row"><span style="font-size:12px;color:var(--muted);width:16px">${s}</span><span style="font-size:11px;color:#d8af63">★</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted);width:26px;text-align:right">${c}</span></div>`;
+        });
+      }
 
-    // Mark user's existing rating
-    if (currentUser) {
-      const userRating = data.users?.[currentUser.uid];
-      if (userRating) highlightStars(userRating);
+      if (currentUser) {
+        const userRating = data.users?.[currentUser.uid];
+        if (userRating) highlightStars(userRating);
+      }
+    } catch(err) {
+      console.error('loadRatings error:', err);
+      const msg = document.getElementById('ratingMsg');
+      if (msg) msg.textContent = '❌ Рейтинг не завантажився. Перевір Firebase.';
     }
   }
   loadRatings();
 
   window.rateBook = async function(stars) {
     if (!currentUser) { await signInWithGoogle(); return; }
-    const ref = doc(db, 'ratings', 'book1');
-    const snap = await getDoc(ref);
-    const data = snap.exists() ? snap.data() : {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
-    const prev = data.users?.[currentUser.uid];
-    if (prev === stars) return;
-    if (prev) data.counts[prev] = Math.max(0, (data.counts[prev]||1) - 1);
-    data.counts[stars] = (data.counts[stars]||0) + 1;
-    data.users = data.users || {};
-    data.users[currentUser.uid] = stars;
-    await setDoc(ref, data);
-    highlightStars(stars);
+
     const msg = document.getElementById('ratingMsg');
-    if (msg) { const t = window.FINAL_I18N?.[window.lang||'uk']?.rating_thanks || 'Дякуємо за оцінку!'; msg.textContent = t; }
-    loadRatings();
+    try {
+      const ref = doc(db, 'ratings', 'book1');
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
+      data.counts = data.counts || {1:0,2:0,3:0,4:0,5:0};
+      data.users = data.users || {};
+
+      const prev = data.users?.[currentUser.uid];
+      if (prev === stars) return;
+      if (prev) data.counts[prev] = Math.max(0, (Number(data.counts[prev]) || 1) - 1);
+      data.counts[stars] = (Number(data.counts[stars]) || 0) + 1;
+      data.users[currentUser.uid] = stars;
+
+      await setDoc(ref, data, { merge: true });
+      highlightStars(stars);
+      if (msg) {
+        const t = window.FINAL_I18N?.[window.lang || 'uk']?.rating_thanks || 'Дякуємо за оцінку!';
+        msg.textContent = t;
+      }
+      await loadRatings();
+    } catch(err) {
+      console.error('rateBook error:', err);
+      if (msg) msg.textContent = '❌ Оцінка не збереглась. Перевір Firebase Rules.';
+    }
   };
 
   function highlightStars(n) {
@@ -3026,6 +3119,110 @@ if('serviceWorker' in navigator){
   if(isIOS && isSafari && !isStandalone && !closed){
     document.getElementById('ios-install-banner').style.display = 'flex';
   }
+})();
+</script>
+
+
+<script id="app-install-and-translation-final-patch">
+/* FINAL PATCH: permanent APP button in language panel + 5-language labels */
+(function(){
+  var deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  function currentLang(){
+    return localStorage.getItem('stanari_lang') || localStorage.getItem('sl') || document.documentElement.lang || 'uk';
+  }
+
+  var PATCH_I18N = {
+    uk:{
+      install_app_btn:'📲 ДОДАТОК',
+      install_app_short:'📲',
+      read_free_label:'Читати безкоштовно',
+      ios_install_msg:'Щоб встановити сайт як додаток на iPhone:\n\n1. Натисни кнопку “Поділитися” в Safari\n2. Обери “На екран Домівка”\n3. Натисни “Додати”',
+      manual_install_msg:'Якщо вікно встановлення не відкрилось:\n\nChrome → меню ⋮ → Встановити додаток або Додати на головний екран.'
+    },
+    en:{
+      install_app_btn:'📲 APP',
+      install_app_short:'📲',
+      read_free_label:'Read for free',
+      ios_install_msg:'To install this site as an app on iPhone:\n\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Tap “Add”',
+      manual_install_msg:'If the install window did not open:\n\nChrome → menu ⋮ → Install app or Add to Home screen.'
+    },
+    pl:{
+      install_app_btn:'📲 APLIKACJA',
+      install_app_short:'📲',
+      read_free_label:'Czytaj za darmo',
+      ios_install_msg:'Aby zainstalować stronę jako aplikację na iPhone:\n\n1. Naciśnij przycisk Udostępnij w Safari\n2. Wybierz “Dodaj do ekranu głównego”\n3. Naciśnij “Dodaj”',
+      manual_install_msg:'Jeśli okno instalacji się nie otworzyło:\n\nChrome → menu ⋮ → Zainstaluj aplikację lub Dodaj do ekranu głównego.'
+    },
+    de:{
+      install_app_btn:'📲 APP',
+      install_app_short:'📲',
+      read_free_label:'Kostenlos lesen',
+      ios_install_msg:'So installierst du die Seite als App auf dem iPhone:\n\n1. Tippe in Safari auf Teilen\n2. Wähle “Zum Home-Bildschirm”\n3. Tippe auf “Hinzufügen”',
+      manual_install_msg:'Wenn das Installationsfenster nicht geöffnet wurde:\n\nChrome → Menü ⋮ → App installieren oder Zum Startbildschirm hinzufügen.'
+    },
+    es:{
+      install_app_btn:'📲 APP',
+      install_app_short:'📲',
+      read_free_label:'Leer gratis',
+      ios_install_msg:'Para instalar este sitio como app en iPhone:\n\n1. Toca Compartir en Safari\n2. Elige “Añadir a pantalla de inicio”\n3. Toca “Añadir”',
+      manual_install_msg:'Si no se abrió la ventana de instalación:\n\nChrome → menú ⋮ → Instalar app o Añadir a pantalla de inicio.'
+    }
+  };
+
+  function applyPatchLang(lang){
+    var dict = PATCH_I18N[lang] || PATCH_I18N.uk;
+    document.querySelectorAll('[data-t]').forEach(function(el){
+      var key = el.getAttribute('data-t');
+      if(dict[key]) el.textContent = dict[key];
+    });
+  }
+
+  window.installApp = function(){
+    var lang = currentLang();
+    var dict = PATCH_I18N[lang] || PATCH_I18N.uk;
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    if(isStandalone){
+      alert('Stan Ari app is already installed ✅');
+      return;
+    }
+
+    if(isIOS){
+      alert(dict.ios_install_msg);
+      return;
+    }
+
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){
+        deferredPrompt = null;
+      });
+    } else {
+      alert(dict.manual_install_msg);
+    }
+  };
+
+  var oldSetLang = window.setLang;
+  window.setLang = function(lang){
+    if(typeof oldSetLang === 'function') oldSetLang(lang);
+    applyPatchLang(lang);
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    applyPatchLang(currentLang());
+    // Never show old floating banners; APP button lives in the language panel.
+    ['desktop-install-banner','ios-install-banner'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.style.display = 'none';
+    });
+  });
 })();
 </script>
 

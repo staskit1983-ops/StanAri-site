@@ -843,7 +843,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   }
 }
 </style>
-
 <style id="final-combined-music-audiobook-fixes">
 /* FINAL COMBINED FIX: music artist names + card players + audiobook Tom label */
 #music .music-artist-heading{
@@ -895,8 +894,31 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #music .music-card-player{max-width:100%!important}
 }
 </style>
-
-</head>
+<style id="stanari-working-music-players-final">
+/* ONLY: working audio players inside song cards */
+#music .music-platform-zone{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:12px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+#music .music-card-player{
+  margin:0!important;
+  width:100%!important;
+  max-width:520px!important;
+  min-height:48px!important;
+  background:linear-gradient(180deg,rgba(16,13,10,.98),rgba(5,4,3,.98))!important;
+  border:1px solid rgba(255,224,155,.24)!important;
+  box-shadow:inset 0 1px 0 rgba(255,237,188,.05),0 8px 24px rgba(0,0,0,.28)!important;
+}
+#music .music-card-player .audio-track{background:rgba(255,255,255,.085)!important}
+#music .music-card-player .audio-time{color:rgba(240,215,154,.74)!important}
+#music .stream-btns{margin-top:0!important}
+@media(max-width:760px){
+  #music .music-card-player{max-width:100%!important}
+}
+</style></head>
 <body>
 <!-- LIGHTBOX -->
 <div id="lb"><button id="lb-x" onclick="closeLB()">✕</button><img id="lb-img" src=""/></div>
@@ -1306,14 +1328,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3>Code Of Cold</h3>
 <p><span data-t="author_label">Автор</span>: KOSMOS ARIA</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
+<div class="music-platform-zone"><div class="audio-player music-card-player" data-track-title="Code Of Cold">
+<button aria-label="Play Code Of Cold" class="audio-play" type="button">▶</button>
 <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
 <div class="audio-progress"></div>
 </div>
 <span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/code-of-cold.mp3" type="audio/mpeg"/>
+<audio preload="metadata">
+<source src="audio/KOSMOS ARIA - Code Of Cold.mp3" type="audio/mpeg"/>
 </audio>
 </div><div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
@@ -1338,14 +1360,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3 data-t="song3_title">Чорне Сонце</h3>
 <p><span data-t="author_label">Автор</span>: KOSMOS ARIA</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
+<div class="music-platform-zone"><div class="audio-player music-card-player" data-track-title="Чорне Сонце">
+<button aria-label="Play Чорне Сонце" class="audio-play" type="button">▶</button>
 <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
 <div class="audio-progress"></div>
 </div>
 <span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/chome-sonce.mp3" type="audio/mpeg"/>
+<audio preload="metadata">
+<source src="audio/Ти мій Всесвіт .mp3" type="audio/mpeg"/>
 </audio>
 </div><div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
@@ -1378,14 +1400,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3>Echoes Of Aria</h3>
 <p><span data-t="author_label">Автор</span>: STAN ARI</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
+<div class="music-platform-zone"><div class="audio-player music-card-player" data-track-title="Echoes Of Aria">
+<button aria-label="Play Echoes Of Aria" class="audio-play" type="button">▶</button>
 <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
 <div class="audio-progress"></div>
 </div>
 <span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/threaded-silence.mp3" type="audio/mpeg"/>
+<audio preload="metadata">
+<source src="audio/STAN_ARI-ECHOES_OF_ARIA.mp3" type="audio/mpeg"/>
 </audio>
 </div><div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
@@ -1410,14 +1432,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3>Ти мій Всесвіт</h3>
 <p><span data-t="author_label">Автор</span>: STAN ARI</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
+<div class="music-platform-zone"><div class="audio-player music-card-player" data-track-title="Ти мій Всесвіт">
+<button aria-label="Play Ти мій Всесвіт" class="audio-play" type="button">▶</button>
 <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
 <div class="audio-progress"></div>
 </div>
 <span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/ty-miy-vsesvit.mp3" type="audio/mpeg"/>
+<audio preload="metadata">
+<source src="audio/Ти мій Всесвіт .mp3" type="audio/mpeg"/>
 </audio>
 </div><div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
@@ -1442,14 +1464,14 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3 data-t="song2_title">The Mirror</h3>
 <p><span data-t="author_label">Автор</span>: STAN ARI</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
+<div class="music-platform-zone"><div class="audio-player music-card-player" data-track-title="The Mirror">
+<button aria-label="Play The Mirror" class="audio-play" type="button">▶</button>
 <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
 <div class="audio-progress"></div>
 </div>
 <span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/the-mirror.mp3" type="audio/mpeg"/>
+<audio preload="metadata">
+<source src="audio/the mirror.mp3" type="audio/mpeg"/>
 </audio>
 </div><div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
@@ -1474,16 +1496,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <h3 data-t="song1_title">Я прокидався — ніби не свій</h3>
 <p><span data-t="author_label">Автор</span>: STAN ARI</p>
 </div>
-<div class="music-platform-zone"><div class="audio-player music-card-player">
-<button class="audio-play" type="button">▶</button>
-<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="audio-track" role="slider">
-<div class="audio-progress"></div>
-</div>
-<span class="audio-time">0:00</span>
-<audio preload="none">
-<source src="audio/ya-prokidavsya.mp3" type="audio/mpeg"/>
-</audio>
-</div><div class="stream-btns">
+<div class="stream-btns">
 <a class="stream-btn spotify" href="#" target="_blank">
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>
             Spotify
@@ -1496,7 +1509,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
-</div></div>
+</div>
 <div class="music-actions">
 <button class="btn btn-ghost btn-sm like-btn" data-song="ya-prokidavsya" data-track="ya-prokidavsya" onclick="toggleLike('ya-prokidavsya')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
 </div>
@@ -3401,7 +3414,6 @@ if('serviceWorker' in navigator){
   });
 })();
 </script>
-
 <script id="audiobook-tom-label-final-fix">
 (function(){
   const AUDIOBOOK_TOM_LABELS = {
@@ -3434,6 +3446,81 @@ if('serviceWorker' in navigator){
   }
 })();
 </script>
+<script id="stanari-working-music-players-script-final">
+(function(){
+  function fmt(sec){
+    if(!isFinite(sec) || sec < 0) return '0:00';
+    var m = Math.floor(sec / 60);
+    var s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2,'0');
+  }
 
-</body>
+  function initMusicPlayers(){
+    var players = Array.from(document.querySelectorAll('#music .music-card-player'));
+    if(!players.length) return;
+
+    players.forEach(function(player){
+      if(player.dataset.ready === '1') return;
+      player.dataset.ready = '1';
+
+      var audio = player.querySelector('audio');
+      var btn = player.querySelector('.audio-play');
+      var track = player.querySelector('.audio-track');
+      var progress = player.querySelector('.audio-progress');
+      var time = player.querySelector('.audio-time');
+
+      if(!audio || !btn || !track || !progress || !time) return;
+
+      btn.addEventListener('click', function(){
+        players.forEach(function(other){
+          var otherAudio = other.querySelector('audio');
+          var otherBtn = other.querySelector('.audio-play');
+          if(otherAudio && otherAudio !== audio){
+            otherAudio.pause();
+            if(otherBtn) otherBtn.textContent = '▶';
+          }
+        });
+
+        if(audio.paused){
+          audio.play().then(function(){
+            btn.textContent = '⏸';
+          }).catch(function(){
+            btn.textContent = '▶';
+          });
+        }else{
+          audio.pause();
+          btn.textContent = '▶';
+        }
+      });
+
+      audio.addEventListener('timeupdate', function(){
+        var pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+        progress.style.width = pct + '%';
+        track.setAttribute('aria-valuenow', String(Math.round(pct)));
+        time.textContent = fmt(audio.currentTime);
+      });
+
+      audio.addEventListener('loadedmetadata', function(){
+        time.textContent = fmt(audio.duration);
+      });
+
+      audio.addEventListener('ended', function(){
+        btn.textContent = '▶';
+        progress.style.width = '0%';
+        time.textContent = fmt(audio.duration || 0);
+      });
+
+      track.addEventListener('click', function(e){
+        if(!audio.duration) return;
+        var rect = track.getBoundingClientRect();
+        var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = pct * audio.duration;
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initMusicPlayers);
+  window.addEventListener('load', initMusicPlayers);
+})();
+</script></body>
 </html>

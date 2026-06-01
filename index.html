@@ -1195,7 +1195,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
         </div>
 
         <form id="reviewFormInner" style="display:none;flex-direction:column;gap:14px;margin-top:16px" onsubmit="submitReview(event)">
-          <textarea id="reviewText" placeholder="Напишіть відгук про книгу..." required
+          <textarea id="reviewText" data-ph="reviews_placeholder" placeholder="Напишіть відгук про книгу..." required
             style="background:rgba(255,255,255,.04);border:1px solid rgba(255,224,155,.2);border-radius:14px;padding:16px;color:#fff8ed;font-size:14px;line-height:1.7;resize:vertical;min-height:120px;font-family:inherit;width:100%;box-sizing:border-box"></textarea>
           <button class="btn btn-gold" type="submit" id="reviewSubmitBtn" style="width:100%;justify-content:center;padding:14px" data-t="reviews_submit_btn">Надіслати відгук</button>
         </form>
@@ -1486,7 +1486,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       loadFail: 'Не вдалося завантажити відгуки. Спробуйте оновити сторінку.',
       ratingFail: 'Не вдалося завантажити рейтинг. Спробуйте оновити сторінку.',
       ratingSaveFail: 'Не вдалося зберегти оцінку. Спробуйте ще раз.',
-      authNeeded: 'Увійдіть, щоб залишити відгук.'
+      authNeeded: 'Увійдіть, щоб залишити відгук.',
+      placeholder: 'Напишіть відгук про книгу...'
     },
     en: {
       loading: 'Loading reviews...',
@@ -1500,7 +1501,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       loadFail: 'Could not load reviews. Please refresh the page.',
       ratingFail: 'Could not load the rating. Please refresh the page.',
       ratingSaveFail: 'Could not save the rating. Please try again.',
-      authNeeded: 'Sign in to leave a review.'
+      authNeeded: 'Sign in to leave a review.',
+      placeholder: 'Write a review about the book...'
     },
     pl: {
       loading: 'Ładujemy opinie...',
@@ -1514,7 +1516,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       loadFail: 'Nie udało się załadować opinii. Odśwież stronę.',
       ratingFail: 'Nie udało się załadować oceny. Odśwież stronę.',
       ratingSaveFail: 'Nie udało się zapisać oceny. Spróbuj ponownie.',
-      authNeeded: 'Zaloguj się, aby zostawić opinię.'
+      authNeeded: 'Zaloguj się, aby zostawić opinię.',
+      placeholder: 'Napisz opinię o książce...'
     },
     de: {
       loading: 'Bewertungen werden geladen...',
@@ -1528,7 +1531,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       loadFail: 'Bewertungen konnten nicht geladen werden. Bitte aktualisiere die Seite.',
       ratingFail: 'Die Bewertung konnte nicht geladen werden. Bitte aktualisiere die Seite.',
       ratingSaveFail: 'Die Bewertung konnte nicht gespeichert werden. Bitte versuche es erneut.',
-      authNeeded: 'Melde dich an, um eine Rezension zu schreiben.'
+      authNeeded: 'Melde dich an, um eine Rezension zu schreiben.',
+      placeholder: 'Schreibe eine Rezension über das Buch...'
     },
     es: {
       loading: 'Cargando reseñas...',
@@ -1542,7 +1546,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       loadFail: 'No se pudieron cargar las reseñas. Actualiza la página.',
       ratingFail: 'No se pudo cargar la calificación. Actualiza la página.',
       ratingSaveFail: 'No se pudo guardar la calificación. Inténtalo de nuevo.',
-      authNeeded: 'Inicia sesión para dejar una reseña.'
+      authNeeded: 'Inicia sesión para dejar una reseña.',
+      placeholder: 'Escribe una reseña sobre el libro...'
     }
   };
 
@@ -1802,6 +1807,23 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       if (userRating) highlightStars(userRating);
     }
   }
+
+
+  function refreshReviewLanguage(){
+    const textarea = document.getElementById('reviewText');
+    const submitBtn = document.getElementById('reviewSubmitBtn');
+    const dict = window.FINAL_I18N?.[langNow()] || window.FINAL_I18N?.uk || {};
+
+    if (textarea) textarea.setAttribute('placeholder', dict.reviews_placeholder || rt('placeholder'));
+    if (submitBtn && !submitBtn.disabled) submitBtn.textContent = dict.reviews_submit_btn || rt('submit');
+
+    // Re-render live Firebase data in the newly selected language.
+    renderReviews(allReviewsCache || []);
+    renderRatings(lastRatingsData || null);
+    updateReviewUI(currentUser);
+  }
+  window.refreshReviewLanguage = refreshReviewLanguage;
+  window.__stanariRefreshReviews = refreshReviewLanguage;
 
   onSnapshot(doc(db, 'ratings', 'book1'), (snap) => {
     ratingsLoaded = true;
@@ -3347,6 +3369,27 @@ if('serviceWorker' in navigator){
       var el = document.getElementById(id);
       if(el) el.style.display = 'none';
     });
+  });
+})();
+</script>
+
+
+<script id="reviews-language-sync-final">
+(function(){
+  function sync(){
+    if (typeof window.__stanariRefreshReviews === 'function') {
+      window.__stanariRefreshReviews();
+    }
+  }
+  const previousSetLang = window.setLang;
+  window.setLang = function(lang){
+    if (typeof previousSetLang === 'function') previousSetLang(lang);
+    setTimeout(sync, 0);
+    setTimeout(sync, 300);
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(sync, 500);
+    setTimeout(sync, 1500);
   });
 })();
 </script>

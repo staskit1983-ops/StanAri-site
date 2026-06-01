@@ -1435,7 +1435,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
@@ -1455,6 +1455,68 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 
   const fbProvider = new FacebookAuthProvider();
 
+
+  // ── Reviews i18n + state helpers ───────────────────────
+  const REVIEW_I18N = {
+    uk:{reviews_placeholder:'Напишіть відгук про книгу...', reviews_empty:'Поки немає відгуків. Будьте першими ✨', reviews_loading:'Завантажуємо відгуки...', reviews_already:'Ви вже залишили відгук ✨', reviews_saved:'✓ Відгук збережено. Дякуємо!', reviews_sending:'Надсилаю...', reviews_submit_btn:'Надіслати відгук', reviews_error:'Не вдалося зберегти відгук. Спробуйте ще раз.', reviews_load_error:'Не вдалося завантажити відгуки. Оновіть сторінку.', rating_thanks:'Дякуємо за оцінку!', rating_error:'Не вдалося зберегти оцінку. Спробуйте ще раз.', rating_load_error:'Не вдалося завантажити рейтинг.'},
+    en:{reviews_placeholder:'Write a review about the book...', reviews_empty:'No reviews yet. Be the first ✨', reviews_loading:'Loading reviews...', reviews_already:'You have already left a review ✨', reviews_saved:'✓ Review saved. Thank you!', reviews_sending:'Sending...', reviews_submit_btn:'Send review', reviews_error:'Could not save the review. Please try again.', reviews_load_error:'Could not load reviews. Refresh the page.', rating_thanks:'Thank you for your rating!', rating_error:'Could not save the rating. Please try again.', rating_load_error:'Could not load rating.'},
+    pl:{reviews_placeholder:'Napisz opinię o książce...', reviews_empty:'Nie ma jeszcze opinii. Bądź pierwszy ✨', reviews_loading:'Ładujemy opinie...', reviews_already:'Już zostawiłeś opinię ✨', reviews_saved:'✓ Opinia zapisana. Dziękujemy!', reviews_sending:'Wysyłanie...', reviews_submit_btn:'Wyślij opinię', reviews_error:'Nie udało się zapisać opinii. Spróbuj ponownie.', reviews_load_error:'Nie udało się wczytać opinii. Odśwież stronę.', rating_thanks:'Dziękujemy za ocenę!', rating_error:'Nie udało się zapisać oceny. Spróbuj ponownie.', rating_load_error:'Nie udało się wczytać oceny.'},
+    de:{reviews_placeholder:'Schreibe eine Bewertung zum Buch...', reviews_empty:'Noch keine Bewertungen. Sei der Erste ✨', reviews_loading:'Bewertungen werden geladen...', reviews_already:'Du hast bereits eine Bewertung abgegeben ✨', reviews_saved:'✓ Bewertung gespeichert. Danke!', reviews_sending:'Wird gesendet...', reviews_submit_btn:'Bewertung senden', reviews_error:'Bewertung konnte nicht gespeichert werden. Bitte versuche es erneut.', reviews_load_error:'Bewertungen konnten nicht geladen werden. Seite neu laden.', rating_thanks:'Danke für deine Bewertung!', rating_error:'Bewertung konnte nicht gespeichert werden. Bitte versuche es erneut.', rating_load_error:'Bewertung konnte nicht geladen werden.'},
+    es:{reviews_placeholder:'Escribe una reseña sobre el libro...', reviews_empty:'Aún no hay reseñas. Sé el primero ✨', reviews_loading:'Cargando reseñas...', reviews_already:'Ya dejaste una reseña ✨', reviews_saved:'✓ Reseña guardada. ¡Gracias!', reviews_sending:'Enviando...', reviews_submit_btn:'Enviar reseña', reviews_error:'No se pudo guardar la reseña. Inténtalo de nuevo.', reviews_load_error:'No se pudieron cargar las reseñas. Actualiza la página.', rating_thanks:'¡Gracias por tu valoración!', rating_error:'No se pudo guardar la valoración. Inténtalo de nuevo.', rating_load_error:'No se pudo cargar la valoración.'}
+  };
+  function reviewLang(){ return window.lang || localStorage.getItem('sl') || localStorage.getItem('stanari_lang') || document.documentElement.lang || 'uk'; }
+  function rt(key){ const l=reviewLang(); return (REVIEW_I18N[l] && REVIEW_I18N[l][key]) || REVIEW_I18N.uk[key] || key; }
+  function formatRatingCount(n){
+    n=Number(n)||0; const l=reviewLang();
+    if(l==='en') return n + ' ' + (n===1 ? 'rating' : 'ratings');
+    if(l==='pl') return n + ' ' + (n===1 ? 'ocena' : (n>=2 && n<=4 ? 'oceny' : 'ocen'));
+    if(l==='de') return n + ' ' + (n===1 ? 'Bewertung' : 'Bewertungen');
+    if(l==='es') return n + ' ' + (n===1 ? 'valoración' : 'valoraciones');
+    const mod10=n%10, mod100=n%100;
+    let word='оцінок'; if(mod10===1 && mod100!==11) word='оцінка'; else if(mod10>=2 && mod10<=4 && !(mod100>=12 && mod100<=14)) word='оцінки';
+    return n + ' ' + word;
+  }
+  window.__allReviews = [];
+  function userAlreadyReviewed(){ return !!(currentUser && window.__allReviews && window.__allReviews.some(r => r.uid === currentUser.uid)); }
+  function setReviewMessage(text, kind='info'){
+    const msg=document.getElementById('reviewSuccessMsg'); if(!msg) return;
+    msg.style.display='block'; msg.style.color = kind==='error' ? '#ffb4a8' : 'var(--gold2)';
+    msg.style.borderColor = kind==='error' ? 'rgba(255,120,100,.35)' : 'rgba(255,224,155,.25)';
+    msg.style.background = kind==='error' ? 'rgba(255,120,100,.08)' : 'rgba(255,237,188,.06)';
+    msg.textContent=text;
+  }
+  function applyReviewLanguage(){
+    const textarea=document.getElementById('reviewText'); if(textarea) textarea.placeholder=rt('reviews_placeholder');
+    const btn=document.getElementById('reviewSubmitBtn'); if(btn && !btn.disabled) btn.textContent=rt('reviews_submit_btn');
+    const totalEl=document.getElementById('totalRatings'); if(totalEl){ const n=parseInt(totalEl.textContent,10); if(!isNaN(n)) totalEl.textContent=formatRatingCount(n); }
+    const msg=document.getElementById('reviewSuccessMsg'); if(msg && msg.dataset.state==='already') setReviewMessage(rt('reviews_already'));
+  }
+  window.applyReviewLanguage = applyReviewLanguage;
+  function refreshReviewAuthUI(){
+    const loginBtn=document.getElementById('reviewGoogleBtn');
+    const form=document.getElementById('reviewFormInner');
+    const userInfo=document.getElementById('reviewUserInfo');
+    const msg=document.getElementById('reviewSuccessMsg');
+    if(!loginBtn) return;
+    applyReviewLanguage();
+    if(currentUser){
+      loginBtn.style.display='none';
+      if(userInfo){ const name=currentUser.displayName || currentUser.email || ''; userInfo.textContent=(name.split(' ')[0] || currentUser.email || ''); }
+      if(userAlreadyReviewed()){
+        if(form) form.style.display='none';
+        if(msg){ msg.dataset.state='already'; setReviewMessage(rt('reviews_already')); }
+      } else {
+        if(form) form.style.display='grid';
+        if(msg && msg.dataset.state==='already'){ msg.dataset.state=''; msg.style.display='none'; }
+      }
+    } else {
+      loginBtn.style.display='flex';
+      if(form) form.style.display='none';
+      if(msg && msg.dataset.state==='already'){ msg.dataset.state=''; msg.style.display='none'; }
+    }
+  }
+  window.refreshReviewAuthUI = refreshReviewAuthUI;
+
   window.signInWithFacebook = async function() {
     try { await signInWithPopup(auth, fbProvider); }
     catch(e) { console.error(e); }
@@ -1465,164 +1527,20 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     handleCodeInApp: true,
   };
 
-  // ── Auth state + Reviews/Ratings live sync ───────────────
+  // ── Auth state ──────────────────────────────────────────
   let currentUser = null;
-  let reviewsLoaded = false;
-  let ratingsLoaded = false;
-  let allReviewsCache = [];
-  let currentUserReviewed = false;
-  let lastRatingsData = null;
-
-  const REVIEW_TXT = {
-    uk: {
-      loading: 'Завантажуємо відгуки...',
-      empty: 'Поки немає відгуків. Будьте першими ✨',
-      already: 'Ви вже залишили відгук ✨',
-      saved: '✓ Відгук збережено. Дякуємо!',
-      saving: 'Надсилаю...',
-      savedBtn: '✓ Збережено!',
-      submit: 'Надіслати відгук',
-      writeFail: 'Не вдалося зберегти відгук. Спробуйте ще раз.',
-      loadFail: 'Не вдалося завантажити відгуки. Спробуйте оновити сторінку.',
-      ratingFail: 'Не вдалося завантажити рейтинг. Спробуйте оновити сторінку.',
-      ratingSaveFail: 'Не вдалося зберегти оцінку. Спробуйте ще раз.',
-      authNeeded: 'Увійдіть, щоб залишити відгук.',
-      placeholder: 'Напишіть відгук про книгу...'
-    },
-    en: {
-      loading: 'Loading reviews...',
-      empty: 'No reviews yet. Be the first ✨',
-      already: 'You have already left a review ✨',
-      saved: '✓ Review saved. Thank you!',
-      saving: 'Sending...',
-      savedBtn: '✓ Saved!',
-      submit: 'Send review',
-      writeFail: 'Could not save the review. Please try again.',
-      loadFail: 'Could not load reviews. Please refresh the page.',
-      ratingFail: 'Could not load the rating. Please refresh the page.',
-      ratingSaveFail: 'Could not save the rating. Please try again.',
-      authNeeded: 'Sign in to leave a review.',
-      placeholder: 'Write a review about the book...'
-    },
-    pl: {
-      loading: 'Ładujemy opinie...',
-      empty: 'Brak opinii. Bądź pierwszy ✨',
-      already: 'Już zostawiłeś opinię ✨',
-      saved: '✓ Opinia zapisana. Dziękujemy!',
-      saving: 'Wysyłanie...',
-      savedBtn: '✓ Zapisano!',
-      submit: 'Wyślij opinię',
-      writeFail: 'Nie udało się zapisać opinii. Spróbuj ponownie.',
-      loadFail: 'Nie udało się załadować opinii. Odśwież stronę.',
-      ratingFail: 'Nie udało się załadować oceny. Odśwież stronę.',
-      ratingSaveFail: 'Nie udało się zapisać oceny. Spróbuj ponownie.',
-      authNeeded: 'Zaloguj się, aby zostawić opinię.',
-      placeholder: 'Napisz opinię o książce...'
-    },
-    de: {
-      loading: 'Bewertungen werden geladen...',
-      empty: 'Noch keine Rezensionen. Sei der Erste ✨',
-      already: 'Du hast bereits eine Bewertung abgegeben ✨',
-      saved: '✓ Rezension gespeichert. Danke!',
-      saving: 'Senden...',
-      savedBtn: '✓ Gespeichert!',
-      submit: 'Rezension senden',
-      writeFail: 'Die Rezension konnte nicht gespeichert werden. Bitte versuche es erneut.',
-      loadFail: 'Bewertungen konnten nicht geladen werden. Bitte aktualisiere die Seite.',
-      ratingFail: 'Die Bewertung konnte nicht geladen werden. Bitte aktualisiere die Seite.',
-      ratingSaveFail: 'Die Bewertung konnte nicht gespeichert werden. Bitte versuche es erneut.',
-      authNeeded: 'Melde dich an, um eine Rezension zu schreiben.',
-      placeholder: 'Schreibe eine Rezension über das Buch...'
-    },
-    es: {
-      loading: 'Cargando reseñas...',
-      empty: 'Aún no hay reseñas. Sé el primero ✨',
-      already: 'Ya dejaste una reseña ✨',
-      saved: '✓ Reseña guardada. ¡Gracias!',
-      saving: 'Enviando...',
-      savedBtn: '✓ Guardado!',
-      submit: 'Enviar reseña',
-      writeFail: 'No se pudo guardar la reseña. Inténtalo de nuevo.',
-      loadFail: 'No se pudieron cargar las reseñas. Actualiza la página.',
-      ratingFail: 'No se pudo cargar la calificación. Actualiza la página.',
-      ratingSaveFail: 'No se pudo guardar la calificación. Inténtalo de nuevo.',
-      authNeeded: 'Inicia sesión para dejar una reseña.',
-      placeholder: 'Escribe una reseña sobre el libro...'
-    }
-  };
-
-  function langNow(){
-    return window.lang || localStorage.getItem('stanari_lang') || localStorage.getItem('sl') || 'uk';
-  }
-  function rt(key){
-    const l = langNow();
-    return (REVIEW_TXT[l] && REVIEW_TXT[l][key]) || REVIEW_TXT.uk[key] || key;
-  }
-  function setReviewMsg(text, type='ok'){
-    const msg = document.getElementById('reviewSuccessMsg');
-    if (!msg) return;
-    msg.style.display = 'block';
-    msg.style.color = type === 'error' ? '#ffb4a8' : '#8fda8f';
-    msg.style.borderColor = type === 'error' ? 'rgba(255,120,100,.35)' : 'rgba(100,200,100,.3)';
-    msg.style.background = type === 'error' ? 'rgba(255,120,100,.08)' : 'rgba(100,200,100,.1)';
-    msg.textContent = text;
-  }
-  function clearReviewMsg(){
-    const msg = document.getElementById('reviewSuccessMsg');
-    if (msg) msg.style.display = 'none';
-  }
-  function userHasReviewed(user){
-    return !!(user && allReviewsCache.some(r => r.uid === user.uid));
-  }
-
   onAuthStateChanged(auth, user => {
     currentUser = user;
-    currentUserReviewed = userHasReviewed(user);
     updateReviewUI(user);
     updateLikeButtons(user);
-    renderRatings(lastRatingsData || null);
   });
 
   function updateReviewUI(user) {
-    const loginBtn = document.getElementById('reviewGoogleBtn');
-    const form = document.getElementById('reviewFormInner');
-    const userInfo = document.getElementById('reviewUserInfo');
-    const textarea = document.getElementById('reviewText');
-    const btn = document.getElementById('reviewSubmitBtn');
-    if (!loginBtn) return;
-
-    currentUserReviewed = userHasReviewed(user);
-
-    if (!user) {
-      loginBtn.style.display = 'flex';
-      if (form) form.style.display = 'none';
-      clearReviewMsg();
-      return;
-    }
-
-    loginBtn.style.display = 'none';
-    if (userInfo) {
-      const name = user.displayName || user.email || '';
-      userInfo.textContent = name.split(' ')[0];
-    }
-
-    if (currentUserReviewed) {
-      if (form) form.style.display = 'none';
-      if (textarea) textarea.disabled = true;
-      if (btn) btn.disabled = true;
-      setReviewMsg(rt('already'), 'ok');
-    } else {
-      if (form) form.style.display = 'grid';
-      if (textarea) textarea.disabled = false;
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = window.FINAL_I18N?.[langNow()]?.reviews_submit_btn || rt('submit');
-      }
-      clearReviewMsg();
-    }
+    currentUser = user;
+    refreshReviewAuthUI();
   }
 
-  // ── Google / Apple / Facebook / Email Sign In ───────────
+  // ── Google Sign In ──────────────────────────────────────
   window.signInWithApple = async function() {
     try { await signInWithPopup(auth, appleProvider); }
     catch(e) { console.error(e); }
@@ -1637,9 +1555,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       localStorage.setItem('emailForSignIn', email);
       if (btn) btn.textContent = '✓ Посилання надіслано!';
       document.getElementById('emailInput').disabled = true;
-    } catch(e) { console.error(e); if (btn) btn.textContent = rt('writeFail'); }
+    } catch(e) { console.error(e); if (btn) btn.textContent = 'Помилка. Спробуй ще.'; }
   };
 
+  // Handle email link sign-in on page load
   if (isSignInWithEmailLink(auth, window.location.href)) {
     let email = localStorage.getItem('emailForSignIn');
     if (!email) email = window.prompt('Введи свій email для підтвердження:');
@@ -1653,88 +1572,23 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     catch(e) { console.error(e); }
   };
 
-  // ── Review rendering + live sync ─────────────────────────
-  function makeReviewCard(r) {
-    const date = r.createdAt?.toDate?.()?.toLocaleDateString(langNow() === 'uk' ? 'uk-UA' : undefined) || '';
-    const name = (r.name || 'Читач').split(' ')[0];
-    const cleanText = String(r.text || '')
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'", '&#039;');
-
-    const el = document.createElement('div');
-    el.className = 'review-card';
-    el.innerHTML = `<div class="review-card-text">&#8220;${cleanText}&#8221;</div><div class="review-card-footer">${name}${date ? ' &bull; ' + date : ''}</div>`;
-    return el;
-  }
-
-  function renderReviews(all){
-    const preview = document.getElementById('reviewsPreview');
-    const showBtn = document.getElementById('showAllBtn');
-    const modal = document.getElementById('reviewsModalList');
-    const reviewCountEl = document.getElementById('reviewsCount');
-
-    if (reviewCountEl) reviewCountEl.textContent = all.length > 0 ? '(' + all.length + ')' : '';
-
-    if (preview) {
-      preview.innerHTML = '';
-      if (!all.length) {
-        preview.innerHTML = `<div class="review-card"><div class="review-card-text">${rt('empty')}</div></div>`;
-      } else {
-        all.slice(0, 3).forEach(r => preview.appendChild(makeReviewCard(r)));
-      }
-    }
-
-    if (showBtn) {
-      showBtn.style.display = all.length > 3 ? 'block' : 'none';
-      showBtn.textContent = (window.FINAL_I18N?.[langNow()]?.reviews_see_all || 'Дивитися всі відгуки →');
-    }
-
-    if (modal) {
-      modal.innerHTML = '';
-      all.forEach(r => modal.appendChild(makeReviewCard(r)));
-    }
-  }
-
-  function showReviewsLoading(){
-    const preview = document.getElementById('reviewsPreview');
-    const reviewCountEl = document.getElementById('reviewsCount');
-    if (reviewCountEl) reviewCountEl.textContent = '';
-    if (preview) preview.innerHTML = `<div class="review-card"><div class="review-card-text">${rt('loading')}</div></div>`;
-  }
-  showReviewsLoading();
-
-  const reviewsQuery = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
-  onSnapshot(reviewsQuery, (snap) => {
-    reviewsLoaded = true;
-    const all = [];
-    snap.forEach(d => all.push({ id: d.id, ...d.data() }));
-    allReviewsCache = all;
-    renderReviews(all);
-    updateReviewUI(currentUser);
-  }, (err) => {
-    console.error('reviews onSnapshot error:', err);
-    const preview = document.getElementById('reviewsPreview');
-    if (preview) preview.innerHTML = `<div class="review-card"><div class="review-card-text">${rt('loadFail')}</div></div>`;
-    const showBtn = document.getElementById('showAllBtn');
-    if (showBtn) showBtn.style.display = 'none';
-  });
-
+  // ── Submit Review ───────────────────────────────────────
   window.submitReview = async function(e) {
     e.preventDefault();
 
     const textarea = document.getElementById('reviewText');
     const btn = document.getElementById('reviewSubmitBtn');
+    const msg = document.getElementById('reviewSuccessMsg');
     const text = textarea ? textarea.value.trim() : '';
 
     if (!currentUser) {
       await signInWithGoogle();
       return;
     }
-    if (userHasReviewed(currentUser)) {
-      updateReviewUI(currentUser);
+    if (userAlreadyReviewed()) {
+      if (msg) msg.dataset.state = 'already';
+      setReviewMessage(rt('reviews_already'));
+      refreshReviewAuthUI();
       return;
     }
     if (!text) return;
@@ -1742,13 +1596,24 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     const oldText = btn ? btn.textContent : '';
     if (btn) {
       btn.disabled = true;
-      btn.textContent = rt('saving');
+      btn.textContent = rt('reviews_sending');
     }
 
     try {
+      const snap = await getDocs(collection(db, 'reviews'));
+      let already = false;
+      snap.forEach(d => { if (d.data()?.uid === currentUser.uid) already = true; });
+      if (already) {
+        if (msg) msg.dataset.state = 'already';
+        setReviewMessage(rt('reviews_already'));
+        await loadReviews();
+        if (btn) { btn.textContent = oldText || rt('reviews_submit_btn'); btn.disabled = false; }
+        return;
+      }
+
       await addDoc(collection(db, 'reviews'), {
         uid: currentUser.uid,
-        name: (currentUser.displayName || currentUser.email || 'Читач').split(' ')[0],
+        name: (currentUser.displayName || currentUser.email || 'Reader').split(' ')[0],
         email: currentUser.email || '',
         photo: currentUser.photoURL || '',
         text: text,
@@ -1757,85 +1622,131 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       });
 
       if (textarea) textarea.value = '';
-      setReviewMsg(rt('saved'), 'ok');
+      if (msg) { msg.dataset.state = 'saved'; setReviewMessage(rt('reviews_saved')); }
+      await loadReviews();
+
       if (btn) {
-        btn.textContent = rt('savedBtn');
+        btn.textContent = '✓';
         setTimeout(() => {
-          btn.textContent = oldText || (window.FINAL_I18N?.[langNow()]?.reviews_submit_btn || rt('submit'));
+          btn.textContent = oldText || rt('reviews_submit_btn');
           btn.disabled = false;
         }, 1600);
       }
     } catch(err) {
       console.error('submitReview error:', err);
-      setReviewMsg(rt('writeFail'), 'error');
+      if (msg) { msg.dataset.state = 'error'; setReviewMessage(rt('reviews_error'), 'error'); }
       if (btn) {
-        btn.textContent = oldText || (window.FINAL_I18N?.[langNow()]?.reviews_submit_btn || rt('submit'));
+        btn.textContent = oldText || rt('reviews_submit_btn');
         btn.disabled = false;
       }
     }
   };
 
-  // ── Ratings live sync ───────────────────────────────────
-  function renderRatings(data){
-    data = data || {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
-    const counts = data.counts || {1:0,2:0,3:0,4:0,5:0};
-    const total = [1,2,3,4,5].reduce((a,s) => a + (Number(counts[s]) || 0), 0);
-    const avg = total ? [1,2,3,4,5].reduce((a,s) => a + s * (Number(counts[s]) || 0), 0) / total : 0;
+  // ── Load Reviews ────────────────────────────────────────
+  async function loadReviews() {
+    const preview = document.getElementById('reviewsPreview');
+    const showBtn = document.getElementById('showAllBtn');
+    const modal = document.getElementById('reviewsModalList');
+    const reviewCountEl = document.getElementById('reviewsCount');
 
-    const avgEl = document.getElementById('avgRating');
-    const starsEl = document.getElementById('starsDisplay');
-    const totalEl = document.getElementById('totalRatings');
-    if (avgEl) avgEl.textContent = total ? avg.toFixed(1) : '—';
-    if (starsEl) starsEl.textContent = total ? ('★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg))) : '☆☆☆☆☆';
-    if (totalEl) {
-      const suffixes = {uk:' оцінок',pl:' ocen',en:' ratings',de:' Bewertungen',es:' valoraciones'};
-      totalEl.textContent = total + (suffixes[langNow()] || ' оцінок');
-    }
+    try {
+      if (preview) preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_loading') + '</div></div>';
+      const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      const all = [];
+      snap.forEach(d => all.push({ id: d.id, ...d.data() }));
 
-    const barsEl = document.getElementById('ratingBars');
-    if (barsEl) {
-      barsEl.innerHTML = '';
-      [5,4,3,2,1].forEach(s => {
-        const c = Number(counts[s]) || 0;
-        const pct = total ? Math.round(c / total * 100) : 0;
-        barsEl.innerHTML += `<div class="rating-bar-row"><span style="font-size:12px;color:var(--muted);width:16px">${s}</span><span style="font-size:11px;color:#d8af63">★</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted);width:26px;text-align:right">${c}</span></div>`;
-      });
-    }
+      window.__allReviews = all;
+      refreshReviewAuthUI();
+      if (reviewCountEl) reviewCountEl.textContent = all.length > 0 ? '(' + all.length + ')' : '';
 
-    if (currentUser) {
-      const userRating = data.users?.[currentUser.uid];
-      if (userRating) highlightStars(userRating);
+      const makeReviewCard = (r) => {
+        const localeMap = {uk:'uk-UA', en:'en-US', pl:'pl-PL', de:'de-DE', es:'es-ES'};
+        const date = r.createdAt?.toDate?.()?.toLocaleDateString(localeMap[reviewLang()] || 'uk-UA') || '';
+        const name = (r.name || (reviewLang()==='uk' ? 'Читач' : 'Reader')).split(' ')[0];
+        const cleanText = String(r.text || '')
+          .replaceAll('&','&amp;')
+          .replaceAll('<','&lt;')
+          .replaceAll('>','&gt;')
+          .replaceAll('"','&quot;')
+          .replaceAll("'", '&#039;');
+
+        const el = document.createElement('div');
+        el.className = 'review-card';
+        el.innerHTML = `<div class="review-card-text">&#8220;${cleanText}&#8221;</div><div class="review-card-footer">${name}${date ? ' &bull; ' + date : ''}</div>`;
+        return el;
+      };
+
+      if (preview) {
+        preview.innerHTML = '';
+        all.slice(0, 3).forEach(r => preview.appendChild(makeReviewCard(r)));
+        if (!all.length) {
+          preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_empty') + '</div></div>';
+        }
+      }
+
+      if (showBtn) {
+        showBtn.style.display = all.length > 3 ? 'block' : 'none';
+        showBtn.textContent = (window.FINAL_I18N?.[reviewLang()]?.reviews_see_all || (reviewLang()==='en' ? 'See all reviews →' : 'Дивитися всі відгуки →'));
+      }
+
+      if (modal) {
+        modal.innerHTML = '';
+        all.forEach(r => modal.appendChild(makeReviewCard(r)));
+      }
+    } catch(err) {
+      console.error('loadReviews error:', err);
+      if (preview) {
+        preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_load_error') + '</div></div>';
+      }
+      if (showBtn) showBtn.style.display = 'none';
+      if (reviewCountEl) reviewCountEl.textContent = '';
     }
   }
+  window.loadReviews = loadReviews;
+  loadReviews();
 
+  // ── Ratings ─────────────────────────────────────────────────────────
+  async function loadRatings() {
+    try {
+      const ref = doc(db, 'ratings', 'book1');
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
+      const counts = data.counts || {1:0,2:0,3:0,4:0,5:0};
+      const total = [1,2,3,4,5].reduce((a,s) => a + (Number(counts[s]) || 0), 0);
+      const avg = total ? [1,2,3,4,5].reduce((a,s) => a + s * (Number(counts[s]) || 0), 0) / total : 0;
 
-  function refreshReviewLanguage(){
-    const textarea = document.getElementById('reviewText');
-    const submitBtn = document.getElementById('reviewSubmitBtn');
-    const dict = window.FINAL_I18N?.[langNow()] || window.FINAL_I18N?.uk || {};
+      const avgEl = document.getElementById('avgRating');
+      const starsEl = document.getElementById('starsDisplay');
+      const totalEl = document.getElementById('totalRatings');
+      if (avgEl) avgEl.textContent = total ? avg.toFixed(1) : '—';
+      if (starsEl) starsEl.textContent = total ? ('★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg))) : '☆☆☆☆☆';
+      if (totalEl) {
+        totalEl.textContent = formatRatingCount(total);
+      }
 
-    if (textarea) textarea.setAttribute('placeholder', dict.reviews_placeholder || rt('placeholder'));
-    if (submitBtn && !submitBtn.disabled) submitBtn.textContent = dict.reviews_submit_btn || rt('submit');
+      const barsEl = document.getElementById('ratingBars');
+      if (barsEl) {
+        barsEl.innerHTML = '';
+        [5,4,3,2,1].forEach(s => {
+          const c = Number(counts[s]) || 0;
+          const pct = total ? Math.round(c / total * 100) : 0;
+          barsEl.innerHTML += `<div class="rating-bar-row"><span style="font-size:12px;color:var(--muted);width:16px">${s}</span><span style="font-size:11px;color:#d8af63">★</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted);width:26px;text-align:right">${c}</span></div>`;
+        });
+      }
 
-    // Re-render live Firebase data in the newly selected language.
-    renderReviews(allReviewsCache || []);
-    renderRatings(lastRatingsData || null);
-    updateReviewUI(currentUser);
+      if (currentUser) {
+        const userRating = data.users?.[currentUser.uid];
+        if (userRating) highlightStars(userRating);
+      }
+    } catch(err) {
+      console.error('loadRatings error:', err);
+      const msg = document.getElementById('ratingMsg');
+      if (msg) msg.textContent = rt('rating_load_error');
+    }
   }
-  window.refreshReviewLanguage = refreshReviewLanguage;
-  window.__stanariRefreshReviews = refreshReviewLanguage;
-
-  onSnapshot(doc(db, 'ratings', 'book1'), (snap) => {
-    ratingsLoaded = true;
-    lastRatingsData = snap.exists() ? snap.data() : {counts:{1:0,2:0,3:0,4:0,5:0}, users:{}};
-    renderRatings(lastRatingsData);
-    const msg = document.getElementById('ratingMsg');
-    if (msg && msg.textContent && msg.textContent.includes('❌')) msg.textContent = '';
-  }, (err) => {
-    console.error('ratings onSnapshot error:', err);
-    const msg = document.getElementById('ratingMsg');
-    if (msg) msg.textContent = rt('ratingFail');
-  });
+  window.loadRatings = loadRatings;
+  loadRatings();
 
   window.rateBook = async function(stars) {
     if (!currentUser) { await signInWithGoogle(); return; }
@@ -1856,10 +1767,13 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 
       await setDoc(ref, data, { merge: true });
       highlightStars(stars);
-      if (msg) msg.textContent = window.FINAL_I18N?.[langNow()]?.rating_thanks || rt('saved');
+      if (msg) {
+        msg.textContent = rt('rating_thanks');
+      }
+      await loadRatings();
     } catch(err) {
       console.error('rateBook error:', err);
-      if (msg) msg.textContent = rt('ratingSaveFail');
+      if (msg) msg.textContent = rt('rating_error');
     }
   };
 
@@ -3374,22 +3288,26 @@ if('serviceWorker' in navigator){
 </script>
 
 
-<script id="reviews-language-sync-final">
+<script id="reviews-language-finalizer">
 (function(){
-  function sync(){
-    if (typeof window.__stanariRefreshReviews === 'function') {
-      window.__stanariRefreshReviews();
-    }
+  function langNow(){return window.lang || localStorage.getItem('sl') || localStorage.getItem('stanari_lang') || document.documentElement.lang || 'uk';}
+  function apply(){
+    if(typeof window.applyReviewLanguage === 'function') window.applyReviewLanguage();
+    if(typeof window.loadRatings === 'function') window.loadRatings();
+    // Re-render reviews shortly after language switch so empty text/date/buttons match active language.
+    if(typeof window.loadReviews === 'function') setTimeout(function(){ window.loadReviews(); }, 80);
   }
-  const previousSetLang = window.setLang;
-  window.setLang = function(lang){
-    if (typeof previousSetLang === 'function') previousSetLang(lang);
-    setTimeout(sync, 0);
-    setTimeout(sync, 300);
+  var prev = window.setLang;
+  window.setLang = function(l){
+    if(typeof prev === 'function') prev(l);
+    try{localStorage.setItem('sl', l); document.documentElement.lang = l;}catch(e){}
+    apply();
   };
   document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(sync, 500);
-    setTimeout(sync, 1500);
+    var t=document.getElementById('reviewText');
+    if(t && !t.getAttribute('data-ph')) t.setAttribute('data-ph','reviews_placeholder');
+    setTimeout(apply, 300);
+    setTimeout(apply, 1200);
   });
 })();
 </script>

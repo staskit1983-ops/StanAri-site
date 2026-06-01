@@ -769,56 +769,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 #desktop-install-banner,#ios-install-banner{display:none!important}
 </style>
 
-
-<style id="stanari-only-requested-fixes-2026-06-01">
-/* ONLY requested fixes: music artist names + reader back button safe-area fallback */
-#music .music-final-list > div > div:first-child h3{
-  font-size:clamp(24px,3.2vw,34px)!important;
-  line-height:1.12!important;
-  font-weight:800!important;
-  letter-spacing:.14em!important;
-  text-transform:uppercase!important;
-  color:var(--gold2)!important;
-  text-shadow:
-    0 0 10px rgba(216,175,99,.45),
-    0 0 24px rgba(216,175,99,.22)!important;
-}
-@media(max-width:768px){
-  #music .music-final-list > div > div:first-child h3{
-    font-size:clamp(22px,7vw,30px)!important;
-  }
-}
-
-/* Safe-area fallback for any reader/back button if this file is used with the reader modal */
-.reader-back,
-.back-to-site,
-.book-reader-back,
-.read-back,
-.reader-home,
-a[href="/"],
-a[href="https://stanari.art/"]{
-  scroll-margin-top:calc(env(safe-area-inset-top, 0px) + 24px);
-}
-@media(max-width:768px){
-  .reader-back,
-  .back-to-site,
-  .book-reader-back,
-  .read-back,
-  .reader-home{
-    top:calc(env(safe-area-inset-top, 0px) + 24px)!important;
-  }
-}
-@media(min-width:769px){
-  .reader-back,
-  .back-to-site,
-  .book-reader-back,
-  .read-back,
-  .reader-home{
-    top:28px!important;
-  }
-}
-</style>
-
 </head>
 <body>
 
@@ -1108,15 +1058,15 @@ a[href="https://stanari.art/"]{
                 <path d="M4 10 Q25 20 45 14 Q60 8 74 14" stroke="#FF9900" stroke-width="3.5" fill="none" stroke-linecap="round"/>
                 <path d="M68 8 L76 14 L68 20" fill="none" stroke="#FF9900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-          <span style="font-size:10px">Незабаром</span>
+          <span style="font-size:10px">Amazon</span>
         </a>
         <div class="btn btn-ghost btn-sm" style="flex:none;width:90px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <img src="https://cdn.simpleicons.org/googleplay/ffffff" width="26" height="26" alt="Google Play"/>
-          <span style="font-size:10px">Незабаром</span>
+          <span style="font-size:10px">Google Play</span>
         </div>
         <div class="btn btn-ghost btn-sm" style="flex:none;width:90px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
           <img src="https://cdn.simpleicons.org/apple/ffffff" width="26" height="26" alt="Apple Books"/>
-          <span style="font-size:10px">Незабаром</span>
+          <span style="font-size:10px">Apple Books</span>
         </div>
       </div>
     </div>
@@ -1250,6 +1200,7 @@ a[href="https://stanari.art/"]{
           <button class="btn btn-gold" type="submit" id="reviewSubmitBtn" style="width:100%;justify-content:center;padding:14px" data-t="reviews_submit_btn">Надіслати відгук</button>
         </form>
         <div id="reviewSuccessMsg" style="display:none;margin-top:14px;padding:14px;background:rgba(100,200,100,.1);border:1px solid rgba(100,200,100,.3);border-radius:12px;color:#8fda8f;font-size:14px;text-align:center">✓ Відгук надіслано. Дякуємо!</div>
+        <div id="reviewsEmptyAfterForm" style="display:none;margin-top:18px"></div>
       </div>
     </div>
   </div>
@@ -1284,7 +1235,7 @@ a[href="https://stanari.art/"]{
     <div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
         <div style="width:3px;height:24px;background:linear-gradient(180deg,#c9a0dc,#9b6fb0);border-radius:2px"></div>
-        <h3 style="font-size:clamp(24px,3.2vw,34px);color:var(--gold2);font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 10px rgba(216,175,99,.45),0 0 24px rgba(216,175,99,.22)">KOSMOS ARIA</h3>
+        <h3 style="font-size:18px;color:#fff8ed;font-weight:700;letter-spacing:.04em">KOSMOS ARIA</h3>
       </div>
       <article class="music-final-card">
         <div class="music-final-info">
@@ -1339,7 +1290,7 @@ a[href="https://stanari.art/"]{
     <div style="margin-bottom:40px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
         <div style="width:3px;height:24px;background:linear-gradient(180deg,#d8af63,#b98740);border-radius:2px"></div>
-        <h3 style="font-size:clamp(24px,3.2vw,34px);color:var(--gold2);font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 10px rgba(216,175,99,.45),0 0 24px rgba(216,175,99,.22)">STAN ARI</h3>
+        <h3 style="font-size:18px;color:#fff8ed;font-weight:700;letter-spacing:.04em">STAN ARI</h3>
       </div>
       <article class="music-final-card">
         <div class="music-final-info">
@@ -1698,6 +1649,7 @@ a[href="https://stanari.art/"]{
     const showBtn = document.getElementById('showAllBtn');
     const modal = document.getElementById('reviewsModalList');
     const reviewCountEl = document.getElementById('reviewsCount');
+    const emptyAfterForm = document.getElementById('reviewsEmptyAfterForm');
 
     try {
       if (preview) preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_loading') + '</div></div>';
@@ -1729,9 +1681,18 @@ a[href="https://stanari.art/"]{
 
       if (preview) {
         preview.innerHTML = '';
-        all.slice(0, 3).forEach(r => preview.appendChild(makeReviewCard(r)));
+        if (all.length) {
+          all.slice(0, 3).forEach(r => preview.appendChild(makeReviewCard(r)));
+        }
+      }
+
+      if (emptyAfterForm) {
         if (!all.length) {
-          preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_empty') + '</div></div>';
+          emptyAfterForm.style.display = 'block';
+          emptyAfterForm.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_empty') + '</div></div>';
+        } else {
+          emptyAfterForm.style.display = 'none';
+          emptyAfterForm.innerHTML = '';
         }
       }
 
@@ -1750,6 +1711,7 @@ a[href="https://stanari.art/"]{
         preview.innerHTML = '<div class="review-card"><div class="review-card-text">' + rt('reviews_load_error') + '</div></div>';
       }
       if (showBtn) showBtn.style.display = 'none';
+      if (emptyAfterForm) emptyAfterForm.style.display = 'none';
       if (reviewCountEl) reviewCountEl.textContent = '';
     }
   }

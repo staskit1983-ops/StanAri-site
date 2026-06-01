@@ -769,6 +769,56 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 #desktop-install-banner,#ios-install-banner{display:none!important}
 </style>
 
+
+<style id="stanari-only-requested-fixes-2026-06-01">
+/* ONLY requested fixes: music artist names + reader back button safe-area fallback */
+#music .music-final-list > div > div:first-child h3{
+  font-size:clamp(24px,3.2vw,34px)!important;
+  line-height:1.12!important;
+  font-weight:800!important;
+  letter-spacing:.14em!important;
+  text-transform:uppercase!important;
+  color:var(--gold2)!important;
+  text-shadow:
+    0 0 10px rgba(216,175,99,.45),
+    0 0 24px rgba(216,175,99,.22)!important;
+}
+@media(max-width:768px){
+  #music .music-final-list > div > div:first-child h3{
+    font-size:clamp(22px,7vw,30px)!important;
+  }
+}
+
+/* Safe-area fallback for any reader/back button if this file is used with the reader modal */
+.reader-back,
+.back-to-site,
+.book-reader-back,
+.read-back,
+.reader-home,
+a[href="/"],
+a[href="https://stanari.art/"]{
+  scroll-margin-top:calc(env(safe-area-inset-top, 0px) + 24px);
+}
+@media(max-width:768px){
+  .reader-back,
+  .back-to-site,
+  .book-reader-back,
+  .read-back,
+  .reader-home{
+    top:calc(env(safe-area-inset-top, 0px) + 24px)!important;
+  }
+}
+@media(min-width:769px){
+  .reader-back,
+  .back-to-site,
+  .book-reader-back,
+  .read-back,
+  .reader-home{
+    top:28px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -1234,7 +1284,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
         <div style="width:3px;height:24px;background:linear-gradient(180deg,#c9a0dc,#9b6fb0);border-radius:2px"></div>
-        <h3 style="font-size:18px;color:#fff8ed;font-weight:700;letter-spacing:.04em">KOSMOS ARIA</h3>
+        <h3 style="font-size:clamp(24px,3.2vw,34px);color:var(--gold2);font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 10px rgba(216,175,99,.45),0 0 24px rgba(216,175,99,.22)">KOSMOS ARIA</h3>
       </div>
       <article class="music-final-card">
         <div class="music-final-info">
@@ -1289,7 +1339,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <div style="margin-bottom:40px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
         <div style="width:3px;height:24px;background:linear-gradient(180deg,#d8af63,#b98740);border-radius:2px"></div>
-        <h3 style="font-size:18px;color:#fff8ed;font-weight:700;letter-spacing:.04em">STAN ARI</h3>
+        <h3 style="font-size:clamp(24px,3.2vw,34px);color:var(--gold2);font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 10px rgba(216,175,99,.45),0 0 24px rgba(216,175,99,.22)">STAN ARI</h3>
       </div>
       <article class="music-final-card">
         <div class="music-final-info">

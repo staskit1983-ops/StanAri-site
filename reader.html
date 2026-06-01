@@ -208,8 +208,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   display:flex;align-items:center;justify-content:center;
 }
 
-
-/* === STAN ARI READER FIX: safe-area back button + desktop zoom/pan === */
+/* === STAN ARI READER FIX v2: safe-area + desktop wheel zoom + drag pan === */
 :root{
   --reader-safe-top: env(safe-area-inset-top, 0px);
   --reader-top-offset: 10px;
@@ -222,14 +221,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 .viewer{
   top: calc(var(--reader-safe-top) + var(--reader-top-offset) + var(--reader-topbar-height)) !important;
 }
-.site-back-btn{flex:0 0 auto;}
-.viewer.zoomed{cursor:grab;}
-.viewer.zoomed.dragging{cursor:grabbing;}
-.viewer.zoomed .page-img{cursor:grab;}
-.viewer.zoomed.dragging .page-img{cursor:grabbing;}
-.page-img{transform-origin:center center;will-change:transform;}
+.viewer.expanded{
+  top: 0 !important;
+  bottom: 0 !important;
+}
+.site-back-btn{
+  flex:0 0 auto !important;
+}
+.viewer.zoomed{
+  cursor:grab !important;
+}
+.viewer.zoomed.dragging{
+  cursor:grabbing !important;
+}
+.viewer.zoomed .page-img{
+  cursor:grab !important;
+}
+.viewer.zoomed.dragging .page-img{
+  cursor:grabbing !important;
+}
+.page-img{
+  transform-origin:center center !important;
+  will-change:transform !important;
+}
 @media(max-width:768px){
-  :root{--reader-top-offset: 14px; --reader-topbar-height: 56px;}
+  :root{--reader-top-offset:14px;--reader-topbar-height:56px;}
   .topbar{padding-left:10px!important;padding-right:10px!important;}
   .site-back-btn{font-size:13px!important;padding:9px 13px!important;}
   .topbar-title{font-size:9px!important;letter-spacing:.15em!important;}
@@ -239,7 +255,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   .top-btn{width:30px!important;height:30px!important;}
   .atmo-btn{padding:5px 9px!important;}
 }
-/* === /STAN ARI READER FIX === */
+/* === /STAN ARI READER FIX v2 === */
 
 </style>
 </head>
@@ -330,12 +346,11 @@ const CHAPTER_LABELS = {
 let lang = null;
 let cur = 0;
 let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
-let panX = 0, panY = 0;
-let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
-let touchPanMoved = false;
 // Check access - only grant if valid purchase token exists
 let hasAccess = false;
 const accessToken = localStorage.getItem('stanari_book_access');
@@ -411,6 +426,42 @@ function skipIntro() {
 function initReader() {
   const cfg = LANG_CONFIG[lang];
   const viewer = document.getElementById('viewer');
+
+// ── Desktop wheel zoom + drag pan
+viewer.addEventListener('wheel', e => {
+  if (!document.getElementById('readerScreen').classList.contains('visible')) return;
+  e.preventDefault();
+  zoom(e.deltaY < 0 ? 0.15 : -0.15);
+  showBars();
+}, {passive:false});
+
+viewer.addEventListener('mousedown', e => {
+  if (scale <= 1.02 || e.button !== 0) return;
+  isPanning = true;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  panBaseX = panX;
+  panBaseY = panY;
+  viewer.classList.add('dragging');
+  showBars();
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', e => {
+  if (!isPanning) return;
+  panX = panBaseX + (e.clientX - panStartX);
+  panY = panBaseY + (e.clientY - panStartY);
+  clampPan();
+  applyScale();
+});
+
+document.addEventListener('mouseup', () => {
+  if (!isPanning) return;
+  isPanning = false;
+  viewer.classList.remove('dragging');
+  applyScale();
+});
+
   viewer.innerHTML = '';
   pages = [];
 
@@ -503,9 +554,9 @@ function updateUI() {
 
 // ── Zoom
 function zoom(d) {
-  const nextScale = Math.min(3, Math.max(0.5, scale + d));
-  scale = nextScale;
+  scale = Math.min(3, Math.max(0.5, scale + d));
   if (scale <= 1) { panX = 0; panY = 0; }
+  clampPan();
   applyScale();
 }
 function applyScale() {
@@ -513,7 +564,7 @@ function applyScale() {
   const viewerEl = document.getElementById('viewer');
   if (img) {
     img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-    img.style.cursor = scale > 1 ? (isPanning ? 'grabbing' : 'grab') : 'default';
+    img.style.cursor = scale > 1.02 ? (isPanning ? 'grabbing' : 'grab') : 'default';
   }
   if (viewerEl) viewerEl.classList.toggle('zoomed', scale > 1.02);
 }
@@ -522,8 +573,8 @@ function clampPan() {
   const viewerEl = document.getElementById('viewer');
   const img = pages[cur]?.querySelector('.page-img');
   if (!viewerEl || !img) return;
-  const maxX = Math.max(0, (img.clientWidth * scale - viewerEl.clientWidth) / 2) + 80;
-  const maxY = Math.max(0, (img.clientHeight * scale - viewerEl.clientHeight) / 2) + 80;
+  const maxX = Math.max(0, (img.clientWidth * scale - viewerEl.clientWidth) / 2) + 100;
+  const maxY = Math.max(0, (img.clientHeight * scale - viewerEl.clientHeight) / 2) + 100;
   panX = Math.max(-maxX, Math.min(maxX, panX));
   panY = Math.max(-maxY, Math.min(maxY, panY));
 }
@@ -555,42 +606,6 @@ function startHideTimer() {
   document.addEventListener(ev, () => {
     if (document.getElementById('readerScreen').classList.contains('visible')) showBars();
   }, {passive: true});
-});
-
-
-// ── Desktop wheel zoom + drag when zoomed
-viewer.addEventListener('wheel', e => {
-  if (!document.getElementById('readerScreen').classList.contains('visible')) return;
-  e.preventDefault();
-  const step = e.deltaY < 0 ? 0.15 : -0.15;
-  zoom(step);
-  showBars();
-}, {passive:false});
-
-viewer.addEventListener('mousedown', e => {
-  if (scale <= 1.02 || e.button !== 0) return;
-  isPanning = true;
-  panStartX = e.clientX;
-  panStartY = e.clientY;
-  panBaseX = panX;
-  panBaseY = panY;
-  viewer.classList.add('dragging');
-  e.preventDefault();
-});
-
-document.addEventListener('mousemove', e => {
-  if (!isPanning) return;
-  panX = panBaseX + (e.clientX - panStartX);
-  panY = panBaseY + (e.clientY - panStartY);
-  clampPan();
-  applyScale();
-});
-
-document.addEventListener('mouseup', () => {
-  if (!isPanning) return;
-  isPanning = false;
-  viewer.classList.remove('dragging');
-  applyScale();
 });
 
 // ── Atmosphere
@@ -649,10 +664,17 @@ viewer.addEventListener('touchmove', e => {
   }
 }, {passive: false});
 
-// ── Swipe
-let tsx = 0, tsy = 0, startScale = 1;
+// ── Swipe + touch pan when zoomed
+let tsx = 0, tsy = 0, startScale = 1, touchPanMoved = false;
 viewer.addEventListener('touchstart', e => {
-  if (e.touches.length === 1) { tsx = e.touches[0].clientX; tsy = e.touches[0].clientY; startScale = scale; panBaseX = panX; panBaseY = panY; touchPanMoved = false; }
+  if (e.touches.length === 1) {
+    tsx = e.touches[0].clientX;
+    tsy = e.touches[0].clientY;
+    startScale = scale;
+    panBaseX = panX;
+    panBaseY = panY;
+    touchPanMoved = false;
+  }
 }, {passive: true});
 
 viewer.addEventListener('touchmove', e => {

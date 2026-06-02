@@ -351,9 +351,15 @@ let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
-// ── Firebase / Firestore access config
-const STANARI_CHECKOUT_URL = 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898';
-const STANARI_FIREBASE_CONFIG = {
+
+// ── Firebase / book access
+let hasAccess = false;
+let authUser = null;
+let firebaseApi = null;
+let accessChecked = false;
+let pages = [];
+
+const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
   authDomain: "stanari-platform.firebaseapp.com",
   projectId: "stanari-platform",
@@ -362,116 +368,81 @@ const STANARI_FIREBASE_CONFIG = {
   appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
 };
 
-let hasAccess = false;
-let firebaseReadyPromise = null;
-let firebaseApi = null;
-let stanariCurrentUser = null;
-let pages = [];
-
-function normalizeEmail(email) {
-  return String(email || '').trim().toLowerCase();
-}
-
 async function getFirebaseApi() {
   if (firebaseApi) return firebaseApi;
-
   const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
   const authMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   const fsMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
-  const app = appMod.getApps().length
-    ? appMod.getApp()
-    : appMod.initializeApp(STANARI_FIREBASE_CONFIG);
-
+  const app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(FIREBASE_CONFIG);
   const auth = authMod.getAuth(app);
   const db = fsMod.getFirestore(app);
   const provider = new authMod.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
 
-  firebaseApi = { app, auth, db, provider, authMod, fsMod };
+  firebaseApi = { authMod, fsMod, auth, db, provider };
   return firebaseApi;
 }
 
-async function getCurrentUserOnce() {
-  const { auth, authMod } = await getFirebaseApi();
-  if (auth.currentUser) {
-    stanariCurrentUser = auth.currentUser;
-    return auth.currentUser;
-  }
-
-  return new Promise(resolve => {
+async function waitForAuthUser(timeoutMs = 2500) {
+  const { authMod, auth } = await getFirebaseApi();
+  if (auth.currentUser) return auth.currentUser;
+  return await new Promise(resolve => {
     let done = false;
     const finish = user => {
       if (done) return;
       done = true;
-      stanariCurrentUser = user || null;
-      try { unsubscribe(); } catch(e) {}
+      clearTimeout(timer);
+      try { unsub(); } catch(e) {}
       resolve(user || null);
     };
-    const unsubscribe = authMod.onAuthStateChanged(auth, finish);
-    setTimeout(() => finish(auth.currentUser || null), 1800);
+    const unsub = authMod.onAuthStateChanged(auth, finish);
+    const timer = setTimeout(() => finish(auth.currentUser || null), timeoutMs);
   });
 }
 
-async function checkBookAccessFromFirestore() {
+async function checkFirestoreBookAccess() {
   try {
-    const user = await getCurrentUserOnce();
-    const email = normalizeEmail(user && user.email);
+    const { fsMod, db } = await getFirebaseApi();
+    authUser = await waitForAuthUser();
+
+    // Old Lemon/localStorage fallback stays, but Firestore is the main access source.
+    const accessToken = localStorage.getItem('stanari_book_access');
+    if (accessToken === 'granted_by_lemon') hasAccess = true;
+
+    const email = (authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
     if (!email) {
-      hasAccess = false;
-      return false;
+      accessChecked = true;
+      return hasAccess;
     }
 
-    const { db, fsMod } = await getFirebaseApi();
-    const accessRef = fsMod.doc(db, 'book_access', email);
-    const accessSnap = await fsMod.getDoc(accessRef);
-    const data = accessSnap.exists() ? accessSnap.data() : null;
-
-    hasAccess = !!(data && data.access === true);
-
-    if (hasAccess) {
+    const directRef = fsMod.doc(db, 'book_access', email);
+    const directSnap = await fsMod.getDoc(directRef);
+    if (directSnap.exists() && directSnap.data() && directSnap.data().access === true) {
+      hasAccess = true;
+      localStorage.setItem('stanari_book_access', 'granted_by_firestore');
       localStorage.setItem('stanari_access_lang', 'all');
-      localStorage.setItem('stanari_access_email', email);
     }
-
-    return hasAccess;
-  } catch (e) {
-    console.warn('Book access check failed:', e);
-    hasAccess = false;
-    return false;
+  } catch (err) {
+    console.warn('Book access check failed:', err);
+  } finally {
+    accessChecked = true;
   }
+  return hasAccess;
 }
 
-async function refreshBookAccessAndRerender() {
-  await checkBookAccessFromFirestore();
-  if (lang) initReader();
-}
-
-async function signInForReader() {
-  const { auth, provider, authMod, db, fsMod } = await getFirebaseApi();
+async function signInAndCheckAccess() {
+  const { authMod, auth, provider } = await getFirebaseApi();
   const result = await authMod.signInWithPopup(auth, provider);
-  stanariCurrentUser = result.user;
-
-  if (stanariCurrentUser && stanariCurrentUser.uid) {
-    await fsMod.setDoc(fsMod.doc(db, 'users', stanariCurrentUser.uid), {
-      email: stanariCurrentUser.email || '',
-      name: stanariCurrentUser.displayName || '',
-      lastLoginAt: fsMod.serverTimestamp()
-    }, { merge: true });
+  authUser = result.user;
+  await checkFirestoreBookAccess();
+  if (hasAccess) {
+    cur = 0;
+    initReader();
+    return true;
   }
-
-  await checkBookAccessFromFirestore();
-  return stanariCurrentUser;
+  return false;
 }
-
-function buildCheckoutUrlForCurrentUser() {
-  const email = normalizeEmail(stanariCurrentUser && stanariCurrentUser.email);
-  if (!email) return STANARI_CHECKOUT_URL;
-  const joiner = STANARI_CHECKOUT_URL.includes('?') ? '&' : '?';
-  return STANARI_CHECKOUT_URL + joiner + 'checkout[email]=' + encodeURIComponent(email) + '&checkout[custom][email]=' + encodeURIComponent(email);
-}
-
-// Real persistent access is checked in Firestore: book_access/{email}.
-// localStorage is not trusted for unlocking the paid book.
 
 // ── Check saved language
 const savedLang = localStorage.getItem('readerLang');
@@ -501,8 +472,8 @@ function startReader(l) {
     }
   } catch(e) {}
 
-  // Play intro video
-  playIntro();
+  // Check Firebase/Firestore access before building pages.
+  checkFirestoreBookAccess().finally(() => playIntro());
 }
 
 // ── Intro video
@@ -537,8 +508,7 @@ function skipIntro() {
 }
 
 // ── Init reader
-async function initReader() {
-  await checkBookAccessFromFirestore();
+function initReader() {
   const cfg = LANG_CONFIG[lang];
   const viewer = document.getElementById('viewer');
 
@@ -595,7 +565,7 @@ document.addEventListener('mouseup', () => {
             <div class="lock-icon">🔒</div>
             <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
             <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
-            <button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</button>
+            <button class="lock-btn" onclick="buyAccess()">${authUser ? (lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR') : (lang === 'uk' ? 'Увійти й купити' : lang === 'en' ? 'Sign in & buy' : 'Zaloguj i kup')}</button>
           </div>
         </div>`;
       // Only one lock page needed
@@ -739,25 +709,24 @@ function toggleAtmo() {
 // ── Buy access
 async function buyAccess() {
   try {
-    let user = await getCurrentUserOnce();
-    if (!user) {
-      user = await signInForReader();
+    if (!authUser) {
+      const alreadyHasAccess = await signInAndCheckAccess();
+      if (alreadyHasAccess) return;
+    } else {
+      await checkFirestoreBookAccess();
+      if (hasAccess) { cur = 0; initReader(); return; }
     }
-
-    const allowed = await checkBookAccessFromFirestore();
-    if (allowed) {
-      initReader();
-      return;
-    }
-
-    window.open(buildCheckoutUrlForCurrentUser(), '_blank');
-  } catch (e) {
-    console.warn('Login before checkout failed:', e);
-    window.open(STANARI_CHECKOUT_URL, '_blank');
+  } catch(e) {
+    console.warn('Login before purchase failed:', e);
   }
-}
 
-window.buyAccess = buyAccess;
+  const urls = {
+    uk: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
+    en: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
+    pl: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
+  };
+  window.open(urls[lang], '_blank');
+}
 
 // ── Finale
 function playFinale() {
@@ -834,6 +803,14 @@ document.addEventListener('keydown', e => {
   if (e.key === '-') zoom(-0.2);
   if (e.key === 'Escape') window.history.back();
 });
+
+// Debug helper: open reader.html?debugAccess=1 and check browser console.
+if (new URLSearchParams(location.search).get('debugAccess') === '1') {
+  setTimeout(async () => {
+    await checkFirestoreBookAccess();
+    console.log('[STAN ARI ACCESS]', { email: authUser && authUser.email, hasAccess, accessChecked });
+  }, 1000);
+}
 </script>
 </body>
 </html>

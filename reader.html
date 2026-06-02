@@ -37,6 +37,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   cursor:pointer;
   font-family:system-ui,sans-serif;
 }
+#startIntroBtn{
+  position:absolute;bottom:30px;left:50%;
+  transform:translateX(-50%);
+  display:none;
+  background:rgba(216,175,99,.16);
+  border:1px solid rgba(216,175,99,.38);
+  color:#d8af63;
+  padding:12px 24px;border-radius:24px;
+  font-size:12px;font-weight:800;letter-spacing:.08em;
+  cursor:pointer;
+  font-family:system-ui,sans-serif;
+  box-shadow:0 8px 24px rgba(216,175,99,.18);
+}
+#startIntroBtn:active{transform:translateX(-50%) scale(.98);}
+
 
 /* ══ READER ══ */
 #readerScreen{
@@ -276,6 +291,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
     <source src="video/book_intro.mp4" type="video/mp4">
   </video>
   <div id="introFade"></div>
+  <button id="startIntroBtn" type="button">▶ Start Reading</button>
   <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
 </div>
 
@@ -368,6 +384,31 @@ const FIREBASE_CONFIG = {
   appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
 };
 
+function isIOSLikeBrowser() {
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isInApp = /FBAN|FBAV|Instagram|Line|Telegram|Twitter|TikTok|Pinterest|LinkedInApp/i.test(ua);
+  return isIOS || isInApp;
+}
+
+async function handleRedirectLoginResult() {
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    const result = await authMod.getRedirectResult(auth);
+    if (result && result.user) {
+      authUser = result.user;
+      await checkFirestoreBookAccess();
+      if (hasAccess && lang) {
+        cur = 0;
+        initReader();
+      }
+    }
+  } catch (err) {
+    console.warn('Redirect login result failed:', err);
+  }
+}
+
 async function getFirebaseApi() {
   if (firebaseApi) return firebaseApi;
   const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
@@ -433,6 +474,13 @@ async function checkFirestoreBookAccess() {
 
 async function signInAndCheckAccess() {
   const { authMod, auth, provider } = await getFirebaseApi();
+
+  if (isIOSLikeBrowser()) {
+    sessionStorage.setItem('stanari_pending_reader_login', '1');
+    await authMod.signInWithRedirect(auth, provider);
+    return false;
+  }
+
   const result = await authMod.signInWithPopup(auth, provider);
   authUser = result.user;
   await checkFirestoreBookAccess();
@@ -473,7 +521,9 @@ function startReader(l) {
   } catch(e) {}
 
   // Check Firebase/Firestore access before building pages.
-  checkFirestoreBookAccess().finally(() => playIntro());
+  handleRedirectLoginResult()
+    .then(() => checkFirestoreBookAccess())
+    .finally(() => playIntro());
 }
 
 // ── Intro video
@@ -481,7 +531,18 @@ function playIntro() {
   const intro = document.getElementById('introScreen');
   intro.style.display = 'flex';
   const video = document.getElementById('introVideo');
-  video.play().catch(() => skipIntro());
+  const startBtn = document.getElementById('startIntroBtn');
+
+  if (startBtn) startBtn.style.display = 'none';
+
+  video.play().catch(() => {
+    if (!startBtn) { skipIntro(); return; }
+    startBtn.style.display = 'block';
+    startBtn.onclick = () => {
+      startBtn.style.display = 'none';
+      video.play().catch(() => fadeAndStart());
+    };
+  });
 
   video.addEventListener('ended', () => {
     fadeAndStart();

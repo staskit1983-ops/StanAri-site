@@ -38,7 +38,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   font-family:system-ui,sans-serif;
 }
 #startIntroBtn{
-  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:calc(34px + env(safe-area-inset-bottom, 0px));left:42%;transform:translateX(-50%);
   display:none;
   background:rgba(216,175,99,.16);
   border:1px solid rgba(216,175,99,.35);
@@ -268,7 +268,36 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 }
 /* === /STAN ARI READER FIX v2 === */
 
+
+/* === iPhone / mobile reader stability patch === */
+@media(max-width:768px){
+  .bottombar{
+    height:calc(58px + env(safe-area-inset-bottom, 0px))!important;
+    padding-bottom:env(safe-area-inset-bottom, 0px)!important;
+  }
+  .progress{bottom:calc(58px + env(safe-area-inset-bottom, 0px))!important;}
+  .progress.bars-hidden{bottom:0!important;}
+  .viewer{bottom:calc(58px + env(safe-area-inset-bottom, 0px))!important;}
+  .viewer.expanded{bottom:0!important;}
+  #startIntroBtn{left:42%!important;bottom:calc(34px + env(safe-area-inset-bottom, 0px))!important;}
+}
+/* === /iPhone / mobile reader stability patch === */
+
 </style>
+
+<style>
+/* === iOS crash guard === */
+@supports (-webkit-touch-callout: none) {
+  .topbar.hidden{transform:none!important;opacity:1!important;}
+  .bottombar.hidden{transform:none!important;opacity:1!important;}
+  .progress.bars-hidden{bottom:58px!important;}
+  .viewer.expanded{
+    top:calc(var(--reader-safe-top) + var(--reader-top-offset) + var(--reader-topbar-height))!important;
+    bottom:58px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -369,6 +398,16 @@ let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
+
+function isInAppBrowser() {
+  return /FBAN|FBAV|Instagram|Line|Twitter|TikTok|Telegram|Messenger/i.test(navigator.userAgent);
+}
+
+function isIOSReaderDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 let finalePlayed = false;
 
 // ── Firebase / book access
@@ -501,12 +540,22 @@ if (savedLang && LANG_CONFIG[savedLang]) {
   document.getElementById('langModal').style.display = 'flex';
 }
 
+
+function updateReaderBookTitle() {
+  const el = document.querySelector('.topbar-title');
+  if (!el) return;
+  el.textContent = lang === 'en'
+    ? 'The Life Operator · Book 1'
+    : 'The Life Operator · Tom 1';
+}
+
 // ── Start reader with chosen language
 function startReader(l) {
   lang = l;
   const titleEl = document.getElementById('topbarTitle');
   if (titleEl) titleEl.textContent = BOOK_TITLES[l] || 'THE LIFE OPERATOR · BOOK 1';
   localStorage.setItem('readerLang', l);
+  updateReaderBookTitle();
   document.getElementById('langModal').style.display = 'none';
 
   // Update buy button language in parent if exists
@@ -533,26 +582,49 @@ function playIntro() {
   const video = document.getElementById('introVideo');
   const startBtn = document.getElementById('startIntroBtn');
 
-  video.play().catch(() => {
-    if (startBtn) startBtn.style.display = 'block';
-  });
+  if (startBtn) startBtn.style.display = 'none';
+
+  const showManualStart = () => {
+    if (startBtn) startBtn.style.display = 'inline-flex';
+  };
+
+  video.muted = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {
+      // iOS / in-app browsers may block autoplay. Show manual start instead of skipping.
+      showManualStart();
+    });
+  }
 
   video.addEventListener('ended', () => {
     fadeAndStart();
-  });
+  }, { once:true });
 
-  // Safety timeout
+  // Safety: if browser stalls on black screen, show manual start instead of crashing/staying stuck.
+  setTimeout(() => {
+    if (document.getElementById('introScreen').style.display !== 'none' && video.paused) {
+      showManualStart();
+    }
+  }, 2200);
+
+  // Long safety fallback: never leave user stuck on intro.
   setTimeout(() => {
     if (document.getElementById('introScreen').style.display !== 'none') {
       fadeAndStart();
     }
-  }, 10000);
+  }, 12000);
 }
 
 function manualStartIntro() {
   const video = document.getElementById('introVideo');
   const startBtn = document.getElementById('startIntroBtn');
   if (startBtn) startBtn.style.display = 'none';
+  video.muted = true;
   video.play().catch(() => fadeAndStart());
 }
 
@@ -569,11 +641,15 @@ function skipIntro() {
 }
 
 // ── Init reader
+let readerPointerHandlersAttached = false;
+
 function initReader() {
   const cfg = LANG_CONFIG[lang];
   const viewer = document.getElementById('viewer');
 
 // ── Desktop wheel zoom + drag pan
+if (!readerPointerHandlersAttached) {
+readerPointerHandlersAttached = true;
 viewer.addEventListener('wheel', e => {
   if (!document.getElementById('readerScreen').classList.contains('visible')) return;
   e.preventDefault();
@@ -607,6 +683,7 @@ document.addEventListener('mouseup', () => {
   viewer.classList.remove('dragging');
   applyScale();
 });
+}
 
   viewer.innerHTML = '';
   pages = [];
@@ -644,6 +721,7 @@ document.addEventListener('mouseup', () => {
   }
 
   pages.forEach(p => viewer.appendChild(p));
+  syncRenderedPagesForMemory();
 
   document.getElementById('readerScreen').classList.add('visible');
   updateUI();
@@ -660,6 +738,34 @@ document.addEventListener('mouseup', () => {
   }, 500);
 }
 
+
+function syncRenderedPagesForMemory() {
+  if (!isIOSReaderDevice()) return;
+  if (!pages || !pages.length || !lang) return;
+  const cfg = LANG_CONFIG[lang];
+  pages.forEach((wrap, idx) => {
+    const pageNo = parseInt(wrap.dataset.page || (idx + 1), 10);
+    const locked = wrap.querySelector('.lock-wrap');
+    if (locked) return;
+
+    const near = Math.abs(idx - cur) <= 2;
+    const hasImg = !!wrap.querySelector('img.page-img');
+
+    if (near && !hasImg) {
+      const img = document.createElement('img');
+      img.className = 'page-img';
+      img.src = `${cfg.folder}/p-${String(pageNo).padStart(3,'0')}.png`;
+      img.loading = Math.abs(idx - cur) <= 1 ? 'eager' : 'lazy';
+      img.draggable = false;
+      wrap.appendChild(img);
+    }
+
+    if (!near && hasImg) {
+      wrap.innerHTML = '';
+    }
+  });
+}
+
 // ── Navigation
 function go(dir) {
   const next = cur + dir;
@@ -668,6 +774,7 @@ function go(dir) {
   pages[cur].className = 'page-wrap ' + (dir > 0 ? 'prev' : 'next');
   cur = next;
   pages[cur].className = 'page-wrap active';
+  syncRenderedPagesForMemory();
   updateUI();
   showBars();
 
@@ -682,26 +789,19 @@ function go(dir) {
 function updateUI() {
   const cfg = LANG_CONFIG[lang];
   const realPgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
-  const pgNum = realPgNum;
-  const total = hasAccess ? cfg.total : cfg.free + 1;
 
-  document.getElementById('pgInfo').textContent = `${pgNum} / ${cfg.total}`;
-  document.getElementById('pFill').style.width = (realPgNum / cfg.total * 100) + '%';
+  // PNG filenames are one step behind the printed page number visible inside the book.
+  // Show the same page number the reader sees printed on the page, but never exceed total.
+  const displayPgNum = Math.min(realPgNum + 1, cfg.total);
+
+  document.getElementById('pgInfo').textContent = `${displayPgNum} / ${cfg.total}`;
+  document.getElementById('pFill').style.width = (displayPgNum / cfg.total * 100) + '%';
   document.getElementById('btnPrev').disabled = cur === 0;
   document.getElementById('btnNext').disabled = cur === pages.length - 1;
 
-  // Chapter label
-  const labels = CHAPTER_LABELS[lang] || {};
-  let chLabel = '';
-  const nums = Object.keys(labels).map(Number).sort((a,b) => a-b);
-  for (const n of nums) {
-    if (pgNum >= n) chLabel = labels[n];
-  }
-  // The full paid pages contain their own printed chapter titles.
-  // If a precise map is not defined, do not show a stale/free-chapter label after the free part.
-  if (pgNum > cfg.free && pgNum < cfg.total) chLabel = '';
-  if (pgNum >= cfg.total) chLabel = lang === 'en' ? 'STAN ARI' : 'STAN ARI';
-  document.getElementById('chapterLabel').textContent = chLabel;
+  // Keep the top bar clean and language-safe across UA / EN / PL.
+  // The actual block/chapter title is printed inside the book page itself.
+  document.getElementById('chapterLabel').textContent = '';
 }
 
 // ── Zoom
@@ -712,6 +812,7 @@ function zoom(d) {
   applyScale();
 }
 function applyScale() {
+  syncRenderedPagesForMemory();
   const img = pages[cur]?.querySelector('.page-img');
   const viewerEl = document.getElementById('viewer');
   if (img) {
@@ -743,6 +844,7 @@ function showBars() {
   startHideTimer();
 }
 function hideBars() {
+  if (isIOSReaderDevice()) return;
   barsVisible = false;
   document.getElementById('topbar').classList.add('hidden');
   document.getElementById('bottombar').classList.add('hidden');
@@ -751,6 +853,12 @@ function hideBars() {
 }
 function startHideTimer() {
   clearTimeout(hideTimer);
+
+  // iPhone/iPad Safari and in-app browsers can crash/reload when fixed bars
+  // are repeatedly hidden and the viewer is expanded after a few idle seconds.
+  // Keep controls stable on iOS to prevent "Повторна помилка".
+  if (isIOSReaderDevice()) return;
+
   hideTimer = setTimeout(hideBars, 3000);
 }
 

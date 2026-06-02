@@ -534,11 +534,12 @@ function go(dir) {
 
 function updateUI() {
   const cfg = LANG_CONFIG[lang];
-  const pgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
+  const realPgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
+  const pgNum = realPgNum + 1; // sync reader counter with printed PDF/PNG page number
   const total = hasAccess ? cfg.total : cfg.free + 1;
 
   document.getElementById('pgInfo').textContent = `${pgNum} / ${cfg.total}`;
-  document.getElementById('pFill').style.width = (pgNum / cfg.total * 100) + '%';
+  document.getElementById('pFill').style.width = (realPgNum / cfg.total * 100) + '%';
   document.getElementById('btnPrev').disabled = cur === 0;
   document.getElementById('btnNext').disabled = cur === pages.length - 1;
 

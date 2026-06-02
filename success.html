@@ -4,29 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>Access Granted — STAN ARI</title>
+  <title>Payment Successful — STAN ARI</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{min-height:100vh;background:#090807;color:#f8f2e8;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
-    .box{width:min(100%,520px);padding:34px 26px;border-radius:28px;border:1px solid rgba(255,224,155,.18);background:linear-gradient(180deg,rgba(22,18,13,.98),rgba(8,7,5,.99));box-shadow:0 34px 110px rgba(0,0,0,.72)}
+    .box{width:min(100%,560px);padding:34px 26px;border-radius:28px;border:1px solid rgba(255,224,155,.18);background:linear-gradient(180deg,rgba(22,18,13,.98),rgba(8,7,5,.99));box-shadow:0 34px 110px rgba(0,0,0,.72)}
     .mark{font-size:42px;margin-bottom:14px;color:#d8af63}
     h1{font-size:clamp(28px,7vw,48px);line-height:1;color:#fff9ef;margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
     p{color:#c8bca7;font-size:15px;line-height:1.7;margin-bottom:22px}
     a{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 24px;border-radius:99px;background:linear-gradient(135deg,#f5dfaa,#d8af63,#b98740);color:#140f08;font-weight:800;text-decoration:none}
   </style>
   <script>
-    try {
-      localStorage.setItem('stanari_book_access','granted_by_lemon');
-      localStorage.setItem('stanari_access_lang','all');
-    } catch(e) {}
-    setTimeout(function(){ window.location.href = 'reader.html'; }, 900);
+    // Access is now granted by Firebase Firestore via Lemon Squeezy webhook.
+    // This page only returns the reader after payment.
+    setTimeout(function(){ window.location.href = 'reader.html'; }, 1800);
   </script>
 </head>
 <body>
   <main class="box">
     <div class="mark">✓</div>
-    <h1>Access Granted</h1>
-    <p>Доступ до повної книги відкрито. Зараз переходимо в читалку.</p>
+    <h1>Payment Successful</h1>
+    <p>Оплату прийнято. Доступ відкривається через Firebase після обробки Lemon Squeezy webhook. Зараз переходимо в читалку.</p>
     <a href="reader.html">Open Reader</a>
   </main>
 </body>

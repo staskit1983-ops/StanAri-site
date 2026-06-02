@@ -730,6 +730,33 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #gallery .gallery-item img{height:auto!important;object-fit:contain!important}
 }
 </style>
+
+<style id="stanari-account-switcher-patch">
+/* STAN ARI account switcher: compact, header-safe, no layout redesign */
+.stanari-auth-switch-btn,.stanari-auth-logout-btn{
+  white-space:nowrap!important;
+  flex:0 0 auto!important;
+}
+.stanari-auth-switch-btn .auth-label{
+  display:inline-block;
+  max-width:96px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  vertical-align:bottom;
+}
+.stanari-auth-logout-btn{
+  padding-left:10px!important;
+  padding-right:10px!important;
+}
+.hdr-mobile .stanari-auth-switch-btn,.hdr-mobile .stanari-auth-logout-btn{
+  padding:6px 8px!important;
+  font-size:10px!important;
+}
+@media(max-width:1120px){
+  .lang-bar .stanari-auth-switch-btn .auth-label{display:none!important;}
+  .lang-bar .stanari-auth-switch-btn{padding-left:10px!important;padding-right:10px!important;}
+}
+</style>
 <style id="app-install-inline-patch">
 .install-app-btn{
   display:inline-flex!important;
@@ -964,6 +991,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <button class="lbtn" onclick="setLang('pl')">PL</button>
 <button class="lbtn" onclick="setLang('de')">DE</button>
 <button class="lbtn" onclick="setLang('es')">ES</button>
+<button class="lbtn stanari-auth-switch-btn" onclick="stanariSwitchGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="auth-label">Увійти</span></button>
+<button class="lbtn stanari-auth-logout-btn" onclick="stanariSignOutAccount();return false;" title="Вийти" style="display:none">⎋</button>
 </div>
 <div class="hdr-mobile">
 <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
@@ -973,6 +1002,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <button class="lbtn" id="mlbPL" onclick="setLang('pl')" style="padding:6px 9px;font-size:10px">PL</button>
 <button class="lbtn" id="mlbDE" onclick="setLang('de')" style="padding:6px 9px;font-size:10px">DE</button>
 <button class="lbtn" id="mlbES" onclick="setLang('es')" style="padding:6px 9px;font-size:10px">ES</button>
+<button class="lbtn stanari-auth-switch-btn stanari-auth-mobile" onclick="stanariSwitchGoogleAccount();return false;" title="Увійти / Змінити акаунт" style="padding:6px 8px;font-size:10px">👤</button>
+<button class="lbtn stanari-auth-logout-btn stanari-auth-mobile" onclick="stanariSignOutAccount();return false;" title="Вийти" style="display:none;padding:6px 8px;font-size:10px">⎋</button>
 </div>
 <button class="burger" onclick="openMenu()">☰</button>
 </div>
@@ -1558,7 +1589,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- Firebase for Reviews & Music Likes -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1573,6 +1604,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
   const appleProvider = new OAuthProvider('apple.com');
   appleProvider.addScope('email');
   appleProvider.addScope('name');
@@ -1641,6 +1673,62 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   }
   window.refreshReviewAuthUI = refreshReviewAuthUI;
 
+
+  // ── Header Google account switcher (keeps reader.html on the same Firebase user) ──
+  function stanariAuthLang(){ return window.lang || localStorage.getItem('sl') || localStorage.getItem('stanari_lang') || document.documentElement.lang || 'uk'; }
+  function stanariAuthText(key){
+    const l = stanariAuthLang();
+    const dict = {
+      uk:{login:'Увійти', change:'Змінити', logout:'Вийти'},
+      en:{login:'Sign in', change:'Switch', logout:'Sign out'},
+      pl:{login:'Zaloguj', change:'Zmień', logout:'Wyjdź'},
+      de:{login:'Login', change:'Wechseln', logout:'Logout'},
+      es:{login:'Entrar', change:'Cambiar', logout:'Salir'}
+    };
+    return (dict[l] && dict[l][key]) || dict.uk[key] || key;
+  }
+  function stanariIsIOSOrInApp(){
+    const ua = navigator.userAgent || '';
+    return /iPad|iPhone|iPod/.test(ua) || /FBAN|FBAV|Instagram|Line|Telegram|Twitter|TikTok|CriOS|FxiOS/i.test(ua);
+  }
+  function stanariClearFirebaseAccessCache(){
+    const v = localStorage.getItem('stanari_book_access');
+    if (v && v !== 'granted_by_lemon') localStorage.removeItem('stanari_book_access');
+    localStorage.removeItem('stanari_access_lang');
+  }
+  function updateStanariAccountUI(user){
+    document.querySelectorAll('.stanari-auth-switch-btn').forEach(btn => {
+      const label = btn.querySelector('.auth-label');
+      const text = user ? stanariAuthText('change') : stanariAuthText('login');
+      btn.title = user && user.email ? (stanariAuthText('change') + ': ' + user.email) : 'Увійти / Змінити акаунт';
+      if (label) label.textContent = text;
+    });
+    document.querySelectorAll('.stanari-auth-logout-btn').forEach(btn => {
+      btn.style.display = user ? 'inline-flex' : 'none';
+      btn.title = stanariAuthText('logout');
+    });
+  }
+  window.stanariSwitchGoogleAccount = async function(){
+    try{
+      provider.setCustomParameters({ prompt: 'select_account' });
+      stanariClearFirebaseAccessCache();
+      await signOut(auth).catch(()=>{});
+      if (stanariIsIOSOrInApp()) {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+      await signInWithPopup(auth, provider);
+    }catch(e){ console.error(e); }
+  };
+  window.stanariSignOutAccount = async function(){
+    try{
+      stanariClearFirebaseAccessCache();
+      await signOut(auth);
+      updateStanariAccountUI(null);
+    }catch(e){ console.error(e); }
+  };
+  getRedirectResult(auth).catch(e => console.warn('Google redirect result failed:', e));
+
   window.signInWithFacebook = async function() {
     try { await signInWithPopup(auth, fbProvider); }
     catch(e) { console.error(e); }
@@ -1657,6 +1745,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     currentUser = user;
     updateReviewUI(user);
     updateLikeButtons(user);
+    updateStanariAccountUI(user);
   });
 
   function updateReviewUI(user) {
@@ -1692,7 +1781,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   }
 
   window.signInWithGoogle = async function() {
-    try { await signInWithPopup(auth, provider); }
+    try { provider.setCustomParameters({ prompt: 'select_account' }); await signInWithPopup(auth, provider); }
     catch(e) { console.error(e); }
   };
 
@@ -2802,6 +2891,7 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serve
 const cleanFirebaseConfig = {apiKey:"AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",authDomain:"stanari-platform.firebaseapp.com",projectId:"stanari-platform",storageBucket:"stanari-platform.firebasestorage.app",messagingSenderId:"1083904103961",appId:"1:1083904103961:web:cd1fec10d11096c8f3fc88"};
 const cleanApp = getApps().find(app => app.name === "cleanBookAccessApp") || initializeApp(cleanFirebaseConfig, "cleanBookAccessApp");
 const cleanAuth = getAuth(cleanApp), cleanDb = getFirestore(cleanApp), cleanProvider = new GoogleAuthProvider();
+cleanProvider.setCustomParameters({ prompt: 'select_account' });
 let cleanUser = null;
 function cleanSetStatus(text){const status=document.getElementById("cleanAccessStatus"); if(status) status.textContent=text;}
 window.openCleanAccessModal=function(){const modal=document.getElementById("cleanAccessModal"); if(modal) modal.classList.add("open"); document.body.style.overflow="hidden"; if(cleanUser) cleanSetStatus("Ви увійшли: "+cleanUser.email+". Тепер введіть промокод."); else cleanSetStatus("Спочатку увійдіть через Google.");};

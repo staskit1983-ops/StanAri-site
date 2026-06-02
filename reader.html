@@ -42,16 +42,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   transform:translateX(-50%);
   display:none;
   background:rgba(216,175,99,.16);
-  border:1px solid rgba(216,175,99,.38);
+  border:1px solid rgba(216,175,99,.35);
   color:#d8af63;
-  padding:12px 24px;border-radius:24px;
-  font-size:12px;font-weight:800;letter-spacing:.08em;
+  padding:10px 22px;border-radius:22px;
+  font-size:12px;font-weight:800;letter-spacing:.1em;
   cursor:pointer;
   font-family:system-ui,sans-serif;
-  box-shadow:0 8px 24px rgba(216,175,99,.18);
 }
-#startIntroBtn:active{transform:translateX(-50%) scale(.98);}
-
 
 /* ══ READER ══ */
 #readerScreen{
@@ -291,7 +288,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
     <source src="video/book_intro.mp4" type="video/mp4">
   </video>
   <div id="introFade"></div>
-  <button id="startIntroBtn" type="button">▶ Start Reading</button>
+  <button id="startIntroBtn" onclick="manualStartIntro()">▶ Start Reading</button>
   <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
 </div>
 
@@ -367,6 +364,7 @@ let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
+let finaleStarted = false;
 
 // ── Firebase / book access
 let hasAccess = false;
@@ -384,31 +382,6 @@ const FIREBASE_CONFIG = {
   appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
 };
 
-function isIOSLikeBrowser() {
-  const ua = navigator.userAgent || '';
-  const platform = navigator.platform || '';
-  const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isInApp = /FBAN|FBAV|Instagram|Line|Telegram|Twitter|TikTok|Pinterest|LinkedInApp/i.test(ua);
-  return isIOS || isInApp;
-}
-
-async function handleRedirectLoginResult() {
-  try {
-    const { authMod, auth } = await getFirebaseApi();
-    const result = await authMod.getRedirectResult(auth);
-    if (result && result.user) {
-      authUser = result.user;
-      await checkFirestoreBookAccess();
-      if (hasAccess && lang) {
-        cur = 0;
-        initReader();
-      }
-    }
-  } catch (err) {
-    console.warn('Redirect login result failed:', err);
-  }
-}
-
 async function getFirebaseApi() {
   if (firebaseApi) return firebaseApi;
   const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
@@ -423,6 +396,30 @@ async function getFirebaseApi() {
 
   firebaseApi = { authMod, fsMod, auth, db, provider };
   return firebaseApi;
+}
+
+function isAppleOrInAppBrowser() {
+  const ua = navigator.userAgent || '';
+  const isApple = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isInApp = /FBAN|FBAV|Instagram|Line|Telegram|Messenger|TikTok|Twitter|Pinterest/i.test(ua);
+  return isApple || isInApp;
+}
+
+async function handleRedirectLoginResult() {
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    const result = await authMod.getRedirectResult(auth);
+    if (result && result.user) {
+      authUser = result.user;
+      await checkFirestoreBookAccess();
+      if (hasAccess) {
+        cur = 0;
+        initReader();
+      }
+    }
+  } catch (err) {
+    console.warn('Redirect login result failed:', err);
+  }
 }
 
 async function waitForAuthUser(timeoutMs = 2500) {
@@ -475,8 +472,7 @@ async function checkFirestoreBookAccess() {
 async function signInAndCheckAccess() {
   const { authMod, auth, provider } = await getFirebaseApi();
 
-  if (isIOSLikeBrowser()) {
-    sessionStorage.setItem('stanari_pending_reader_login', '1');
+  if (isAppleOrInAppBrowser()) {
     await authMod.signInWithRedirect(auth, provider);
     return false;
   }
@@ -529,31 +525,34 @@ function startReader(l) {
 // ── Intro video
 function playIntro() {
   const intro = document.getElementById('introScreen');
-  intro.style.display = 'flex';
   const video = document.getElementById('introVideo');
   const startBtn = document.getElementById('startIntroBtn');
-
+  intro.style.display = 'flex';
   if (startBtn) startBtn.style.display = 'none';
 
-  video.play().catch(() => {
-    if (!startBtn) { skipIntro(); return; }
-    startBtn.style.display = 'block';
-    startBtn.onclick = () => {
-      startBtn.style.display = 'none';
-      video.play().catch(() => fadeAndStart());
-    };
-  });
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {
+      if (startBtn) startBtn.style.display = 'block';
+    });
+  }
 
   video.addEventListener('ended', () => {
     fadeAndStart();
-  });
+  }, { once: true });
 
-  // Safety timeout
   setTimeout(() => {
-    if (document.getElementById('introScreen').style.display !== 'none') {
-      fadeAndStart();
+    if (document.getElementById('introScreen').style.display !== 'none' && video.paused) {
+      if (startBtn) startBtn.style.display = 'block';
     }
-  }, 10000);
+  }, 1800);
+}
+
+function manualStartIntro() {
+  const video = document.getElementById('introVideo');
+  const startBtn = document.getElementById('startIntroBtn');
+  if (startBtn) startBtn.style.display = 'none';
+  video.play().catch(() => fadeAndStart());
 }
 
 function fadeAndStart() {
@@ -671,21 +670,23 @@ function go(dir) {
   updateUI();
   showBars();
 
-  // Check if last page — play finale
-  const cfg = LANG_CONFIG[lang];
+  // Last bio page — start the song without covering the page.
   if (hasAccess && cur === pages.length - 1) {
-    setTimeout(() => playFinale(), 1500);
+    setTimeout(() => playFinaleSongOnly(), 700);
+  } else {
+    finaleStarted = false;
+    const finaleAudio = document.getElementById('finaleAudio');
+    if (finaleAudio && !finaleAudio.paused) finaleAudio.pause();
   }
 }
 
 function updateUI() {
   const cfg = LANG_CONFIG[lang];
   const realPgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
-  const pgNum = realPgNum + 1; // sync reader counter with printed PDF/PNG page number
-  const total = hasAccess ? cfg.total : cfg.free + 1;
+  const pgNum = Math.min(realPgNum, cfg.total);
 
   document.getElementById('pgInfo').textContent = `${pgNum} / ${cfg.total}`;
-  document.getElementById('pFill').style.width = (realPgNum / cfg.total * 100) + '%';
+  document.getElementById('pFill').style.width = (pgNum / cfg.total * 100) + '%';
   document.getElementById('btnPrev').disabled = cur === 0;
   document.getElementById('btnNext').disabled = cur === pages.length - 1;
 
@@ -696,6 +697,15 @@ function updateUI() {
   for (const n of nums) {
     if (pgNum >= n) chLabel = labels[n];
   }
+
+  if (hasAccess && pgNum > cfg.free && chLabel === labels[30]) {
+    chLabel = lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej';
+  }
+
+  if (hasAccess && pgNum >= cfg.total) {
+    chLabel = 'STAN ARI';
+  }
+
   document.getElementById('chapterLabel').textContent = chLabel;
 }
 
@@ -790,13 +800,19 @@ async function buyAccess() {
 }
 
 // ── Finale
-function playFinale() {
+function playFinaleSongOnly() {
+  if (finaleStarted) return;
+  finaleStarted = true;
   const audio = document.getElementById('atmoAudio');
-  audio.pause();
+  if (audio) audio.pause();
   const finaleAudio = document.getElementById('finaleAudio');
-  finaleAudio.volume = 0.8;
-  finaleAudio.play().catch(() => {});
-  document.getElementById('finaleScreen').classList.add('show');
+  if (finaleAudio) {
+    finaleAudio.volume = 0.8;
+    finaleAudio.play().catch(() => {});
+  }
+}
+function playFinale() {
+  playFinaleSongOnly();
 }
 function closeFinale() {
   document.getElementById('finaleScreen').classList.remove('show');

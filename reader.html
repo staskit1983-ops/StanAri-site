@@ -38,14 +38,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   font-family:system-ui,sans-serif;
 }
 #startIntroBtn{
-  position:absolute;bottom:30px;left:50%;
-  transform:translateX(-50%);
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
   display:none;
   background:rgba(216,175,99,.16);
   border:1px solid rgba(216,175,99,.35);
   color:#d8af63;
   padding:10px 22px;border-radius:22px;
-  font-size:12px;font-weight:800;letter-spacing:.1em;
+  font-size:12px;font-weight:800;letter-spacing:.08em;
   cursor:pointer;
   font-family:system-ui,sans-serif;
 }
@@ -288,7 +287,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
     <source src="video/book_intro.mp4" type="video/mp4">
   </video>
   <div id="introFade"></div>
-  <button id="startIntroBtn" onclick="manualStartIntro()">▶ Start Reading</button>
+  <button id="startIntroBtn" onclick="manualStartIntro()">▶ START</button>
   <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
 </div>
 
@@ -298,7 +297,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
     <div class="topbar-left" style="display:flex;align-items:center;gap:12px">
       <button class="site-back-btn" onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,rgba(216,175,99,.35),rgba(216,175,99,.15));border:2px solid #d8af63;border-radius:10px;color:#f5e4a0;font-size:15px;font-weight:800;cursor:pointer;padding:10px 18px;line-height:1;letter-spacing:.5px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 12px rgba(216,175,99,.3)" title="Повернутись на сайт">← stanari.art</button>
       <div>
-        <span class="topbar-title">The Life Operator · Tom 1</span>
+        <span class="topbar-title" id="topbarTitle">THE LIFE OPERATOR · TOM 1</span>
         <span class="topbar-chapter" id="chapterLabel"></span>
       </div>
     </div>
@@ -350,6 +349,12 @@ const LANG_CONFIG = {
   pl: { total: 181, free: 63,  folder: 'pages/pl', label: 'Polski' },
 };
 
+const BOOK_TITLES = {
+  uk: 'THE LIFE OPERATOR · TOM 1',
+  en: 'THE LIFE OPERATOR · BOOK 1',
+  pl: 'THE LIFE OPERATOR · TOM 1',
+};
+
 const CHAPTER_LABELS = {
   uk: {1:'Пролог',5:'Блок II · Шум',7:'Глава 1 · Релігія',15:'Глава 2 · Первородний гріх',22:'Глава 3 · Дисонанс',30:'Глава 4 · Молитва'},
   en: {1:'Prologue',7:'Block II · Noise',10:'Chapter 1 · Religion',20:'Chapter 2 · Original Sin',35:'Chapter 3 · Dissonance',50:'Chapter 4 · Prayer'},
@@ -364,7 +369,7 @@ let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
 let barsVisible = true;
 let hideTimer = null;
 let atmoOn = false;
-let finaleStarted = false;
+let finalePlayed = false;
 
 // ── Firebase / book access
 let hasAccess = false;
@@ -396,30 +401,6 @@ async function getFirebaseApi() {
 
   firebaseApi = { authMod, fsMod, auth, db, provider };
   return firebaseApi;
-}
-
-function isAppleOrInAppBrowser() {
-  const ua = navigator.userAgent || '';
-  const isApple = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isInApp = /FBAN|FBAV|Instagram|Line|Telegram|Messenger|TikTok|Twitter|Pinterest/i.test(ua);
-  return isApple || isInApp;
-}
-
-async function handleRedirectLoginResult() {
-  try {
-    const { authMod, auth } = await getFirebaseApi();
-    const result = await authMod.getRedirectResult(auth);
-    if (result && result.user) {
-      authUser = result.user;
-      await checkFirestoreBookAccess();
-      if (hasAccess) {
-        cur = 0;
-        initReader();
-      }
-    }
-  } catch (err) {
-    console.warn('Redirect login result failed:', err);
-  }
 }
 
 async function waitForAuthUser(timeoutMs = 2500) {
@@ -469,10 +450,30 @@ async function checkFirestoreBookAccess() {
   return hasAccess;
 }
 
+function shouldUseRedirectLogin() {
+  const ua = navigator.userAgent || '';
+  return /iPad|iPhone|iPod/.test(ua) || /FBAN|FBAV|Instagram|Line|Telegram|Twitter|CriOS|FxiOS/.test(ua);
+}
+
+async function handleRedirectLoginResult() {
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    const result = await authMod.getRedirectResult(auth);
+    if (result && result.user) {
+      authUser = result.user;
+      await checkFirestoreBookAccess();
+      if (hasAccess && lang) { cur = 0; initReader(); }
+    }
+  } catch(e) {
+    console.warn('Redirect login result failed:', e);
+  }
+}
+
 async function signInAndCheckAccess() {
   const { authMod, auth, provider } = await getFirebaseApi();
 
-  if (isAppleOrInAppBrowser()) {
+  if (shouldUseRedirectLogin()) {
+    localStorage.setItem('readerLang', lang || localStorage.getItem('readerLang') || 'uk');
     await authMod.signInWithRedirect(auth, provider);
     return false;
   }
@@ -488,6 +489,9 @@ async function signInAndCheckAccess() {
   return false;
 }
 
+// ── Handle Firebase redirect result on iOS / in-app browsers
+handleRedirectLoginResult();
+
 // ── Check saved language
 const savedLang = localStorage.getItem('readerLang');
 if (savedLang && LANG_CONFIG[savedLang]) {
@@ -500,6 +504,8 @@ if (savedLang && LANG_CONFIG[savedLang]) {
 // ── Start reader with chosen language
 function startReader(l) {
   lang = l;
+  const titleEl = document.getElementById('topbarTitle');
+  if (titleEl) titleEl.textContent = BOOK_TITLES[l] || 'THE LIFE OPERATOR · BOOK 1';
   localStorage.setItem('readerLang', l);
   document.getElementById('langModal').style.display = 'none';
 
@@ -517,35 +523,30 @@ function startReader(l) {
   } catch(e) {}
 
   // Check Firebase/Firestore access before building pages.
-  handleRedirectLoginResult()
-    .then(() => checkFirestoreBookAccess())
-    .finally(() => playIntro());
+  checkFirestoreBookAccess().finally(() => playIntro());
 }
 
 // ── Intro video
 function playIntro() {
   const intro = document.getElementById('introScreen');
+  intro.style.display = 'flex';
   const video = document.getElementById('introVideo');
   const startBtn = document.getElementById('startIntroBtn');
-  intro.style.display = 'flex';
-  if (startBtn) startBtn.style.display = 'none';
 
-  const playPromise = video.play();
-  if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise.catch(() => {
-      if (startBtn) startBtn.style.display = 'block';
-    });
-  }
+  video.play().catch(() => {
+    if (startBtn) startBtn.style.display = 'block';
+  });
 
   video.addEventListener('ended', () => {
     fadeAndStart();
-  }, { once: true });
+  });
 
+  // Safety timeout
   setTimeout(() => {
-    if (document.getElementById('introScreen').style.display !== 'none' && video.paused) {
-      if (startBtn) startBtn.style.display = 'block';
+    if (document.getElementById('introScreen').style.display !== 'none') {
+      fadeAndStart();
     }
-  }, 1800);
+  }, 10000);
 }
 
 function manualStartIntro() {
@@ -670,23 +671,22 @@ function go(dir) {
   updateUI();
   showBars();
 
-  // Last bio page — start the song without covering the page.
-  if (hasAccess && cur === pages.length - 1) {
-    setTimeout(() => playFinaleSongOnly(), 700);
-  } else {
-    finaleStarted = false;
-    const finaleAudio = document.getElementById('finaleAudio');
-    if (finaleAudio && !finaleAudio.paused) finaleAudio.pause();
+  // Check if last page — play finale
+  const cfg = LANG_CONFIG[lang];
+  if (hasAccess && cur === pages.length - 1 && !finalePlayed) {
+    finalePlayed = true;
+    setTimeout(() => playFinale(), 900);
   }
 }
 
 function updateUI() {
   const cfg = LANG_CONFIG[lang];
   const realPgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
-  const pgNum = Math.min(realPgNum, cfg.total);
+  const pgNum = realPgNum;
+  const total = hasAccess ? cfg.total : cfg.free + 1;
 
   document.getElementById('pgInfo').textContent = `${pgNum} / ${cfg.total}`;
-  document.getElementById('pFill').style.width = (pgNum / cfg.total * 100) + '%';
+  document.getElementById('pFill').style.width = (realPgNum / cfg.total * 100) + '%';
   document.getElementById('btnPrev').disabled = cur === 0;
   document.getElementById('btnNext').disabled = cur === pages.length - 1;
 
@@ -697,15 +697,10 @@ function updateUI() {
   for (const n of nums) {
     if (pgNum >= n) chLabel = labels[n];
   }
-
-  if (hasAccess && pgNum > cfg.free && chLabel === labels[30]) {
-    chLabel = lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej';
-  }
-
-  if (hasAccess && pgNum >= cfg.total) {
-    chLabel = 'STAN ARI';
-  }
-
+  // The full paid pages contain their own printed chapter titles.
+  // If a precise map is not defined, do not show a stale/free-chapter label after the free part.
+  if (pgNum > cfg.free && pgNum < cfg.total) chLabel = '';
+  if (pgNum >= cfg.total) chLabel = lang === 'en' ? 'STAN ARI' : 'STAN ARI';
   document.getElementById('chapterLabel').textContent = chLabel;
 }
 
@@ -800,19 +795,13 @@ async function buyAccess() {
 }
 
 // ── Finale
-function playFinaleSongOnly() {
-  if (finaleStarted) return;
-  finaleStarted = true;
-  const audio = document.getElementById('atmoAudio');
-  if (audio) audio.pause();
-  const finaleAudio = document.getElementById('finaleAudio');
-  if (finaleAudio) {
-    finaleAudio.volume = 0.8;
-    finaleAudio.play().catch(() => {});
-  }
-}
 function playFinale() {
-  playFinaleSongOnly();
+  const audio = document.getElementById('atmoAudio');
+  audio.pause();
+  const finaleAudio = document.getElementById('finaleAudio');
+  finaleAudio.volume = 0.8;
+  finaleAudio.play().catch(() => {});
+  // Do not cover the final bio page; soundtrack plays in the background.
 }
 function closeFinale() {
   document.getElementById('finaleScreen').classList.remove('show');

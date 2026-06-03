@@ -372,6 +372,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 </div>
 
 <script>
+console.log("[STAN ARI] reader v9 language selector fix loaded");
 // ── Config
 const LANG_CONFIG = {
   uk: { total: 133, free: 42,  folder: 'pages/ua', label: 'Українська' },
@@ -658,12 +659,18 @@ async function waitForAccessAfterPayment() {
   if (hasAccess) sessionStorage.removeItem('stanari_payment_pending');
 }
 
-// ── Check saved language
+// ── Check language
+// v9: opening reader from the main “Read the book” button must always show language choice.
+// Saved language is used only for direct reader opens without chooseLang=1, or when lang=uk/en/pl is provided.
+const readerParams = new URLSearchParams(location.search);
+const forcedLang = readerParams.get('lang');
+const mustChooseLang = readerParams.get('chooseLang') === '1' || readerParams.get('selectLang') === '1' || readerParams.get('noLangAuto') === '1';
 const savedLang = localStorage.getItem('readerLang');
-if (savedLang && LANG_CONFIG[savedLang]) {
+if (forcedLang && LANG_CONFIG[forcedLang]) {
+  startReader(forcedLang);
+} else if (!mustChooseLang && savedLang && LANG_CONFIG[savedLang]) {
   startReader(savedLang);
 } else {
-  // Show lang modal
   document.getElementById('langModal').style.display = 'flex';
 }
 

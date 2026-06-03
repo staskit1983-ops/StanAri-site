@@ -150,6 +150,15 @@ button{font-family:inherit}
 .stanari-menu-caption{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(216,175,99,.78);font-weight:900}
 .stanari-menu-email{margin-top:6px;color:rgba(255,255,255,.58);font-size:12px;word-break:break-all}
 @media(max-width:768px){.hdr-mobile{margin-left:auto}.stanari-menu-open-btn{padding:8px 13px!important}}
+/* === STAN ARI MENU AUTH v15: full-size account buttons in mobile menu === */
+.mobile-menu .stanari-menu-actions{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.mobile-menu .stanari-account-btn,.mobile-menu .stanari-google-login-btn,.mobile-menu .stanari-facebook-login-btn,.mobile-menu .stanari-logout-btn{
+  width:100%!important;max-width:none!important;justify-content:flex-start!important;padding:12px 16px!important;border-radius:14px!important;
+}
+.mobile-menu .stanari-account-btn .stanari-auth-label,.mobile-menu .stanari-google-login-btn .stanari-auth-label,.mobile-menu .stanari-facebook-login-btn .stanari-auth-label,.mobile-menu .stanari-logout-btn .stanari-auth-label{display:inline!important;overflow:visible!important;text-overflow:clip!important;white-space:normal!important}
+.stanari-auth-separator{height:1px;background:rgba(255,224,155,.10);margin:2px 0}
+/* === /STAN ARI MENU AUTH v15 === */
+
 /* === /STAN ARI TOP MENU v14 === */
 
 
@@ -935,7 +944,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 @media(max-width:760px){
   #music .music-card-player{max-width:100%!important}
 }
-</style><!-- STAN ARI FIX v5: robust Firebase default app init -->
+</style><!-- STAN ARI FIX v15: mobile menu account/login buttons -->
 </head>
 <body>
 <!-- LIGHTBOX -->
@@ -958,9 +967,12 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <div class="stanari-menu-section">
   <div class="stanari-menu-caption" data-t="menu_account_title">Акаунт</div>
   <div class="stanari-menu-email" id="stanariMenuEmail" data-t="menu_not_signed">Ви не увійшли</div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-    <button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label" data-t="auth_login_change">Увійти / Змінити акаунт</span></button>
+  <div class="stanari-menu-actions">
+    <button class="lbtn stanari-google-login-btn stanari-account-btn" id="stanariMenuGoogleBtn" type="button" onclick="stanariMenuGoogleAction();return false;" title="Увійти через Google">🔐 <span class="stanari-auth-label" data-t="auth_google_login">Увійти через Google</span></button>
+    <button class="lbtn stanari-account-btn" id="stanariMenuSwitchBtn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Змінити акаунт">🔁 <span class="stanari-auth-label" data-t="auth_switch_account">Змінити акаунт</span></button>
+    <button class="lbtn stanari-facebook-login-btn" type="button" onclick="stanariFacebookLogin();return false;" title="Увійти через Facebook">📘 <span class="stanari-auth-label" data-t="auth_facebook_login">Увійти через Facebook</span></button>
     <button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label" data-t="auth_logout">Вийти</span></button>
+    <div class="stanari-auth-separator"></div>
     <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
   </div>
 </div>
@@ -1574,7 +1586,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- Firebase for Reviews & Music Likes -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1707,8 +1719,17 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       .catch(console.error);
   }
 
+  function stanariOldModuleIsMobile(){ return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+  try { getRedirectResult(auth).catch(()=>{}); } catch(e) {}
   window.signInWithGoogle = async function() {
-    try { await signInWithPopup(auth, provider); }
+    try {
+      provider.setCustomParameters({ prompt: 'select_account' });
+      if (stanariOldModuleIsMobile()) {
+        await signInWithRedirect(auth, provider);
+      } else {
+        await signInWithPopup(auth, provider);
+      }
+    }
     catch(e) { console.error(e); }
   };
 
@@ -3313,6 +3334,9 @@ if('serviceWorker' in navigator){
       menu_language_title:'Мова',
       menu_not_signed:'Ви не увійшли',
       auth_login_change:'Увійти / Змінити акаунт',
+      auth_google_login:'Увійти через Google',
+      auth_switch_account:'Змінити акаунт',
+      auth_facebook_login:'Увійти через Facebook',
       auth_logout:'Вийти',
       read_free_label:'Читати книгу',
       ios_install_msg:'Щоб встановити сайт як додаток на iPhone:\n\n1. Натисни кнопку “Поділитися” в Safari\n2. Обери “На екран Домівка”\n3. Натисни “Додати”',
@@ -3326,6 +3350,9 @@ if('serviceWorker' in navigator){
       menu_language_title:'Language',
       menu_not_signed:'Not signed in',
       auth_login_change:'Sign in / Switch account',
+      auth_google_login:'Sign in with Google',
+      auth_switch_account:'Switch account',
+      auth_facebook_login:'Sign in with Facebook',
       auth_logout:'Sign out',
       read_free_label:'Read the book',
       ios_install_msg:'To install this site as an app on iPhone:\n\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Tap “Add”',
@@ -3339,6 +3366,9 @@ if('serviceWorker' in navigator){
       menu_language_title:'Język',
       menu_not_signed:'Nie zalogowano',
       auth_login_change:'Zaloguj / Zmień konto',
+      auth_google_login:'Zaloguj przez Google',
+      auth_switch_account:'Zmień konto',
+      auth_facebook_login:'Zaloguj przez Facebook',
       auth_logout:'Wyloguj',
       read_free_label:'Czytaj książkę',
       ios_install_msg:'Aby zainstalować stronę jako aplikację na iPhone:\n\n1. Naciśnij przycisk Udostępnij w Safari\n2. Wybierz “Dodaj do ekranu głównego”\n3. Naciśnij “Dodaj”',
@@ -3352,6 +3382,9 @@ if('serviceWorker' in navigator){
       menu_language_title:'Sprache',
       menu_not_signed:'Nicht angemeldet',
       auth_login_change:'Anmelden / Konto wechseln',
+      auth_google_login:'Mit Google anmelden',
+      auth_switch_account:'Konto wechseln',
+      auth_facebook_login:'Mit Facebook anmelden',
       auth_logout:'Abmelden',
       read_free_label:'Buch lesen',
       ios_install_msg:'So installierst du die Seite als App auf dem iPhone:\n\n1. Tippe in Safari auf Teilen\n2. Wähle “Zum Home-Bildschirm”\n3. Tippe auf “Hinzufügen”',
@@ -3365,6 +3398,9 @@ if('serviceWorker' in navigator){
       menu_language_title:'Idioma',
       menu_not_signed:'No has iniciado sesión',
       auth_login_change:'Iniciar sesión / Cambiar cuenta',
+      auth_google_login:'Iniciar sesión con Google',
+      auth_switch_account:'Cambiar cuenta',
+      auth_facebook_login:'Iniciar sesión con Facebook',
       auth_logout:'Salir',
       read_free_label:'Leer libro',
       ios_install_msg:'Para instalar este sitio como app en iPhone:\n\n1. Toca Compartir en Safari\n2. Elige “Añadir a pantalla de inicio”\n3. Toca “Añadir”',
@@ -3573,7 +3609,7 @@ if('serviceWorker' in navigator){
 })();
 </script>
 <script type="module">
-/* === STAN ARI AUTH + PURCHASE FIX v13: auth and Lemon are fully separated === */
+/* === STAN ARI AUTH + PURCHASE FIX v16: separated auth/purchase + full-page Google redirect === */
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -3626,11 +3662,11 @@ function stanariUiLang(){
 function stanariAuthText(key){
   const lang = stanariUiLang();
   const dict = {
-    uk:{login:"Увійти / Змінити акаунт",logout:"Вийти",notSigned:"Ви не увійшли"},
-    en:{login:"Sign in / Switch account",logout:"Sign out",notSigned:"Not signed in"},
-    pl:{login:"Zaloguj / Zmień konto",logout:"Wyloguj",notSigned:"Nie zalogowano"},
-    de:{login:"Anmelden / Konto wechseln",logout:"Abmelden",notSigned:"Nicht angemeldet"},
-    es:{login:"Iniciar sesión / Cambiar cuenta",logout:"Salir",notSigned:"No has iniciado sesión"}
+    uk:{login:"Увійти через Google",switch:"Змінити акаунт",facebook:"Увійти через Facebook",logout:"Вийти",notSigned:"Ви не увійшли"},
+    en:{login:"Sign in with Google",switch:"Switch account",facebook:"Sign in with Facebook",logout:"Sign out",notSigned:"Not signed in"},
+    pl:{login:"Zaloguj przez Google",switch:"Zmień konto",facebook:"Zaloguj przez Facebook",logout:"Wyloguj",notSigned:"Nie zalogowano"},
+    de:{login:"Mit Google anmelden",switch:"Konto wechseln",facebook:"Mit Facebook anmelden",logout:"Abmelden",notSigned:"Nicht angemeldet"},
+    es:{login:"Iniciar sesión con Google",switch:"Cambiar cuenta",facebook:"Iniciar sesión con Facebook",logout:"Salir",notSigned:"No has iniciado sesión"}
   };
   return (dict[lang] || dict.uk)[key];
 }
@@ -3639,11 +3675,26 @@ function stanariUpdateAuthUi(user) {
   const liveEmail = user && user.email ? user.email.trim().toLowerCase() : "";
   const email = liveEmail || stanariStoredEmail();
 
-  document.querySelectorAll(".stanari-account-btn .stanari-auth-label").forEach(el => {
-    el.textContent = email || stanariAuthText("login");
+  document.querySelectorAll("#stanariMenuGoogleBtn .stanari-auth-label").forEach(el => {
+    el.textContent = stanariAuthText("login");
+  });
+  document.querySelectorAll("#stanariMenuSwitchBtn .stanari-auth-label").forEach(el => {
+    el.textContent = stanariAuthText("switch");
+  });
+  document.querySelectorAll(".stanari-facebook-login-btn .stanari-auth-label").forEach(el => {
+    el.textContent = stanariAuthText("facebook");
   });
   document.querySelectorAll(".stanari-logout-btn .stanari-auth-label").forEach(el => {
     el.textContent = stanariAuthText("logout");
+  });
+  document.querySelectorAll("#stanariMenuGoogleBtn").forEach(btn => {
+    btn.style.display = email ? "none" : "inline-flex";
+  });
+  document.querySelectorAll("#stanariMenuSwitchBtn").forEach(btn => {
+    btn.style.display = email ? "inline-flex" : "none";
+  });
+  document.querySelectorAll(".stanari-facebook-login-btn").forEach(btn => {
+    btn.style.display = email ? "none" : "inline-flex";
   });
   document.querySelectorAll(".stanari-logout-btn").forEach(btn => {
     btn.classList.toggle("show", !!email);
@@ -3713,6 +3764,9 @@ async function stanariFinishRedirectLogin() {
     const result = await getRedirectResult(stanariAuth);
     const user = (result && result.user) || stanariAuth.currentUser;
     if (user) {
+      localStorage.removeItem("stanari_login_started");
+      localStorage.setItem("stanari_last_auth_email", (user.email || "").trim().toLowerCase());
+      localStorage.setItem("stanari_login_completed", "1");
       stanariUpdateAuthUi(user);
     }
   } catch (e) {
@@ -3731,18 +3785,46 @@ async function stanariLoginOnly(options = {}) {
     localStorage.removeItem("stanari_login_completed");
     stanariUpdateAuthUi(null);
   }
-  stanariProvider.setCustomParameters({ prompt: "select_account" });
-  try {
-    if (stanariIsMobileLike()) throw new Error("Use redirect login on mobile/Safari");
-    const result = await signInWithPopup(stanariAuth, stanariProvider);
-    stanariUpdateAuthUi(result.user);
-    return result.user;
-  } catch (e) {
-    console.warn("Popup login failed or mobile login selected, using redirect:", e);
-    await signInWithRedirect(stanariAuth, stanariProvider);
-    return null;
+
+  if (stanariAuth.currentUser && !forceSelect) {
+    stanariUpdateAuthUi(stanariAuth.currentUser);
+    return stanariAuth.currentUser;
   }
+
+  // v16: For stability on iPhone/Samsung mobile browsers we use full-page redirect.
+  // It avoids popup / add-account loops and broken window.closed handling.
+  localStorage.setItem("stanari_login_started", "1");
+  localStorage.setItem("stanari_login_return", location.pathname + location.search + location.hash);
+  stanariProvider.setCustomParameters({ prompt: "select_account" });
+  await signInWithRedirect(stanariAuth, stanariProvider);
+  return null;
 }
+
+window.stanariMenuGoogleAction = async function() {
+  try {
+    if (stanariAuth.currentUser) {
+      stanariUpdateAuthUi(stanariAuth.currentUser);
+      return;
+    }
+    await stanariLoginOnly({ forceSelect:false });
+  } catch (e) {
+    console.warn("Google login failed:", e);
+    alert("Не вдалося відкрити Google Login. Спробуй ще раз у Safari/Chrome без приватного режиму.");
+  }
+};
+
+window.stanariFacebookLogin = async function() {
+  try {
+    if (typeof window.signInWithFacebook === "function") {
+      await window.signInWithFacebook();
+    } else {
+      alert("Facebook Login зараз недоступний. Використайте Google.");
+    }
+  } catch (e) {
+    console.warn("Facebook login failed:", e);
+    alert("Facebook Login зараз недоступний. Використайте Google.");
+  }
+};
 
 window.stanariChangeGoogleAccount = async function() {
   try {
@@ -3791,7 +3873,7 @@ document.addEventListener("click", function(e) {
   buy.setAttribute("target", "_self");
   buy.setAttribute("rel", "noopener");
 }, true);
-/* === /STAN ARI AUTH + PURCHASE FIX v13 === */
+/* === /STAN ARI AUTH + PURCHASE FIX v15 === */
 </script>
 
 </body>

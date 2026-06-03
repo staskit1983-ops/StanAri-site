@@ -426,6 +426,17 @@ const FIREBASE_CONFIG = {
   appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
 };
 
+const LEMON_CHECKOUT_URL = 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898';
+function buildLemonCheckoutUrl(email) {
+  const url = new URL(LEMON_CHECKOUT_URL);
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (cleanEmail) {
+    url.searchParams.set('checkout[email]', cleanEmail);
+    url.searchParams.set('checkout[custom][firebase_email]', cleanEmail);
+  }
+  return url.toString();
+}
+
 async function getFirebaseApi() {
   if (firebaseApi) return firebaseApi;
   const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
@@ -462,6 +473,7 @@ async function waitForAuthUser(timeoutMs = 2500) {
 async function checkFirestoreBookAccess() {
   try {
     const { fsMod, db } = await getFirebaseApi();
+    await handleRedirectLoginResult();
     authUser = await waitForAuthUser();
 
     // Old Lemon/localStorage fallback stays, but Firestore is the main access source.
@@ -489,47 +501,87 @@ async function checkFirestoreBookAccess() {
   return hasAccess;
 }
 
-function shouldUseRedirectLogin() {
+function stanariIsIOSLike() {
   const ua = navigator.userAgent || '';
-  return /iPad|iPhone|iPod/.test(ua) || /FBAN|FBAV|Instagram|Line|Telegram|Twitter|CriOS|FxiOS/.test(ua);
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
+function shouldUseRedirectLogin() {
+  // iPhone/Safari often blocks Firebase popups. Use redirect only when popup fails or on iOS.
+  return stanariIsIOSLike();
+}
+
+let redirectResultHandled = false;
 async function handleRedirectLoginResult() {
+  if (redirectResultHandled) return authUser || null;
+  redirectResultHandled = true;
   try {
     const { authMod, auth } = await getFirebaseApi();
     const result = await authMod.getRedirectResult(auth);
     if (result && result.user) {
       authUser = result.user;
-      await checkFirestoreBookAccess();
-      if (hasAccess && lang) { cur = 0; initReader(); }
+      return authUser;
     }
+    authUser = auth.currentUser || authUser;
   } catch(e) {
     console.warn('Redirect login result failed:', e);
   }
+  return authUser || null;
 }
 
 async function signInAndCheckAccess() {
   const { authMod, auth, provider } = await getFirebaseApi();
+  provider.setCustomParameters({ prompt: 'select_account' });
 
-  if (shouldUseRedirectLogin()) {
-    localStorage.setItem('readerLang', lang || localStorage.getItem('readerLang') || 'uk');
+  try {
+    if (shouldUseRedirectLogin()) throw new Error('Use redirect login on iOS/Safari');
+    const result = await authMod.signInWithPopup(auth, provider);
+    authUser = result && result.user ? result.user : auth.currentUser;
+  } catch (popupErr) {
+    console.warn('Popup login failed, switching to redirect:', popupErr);
+    sessionStorage.setItem('stanari_after_login_checkout', '1');
     await authMod.signInWithRedirect(auth, provider);
-    return false;
+    return null;
   }
 
-  const result = await authMod.signInWithPopup(auth, provider);
-  authUser = result.user;
   await checkFirestoreBookAccess();
   if (hasAccess) {
     cur = 0;
     initReader();
-    return true;
   }
-  return false;
+  return authUser || null;
 }
 
+
 // ── Handle Firebase redirect result on iOS / in-app browsers
-handleRedirectLoginResult();
+handleRedirectLoginResult().then(async (user) => {
+  if (user && sessionStorage.getItem('stanari_after_login_checkout') === '1') {
+    sessionStorage.removeItem('stanari_after_login_checkout');
+    authUser = user;
+    await checkFirestoreBookAccess();
+    if (!hasAccess && user.email) {
+      sessionStorage.setItem('stanari_payment_pending', '1');
+      window.location.href = buildLemonCheckoutUrl(user.email);
+    }
+  }
+});
+
+function stanariPaymentReturnDetected() {
+  const q = new URLSearchParams(location.search);
+  return q.get('purchase') === 'success' || q.get('payment') === 'success' || sessionStorage.getItem('stanari_payment_pending') === '1';
+}
+
+function stanariSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function waitForAccessAfterPayment() {
+  if (!stanariPaymentReturnDetected() || hasAccess) return;
+  // Lemon webhook may need a few seconds to create book_access/{email} in Firestore.
+  for (let i = 0; i < 18 && !hasAccess; i++) {
+    await stanariSleep(i === 0 ? 1200 : 2000);
+    await checkFirestoreBookAccess();
+  }
+  if (hasAccess) sessionStorage.removeItem('stanari_payment_pending');
+}
 
 // ── Check saved language
 const savedLang = localStorage.getItem('readerLang');
@@ -572,7 +624,9 @@ function startReader(l) {
   } catch(e) {}
 
   // Check Firebase/Firestore access before building pages.
-  checkFirestoreBookAccess().finally(() => playIntro());
+  checkFirestoreBookAccess()
+    .then(() => waitForAccessAfterPayment())
+    .finally(() => playIntro());
 }
 
 // ── Intro video
@@ -883,24 +937,27 @@ function toggleAtmo() {
 // ── Buy access
 async function buyAccess() {
   try {
-    if (!authUser) {
-      const alreadyHasAccess = await signInAndCheckAccess();
-      if (alreadyHasAccess) return;
-    } else {
-      await checkFirestoreBookAccess();
-      if (hasAccess) { cur = 0; initReader(); return; }
+    let user = authUser || await waitForAuthUser(800);
+    if (!user || !user.email) {
+      sessionStorage.setItem('stanari_after_login_checkout', '1');
+      user = await signInAndCheckAccess();
     }
+
+    const email = user && user.email ? user.email.trim().toLowerCase() : '';
+    if (!email) return;
+
+    await checkFirestoreBookAccess();
+    if (hasAccess) { cur = 0; initReader(); return; }
+
+    // Google/Firebase email is known before Lemon opens.
+    // Lemon receives the same email as prefilled checkout data and custom webhook data.
+    sessionStorage.setItem('stanari_payment_pending', '1');
+    window.location.href = buildLemonCheckoutUrl(email);
   } catch(e) {
     console.warn('Login before purchase failed:', e);
   }
-
-  const urls = {
-    uk: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
-    en: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
-    pl: 'https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898',
-  };
-  window.open(urls[lang], '_blank');
 }
+
 
 // ── Finale
 function playFinale() {

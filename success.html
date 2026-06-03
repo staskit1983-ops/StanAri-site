@@ -17,7 +17,8 @@
   <script>
     // Access is now granted by Firebase Firestore via Lemon Squeezy webhook.
     // This page only returns the reader after payment.
-    setTimeout(function(){ window.location.href = 'reader.html'; }, 1800);
+    try { sessionStorage.setItem('stanari_payment_pending', '1'); } catch(e) {}
+    setTimeout(function(){ window.location.href = 'reader.html?purchase=success'; }, 2200);
   </script>
 </head>
 <body>

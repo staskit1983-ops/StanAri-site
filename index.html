@@ -136,6 +136,14 @@ button{font-family:inherit}
 .hdr-cta{padding:10px 20px;background:linear-gradient(135deg,#f5dfaa,#d8af63,#b98740);
   border-radius:99px;color:#140f08;font-size:13px;font-weight:700;
   white-space:nowrap;flex-shrink:0}
+/* === STAN ARI AUTH BUTTONS: compact Google account switcher === */
+.stanari-account-btn,.stanari-logout-btn{display:inline-flex!important;align-items:center;justify-content:center;gap:5px;max-width:176px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stanari-account-btn .stanari-auth-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stanari-logout-btn{display:none!important}
+.stanari-logout-btn.show{display:inline-flex!important}
+@media(max-width:920px){.stanari-account-btn{max-width:42px;padding-left:9px!important;padding-right:9px!important}.stanari-account-btn .stanari-auth-label{display:none}.stanari-logout-btn{max-width:42px;padding-left:9px!important;padding-right:9px!important}.stanari-logout-btn .stanari-auth-label{display:none}}
+/* === /STAN ARI AUTH BUTTONS === */
+
 
 /* Mobile header */
 .hdr-mobile{display:none;align-items:center;gap:10px}
@@ -730,33 +738,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #gallery .gallery-item img{height:auto!important;object-fit:contain!important}
 }
 </style>
-
-<style id="stanari-account-switcher-patch">
-/* STAN ARI account switcher: compact, header-safe, no layout redesign */
-.stanari-auth-switch-btn,.stanari-auth-logout-btn{
-  white-space:nowrap!important;
-  flex:0 0 auto!important;
-}
-.stanari-auth-switch-btn .auth-label{
-  display:inline-block;
-  max-width:96px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  vertical-align:bottom;
-}
-.stanari-auth-logout-btn{
-  padding-left:10px!important;
-  padding-right:10px!important;
-}
-.hdr-mobile .stanari-auth-switch-btn,.hdr-mobile .stanari-auth-logout-btn{
-  padding:6px 8px!important;
-  font-size:10px!important;
-}
-@media(max-width:1120px){
-  .lang-bar .stanari-auth-switch-btn .auth-label{display:none!important;}
-  .lang-bar .stanari-auth-switch-btn{padding-left:10px!important;padding-right:10px!important;}
-}
-</style>
 <style id="app-install-inline-patch">
 .install-app-btn{
   display:inline-flex!important;
@@ -966,6 +947,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </nav>
 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
 <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
+<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
+<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label">Вийти</span></button>
 <button class="lbtn on" onclick="setLang('uk');closeMenu()">UA</button>
 <button class="lbtn" onclick="setLang('en');closeMenu()">EN</button>
 <button class="lbtn" onclick="setLang('pl');closeMenu()">PL</button>
@@ -986,24 +969,24 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </nav>
 <div class="lang-bar">
 <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
+<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
+<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label">Вийти</span></button>
 <button class="lbtn on" onclick="setLang('uk')">UA</button>
 <button class="lbtn" onclick="setLang('en')">EN</button>
 <button class="lbtn" onclick="setLang('pl')">PL</button>
 <button class="lbtn" onclick="setLang('de')">DE</button>
 <button class="lbtn" onclick="setLang('es')">ES</button>
-<button class="lbtn stanari-auth-switch-btn" onclick="stanariSwitchGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="auth-label">Увійти</span></button>
-<button class="lbtn stanari-auth-logout-btn" onclick="stanariSignOutAccount();return false;" title="Вийти" style="display:none">⎋</button>
 </div>
 <div class="hdr-mobile">
 <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
 <button class="lbtn install-app-btn" data-t="install_app_short" onclick="installApp();return false;" style="padding:6px 8px;font-size:10px">📲</button>
+<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт" style="padding:6px 8px;font-size:10px">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
+<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти" style="padding:6px 8px;font-size:10px">⎋ <span class="stanari-auth-label">Вийти</span></button>
 <button class="lbtn on" id="mlbUA" onclick="setLang('uk')" style="padding:6px 9px;font-size:10px">UA</button>
 <button class="lbtn" id="mlbEN" onclick="setLang('en')" style="padding:6px 9px;font-size:10px">EN</button>
 <button class="lbtn" id="mlbPL" onclick="setLang('pl')" style="padding:6px 9px;font-size:10px">PL</button>
 <button class="lbtn" id="mlbDE" onclick="setLang('de')" style="padding:6px 9px;font-size:10px">DE</button>
 <button class="lbtn" id="mlbES" onclick="setLang('es')" style="padding:6px 9px;font-size:10px">ES</button>
-<button class="lbtn stanari-auth-switch-btn stanari-auth-mobile" onclick="stanariSwitchGoogleAccount();return false;" title="Увійти / Змінити акаунт" style="padding:6px 8px;font-size:10px">👤</button>
-<button class="lbtn stanari-auth-logout-btn stanari-auth-mobile" onclick="stanariSignOutAccount();return false;" title="Вийти" style="display:none;padding:6px 8px;font-size:10px">⎋</button>
 </div>
 <button class="burger" onclick="openMenu()">☰</button>
 </div>
@@ -1589,7 +1572,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- Firebase for Reviews & Music Likes -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1604,7 +1587,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
   const appleProvider = new OAuthProvider('apple.com');
   appleProvider.addScope('email');
   appleProvider.addScope('name');
@@ -1673,62 +1655,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   }
   window.refreshReviewAuthUI = refreshReviewAuthUI;
 
-
-  // ── Header Google account switcher (keeps reader.html on the same Firebase user) ──
-  function stanariAuthLang(){ return window.lang || localStorage.getItem('sl') || localStorage.getItem('stanari_lang') || document.documentElement.lang || 'uk'; }
-  function stanariAuthText(key){
-    const l = stanariAuthLang();
-    const dict = {
-      uk:{login:'Увійти', change:'Змінити', logout:'Вийти'},
-      en:{login:'Sign in', change:'Switch', logout:'Sign out'},
-      pl:{login:'Zaloguj', change:'Zmień', logout:'Wyjdź'},
-      de:{login:'Login', change:'Wechseln', logout:'Logout'},
-      es:{login:'Entrar', change:'Cambiar', logout:'Salir'}
-    };
-    return (dict[l] && dict[l][key]) || dict.uk[key] || key;
-  }
-  function stanariIsIOSOrInApp(){
-    const ua = navigator.userAgent || '';
-    return /iPad|iPhone|iPod/.test(ua) || /FBAN|FBAV|Instagram|Line|Telegram|Twitter|TikTok|CriOS|FxiOS/i.test(ua);
-  }
-  function stanariClearFirebaseAccessCache(){
-    const v = localStorage.getItem('stanari_book_access');
-    if (v && v !== 'granted_by_lemon') localStorage.removeItem('stanari_book_access');
-    localStorage.removeItem('stanari_access_lang');
-  }
-  function updateStanariAccountUI(user){
-    document.querySelectorAll('.stanari-auth-switch-btn').forEach(btn => {
-      const label = btn.querySelector('.auth-label');
-      const text = user ? stanariAuthText('change') : stanariAuthText('login');
-      btn.title = user && user.email ? (stanariAuthText('change') + ': ' + user.email) : 'Увійти / Змінити акаунт';
-      if (label) label.textContent = text;
-    });
-    document.querySelectorAll('.stanari-auth-logout-btn').forEach(btn => {
-      btn.style.display = user ? 'inline-flex' : 'none';
-      btn.title = stanariAuthText('logout');
-    });
-  }
-  window.stanariSwitchGoogleAccount = async function(){
-    try{
-      provider.setCustomParameters({ prompt: 'select_account' });
-      stanariClearFirebaseAccessCache();
-      await signOut(auth).catch(()=>{});
-      if (stanariIsIOSOrInApp()) {
-        await signInWithRedirect(auth, provider);
-        return;
-      }
-      await signInWithPopup(auth, provider);
-    }catch(e){ console.error(e); }
-  };
-  window.stanariSignOutAccount = async function(){
-    try{
-      stanariClearFirebaseAccessCache();
-      await signOut(auth);
-      updateStanariAccountUI(null);
-    }catch(e){ console.error(e); }
-  };
-  getRedirectResult(auth).catch(e => console.warn('Google redirect result failed:', e));
-
   window.signInWithFacebook = async function() {
     try { await signInWithPopup(auth, fbProvider); }
     catch(e) { console.error(e); }
@@ -1745,7 +1671,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     currentUser = user;
     updateReviewUI(user);
     updateLikeButtons(user);
-    updateStanariAccountUI(user);
   });
 
   function updateReviewUI(user) {
@@ -1781,7 +1706,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   }
 
   window.signInWithGoogle = async function() {
-    try { provider.setCustomParameters({ prompt: 'select_account' }); await signInWithPopup(auth, provider); }
+    try { await signInWithPopup(auth, provider); }
     catch(e) { console.error(e); }
   };
 
@@ -2891,7 +2816,6 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serve
 const cleanFirebaseConfig = {apiKey:"AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",authDomain:"stanari-platform.firebaseapp.com",projectId:"stanari-platform",storageBucket:"stanari-platform.firebasestorage.app",messagingSenderId:"1083904103961",appId:"1:1083904103961:web:cd1fec10d11096c8f3fc88"};
 const cleanApp = getApps().find(app => app.name === "cleanBookAccessApp") || initializeApp(cleanFirebaseConfig, "cleanBookAccessApp");
 const cleanAuth = getAuth(cleanApp), cleanDb = getFirestore(cleanApp), cleanProvider = new GoogleAuthProvider();
-cleanProvider.setCustomParameters({ prompt: 'select_account' });
 let cleanUser = null;
 function cleanSetStatus(text){const status=document.getElementById("cleanAccessStatus"); if(status) status.textContent=text;}
 window.openCleanAccessModal=function(){const modal=document.getElementById("cleanAccessModal"); if(modal) modal.classList.add("open"); document.body.style.overflow="hidden"; if(cleanUser) cleanSetStatus("Ви увійшли: "+cleanUser.email+". Тепер введіть промокод."); else cleanSetStatus("Спочатку увійдіть через Google.");};
@@ -3612,5 +3536,137 @@ if('serviceWorker' in navigator){
   document.addEventListener('DOMContentLoaded', initMusicPlayers);
   window.addEventListener('load', initMusicPlayers);
 })();
-</script></body>
+</script>
+<script type="module">
+/* === STAN ARI AUTH + PURCHASE FIX: Google first, Lemon second === */
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const STANARI_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
+  authDomain: "stanari-platform.firebaseapp.com",
+  projectId: "stanari-platform",
+  storageBucket: "stanari-platform.firebasestorage.app",
+  messagingSenderId: "1083904103961",
+  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
+};
+const STANARI_LEMON_CHECKOUT = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
+
+const stanariApp = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG);
+const stanariAuth = getAuth(stanariApp);
+const stanariProvider = new GoogleAuthProvider();
+stanariProvider.setCustomParameters({ prompt: "select_account" });
+setPersistence(stanariAuth, browserLocalPersistence).catch(console.warn);
+
+function stanariBuildCheckoutUrl(email) {
+  const url = new URL(STANARI_LEMON_CHECKOUT);
+  const cleanEmail = (email || "").trim().toLowerCase();
+  if (cleanEmail) {
+    url.searchParams.set("checkout[email]", cleanEmail);
+    url.searchParams.set("checkout[custom][firebase_email]", cleanEmail);
+  }
+  return url.toString();
+}
+
+function stanariUpdateAuthUi(user) {
+  const email = user && user.email ? user.email.trim().toLowerCase() : "";
+  document.querySelectorAll(".stanari-account-btn .stanari-auth-label").forEach(el => {
+    el.textContent = email || "Увійти / Змінити акаунт";
+  });
+  document.querySelectorAll(".stanari-logout-btn").forEach(btn => {
+    btn.classList.toggle("show", !!email);
+  });
+  if (email) localStorage.setItem("stanari_last_auth_email", email);
+}
+
+function stanariIsIOSLike() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+async function stanariHandleRedirectCheckout() {
+  try {
+    const result = await getRedirectResult(stanariAuth);
+    const user = (result && result.user) || stanariAuth.currentUser;
+    if (user) stanariUpdateAuthUi(user);
+    if (user && user.email && sessionStorage.getItem("stanari_after_login_checkout") === "1") {
+      sessionStorage.removeItem("stanari_after_login_checkout");
+      sessionStorage.setItem("stanari_payment_pending", "1");
+      window.location.href = stanariBuildCheckoutUrl(user.email);
+    }
+  } catch (e) {
+    console.warn("Google redirect login result failed:", e);
+  }
+}
+stanariHandleRedirectCheckout();
+
+async function stanariPopupLogin(options = {}) {
+  const forCheckout = !!(options && options.checkout);
+  try {
+    if (stanariIsIOSLike()) throw new Error("Use redirect login on iOS/Safari");
+    const result = await signInWithPopup(stanariAuth, stanariProvider);
+    stanariUpdateAuthUi(result.user);
+    return result.user;
+  } catch (e) {
+    console.warn("Popup login failed, switching to redirect:", e);
+    if (forCheckout) sessionStorage.setItem("stanari_after_login_checkout", "1");
+    await signInWithRedirect(stanariAuth, stanariProvider);
+    return null;
+  }
+}
+
+window.stanariChangeGoogleAccount = async function() {
+  try {
+    await signOut(stanariAuth).catch(() => {});
+    localStorage.removeItem("stanari_book_access");
+    localStorage.removeItem("stanari_access_lang");
+    localStorage.removeItem("stanari_last_auth_email");
+    sessionStorage.removeItem("firebase:redirectUser");
+    stanariUpdateAuthUi(null);
+    await stanariPopupLogin({ checkout:false });
+  } catch (e) {
+    console.warn("Google account switch failed:", e);
+    alert("Не вдалося відкрити Google Login. Спробуй ще раз у Safari/Chrome без приватного режиму.");
+  }
+};
+
+window.stanariSignOut = async function() {
+  try {
+    await signOut(stanariAuth);
+    localStorage.removeItem("stanari_book_access");
+    localStorage.removeItem("stanari_access_lang");
+    localStorage.removeItem("stanari_last_auth_email");
+    stanariUpdateAuthUi(null);
+  } catch (e) {
+    console.warn("Sign out failed:", e);
+  }
+};
+
+window.stanariBuyBook = async function() {
+  try {
+    let user = stanariAuth.currentUser;
+    if (!user || !user.email) {
+      user = await stanariPopupLogin({ checkout:true });
+    }
+    const email = user && user.email ? user.email.trim().toLowerCase() : "";
+    if (!email) return;
+    sessionStorage.setItem("stanari_payment_pending", "1");
+    window.location.href = stanariBuildCheckoutUrl(email);
+  } catch (e) {
+    console.warn("Login before Lemon checkout failed:", e);
+  }
+};
+
+onAuthStateChanged(stanariAuth, stanariUpdateAuthUi);
+
+document.addEventListener("click", function(e) {
+  const buy = e.target.closest('[data-t="buy_main_btn"]');
+  if (!buy) return;
+  e.preventDefault();
+  window.stanariBuyBook();
+}, true);
+/* === /STAN ARI AUTH + PURCHASE FIX === */
+</script>
+
+</body>
 </html>

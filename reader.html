@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   display:flex;align-items:center;justify-content:center;
 }
 
-/* === STAN ARI READER FIX v2: safe-area + desktop wheel zoom + drag pan === */
+/* === STAN ARI READER FIX v12: safe-area + desktop wheel zoom + drag pan === */
 :root{
   --reader-safe-top: env(safe-area-inset-top, 0px);
   --reader-top-offset: 10px;
@@ -439,6 +439,17 @@ function buildLemonCheckoutUrl(email) {
   return url.toString();
 }
 
+function stanariKnownEmail() {
+  const fromAuth = authUser && authUser.email ? authUser.email : '';
+  const fromAccess = localStorage.getItem('stanari_access_email') || '';
+  const fromLast = localStorage.getItem('stanari_last_auth_email') || '';
+  return String(fromAuth || fromAccess || fromLast || '').trim().toLowerCase();
+}
+
+function stanariLoginWasCompleted() {
+  return localStorage.getItem('stanari_login_completed') === '1' || !!localStorage.getItem('stanari_last_auth_email');
+}
+
 async function getFirebaseApi() {
   if (firebaseApi) return firebaseApi;
   const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
@@ -484,9 +495,15 @@ async function checkFirestoreBookAccess() {
     await handleRedirectLoginResult();
     authUser = await waitForAuthUser();
 
-    // Old Lemon/localStorage fallback stays, but Firestore is the main access source.
+    // Verified local fallback from previous successful Firestore check on this device.
     const accessToken = localStorage.getItem('stanari_book_access');
-    if (accessToken === 'granted_by_lemon') hasAccess = true;
+    const savedAccessEmail = (localStorage.getItem('stanari_access_email') || '').trim().toLowerCase();
+    const currentOrKnownEmail = stanariKnownEmail();
+    if ((accessToken === 'granted_by_lemon' || accessToken === 'granted_by_firestore') && savedAccessEmail && savedAccessEmail === currentOrKnownEmail) {
+      hasAccess = true;
+      accessChecked = true;
+      return true;
+    }
 
     const email = (authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
     if (!email) {
@@ -839,7 +856,9 @@ document.addEventListener('mouseup', () => {
             <div class="lock-icon">🔒</div>
             <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
             <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
-            <button class="lock-btn" onclick="buyAccess()">${authUser ? (lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR') : (lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google')}</button>
+            ${(authUser || stanariLoginWasCompleted() || stanariKnownEmail())
+              ? `<a class="lock-btn" href="${buildLemonCheckoutUrl(stanariKnownEmail() || (authUser && authUser.email) || '')}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</a>`
+              : `<button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google'}</button>`}
           </div>
         </div>`;
       // Only one lock page needed
@@ -1019,20 +1038,23 @@ function toggleAtmo() {
 // ── Buy access
 async function buyAccess() {
   try {
-    let user = authUser || await waitForAuthUser(800);
-    if (!user || !user.email) {
-      // v8: first tap logs in only. After returning, the lock button becomes a direct Lemon buy button.
+    let email = stanariKnownEmail();
+
+    if (!email && !stanariLoginWasCompleted()) {
+      // First tap: login only. Safari-safe. After return, the button becomes a direct Lemon action.
       await signInAndCheckAccess();
       return;
     }
 
-    const email = user && user.email ? user.email.trim().toLowerCase() : '';
-    if (!email) return;
+    email = email || stanariKnownEmail();
+    if (!email) {
+      await signInAndCheckAccess();
+      return;
+    }
 
-    await checkFirestoreBookAccess();
+    // If reader already proved access on this device, open the book. Otherwise go to Lemon immediately.
     if (hasAccess) { cur = 0; initReader(); return; }
 
-    // User is already authenticated. This tap is a direct user action, safe for iPhone Safari.
     localStorage.setItem('stanari_payment_pending', '1');
     window.location.href = buildLemonCheckoutUrl(email);
   } catch(e) {

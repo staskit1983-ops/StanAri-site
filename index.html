@@ -143,6 +143,15 @@ button{font-family:inherit}
 .stanari-logout-btn.show{display:inline-flex!important}
 @media(max-width:920px){.stanari-account-btn{max-width:42px;padding-left:9px!important;padding-right:9px!important}.stanari-account-btn .stanari-auth-label{display:none}.stanari-logout-btn{max-width:42px;padding-left:9px!important;padding-right:9px!important}.stanari-logout-btn .stanari-auth-label{display:none}}
 /* === /STAN ARI AUTH BUTTONS === */
+/* === STAN ARI TOP MENU v14: one compact header menu === */
+.stanari-menu-open-btn{display:inline-flex!important;align-items:center;justify-content:center;gap:6px;font-weight:800;color:var(--gold2)!important;border-color:rgba(216,175,99,.32)!important;background:rgba(255,237,188,.055)!important;white-space:nowrap}
+.stanari-menu-open-btn:hover{color:#140f08!important;background:linear-gradient(135deg,#f5dfaa,#d8af63)!important;border-color:transparent!important}
+.stanari-menu-section{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,224,155,.10)}
+.stanari-menu-caption{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(216,175,99,.78);font-weight:900}
+.stanari-menu-email{margin-top:6px;color:rgba(255,255,255,.58);font-size:12px;word-break:break-all}
+@media(max-width:768px){.hdr-mobile{margin-left:auto}.stanari-menu-open-btn{padding:8px 13px!important}}
+/* === /STAN ARI TOP MENU v14 === */
+
 
 
 /* Mobile header */
@@ -946,15 +955,24 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <a data-t="nav_gallery" href="#gallery" onclick="closeMenu()">Ілюстрації</a>
 <a data-t="nav_music" href="#music" onclick="closeMenu()">Музика</a>
 </nav>
-<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
-<button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
-<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
-<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label">Вийти</span></button>
-<button class="lbtn on" onclick="setLang('uk');closeMenu()">UA</button>
-<button class="lbtn" onclick="setLang('en');closeMenu()">EN</button>
-<button class="lbtn" onclick="setLang('pl');closeMenu()">PL</button>
-<button class="lbtn" onclick="setLang('de');closeMenu()">DE</button>
-<button class="lbtn" onclick="setLang('es');closeMenu()">ES</button>
+<div class="stanari-menu-section">
+  <div class="stanari-menu-caption" data-t="menu_account_title">Акаунт</div>
+  <div class="stanari-menu-email" id="stanariMenuEmail" data-t="menu_not_signed">Ви не увійшли</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+    <button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label" data-t="auth_login_change">Увійти / Змінити акаунт</span></button>
+    <button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label" data-t="auth_logout">Вийти</span></button>
+    <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
+  </div>
+</div>
+<div class="stanari-menu-section">
+  <div class="stanari-menu-caption" data-t="menu_language_title">Мова</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+    <button class="lbtn on" onclick="setLang('uk');closeMenu()">UA</button>
+    <button class="lbtn" onclick="setLang('en');closeMenu()">EN</button>
+    <button class="lbtn" onclick="setLang('pl');closeMenu()">PL</button>
+    <button class="lbtn" onclick="setLang('de');closeMenu()">DE</button>
+    <button class="lbtn" onclick="setLang('es');closeMenu()">ES</button>
+  </div>
 </div>
 </div>
 </div>
@@ -969,27 +987,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <a data-t="nav_music" href="#music">Музика</a>
 </nav>
 <div class="lang-bar">
-<button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
-<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
-<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label">Вийти</span></button>
-<button class="lbtn on" onclick="setLang('uk')">UA</button>
-<button class="lbtn" onclick="setLang('en')">EN</button>
-<button class="lbtn" onclick="setLang('pl')">PL</button>
-<button class="lbtn" onclick="setLang('de')">DE</button>
-<button class="lbtn" onclick="setLang('es')">ES</button>
+<button class="lbtn stanari-menu-open-btn" data-t="top_menu_btn" type="button" onclick="openMenu();return false;">☰ Меню</button>
 </div>
 <div class="hdr-mobile">
-<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
-<button class="lbtn install-app-btn" data-t="install_app_short" onclick="installApp();return false;" style="padding:6px 8px;font-size:10px">📲</button>
-<button class="lbtn stanari-account-btn" type="button" onclick="stanariChangeGoogleAccount();return false;" title="Увійти / Змінити акаунт" style="padding:6px 8px;font-size:10px">👤 <span class="stanari-auth-label">Увійти / Змінити акаунт</span></button>
-<button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти" style="padding:6px 8px;font-size:10px">⎋ <span class="stanari-auth-label">Вийти</span></button>
-<button class="lbtn on" id="mlbUA" onclick="setLang('uk')" style="padding:6px 9px;font-size:10px">UA</button>
-<button class="lbtn" id="mlbEN" onclick="setLang('en')" style="padding:6px 9px;font-size:10px">EN</button>
-<button class="lbtn" id="mlbPL" onclick="setLang('pl')" style="padding:6px 9px;font-size:10px">PL</button>
-<button class="lbtn" id="mlbDE" onclick="setLang('de')" style="padding:6px 9px;font-size:10px">DE</button>
-<button class="lbtn" id="mlbES" onclick="setLang('es')" style="padding:6px 9px;font-size:10px">ES</button>
-</div>
-<button class="burger" onclick="openMenu()">☰</button>
+<button class="lbtn stanari-menu-open-btn" data-t="top_menu_btn" type="button" onclick="openMenu();return false;" style="padding:8px 13px;font-size:11px">☰ Меню</button>
 </div>
 </div>
 </header>
@@ -1092,7 +1093,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <button class="btn btn-ghost" onclick="openReadLangModal()" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63">
               📖 <span data-t="read_free_label">Читати книгу</span>
 </button>
-<a class="btn btn-gold" data-t="buy_main_btn" href="https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" target="_blank">
+<a class="btn btn-gold" data-t="buy_main_btn" href="#auth-first" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" target="_self">
               🛒 <span data-t="buy_label">Купити — 9.99 EUR</span>
 </a>
 </div>
@@ -3307,6 +3308,12 @@ if('serviceWorker' in navigator){
     uk:{
       install_app_btn:'📲 ДОДАТОК',
       install_app_short:'📲',
+      top_menu_btn:'☰ Меню',
+      menu_account_title:'Акаунт',
+      menu_language_title:'Мова',
+      menu_not_signed:'Ви не увійшли',
+      auth_login_change:'Увійти / Змінити акаунт',
+      auth_logout:'Вийти',
       read_free_label:'Читати книгу',
       ios_install_msg:'Щоб встановити сайт як додаток на iPhone:\n\n1. Натисни кнопку “Поділитися” в Safari\n2. Обери “На екран Домівка”\n3. Натисни “Додати”',
       manual_install_msg:'Якщо вікно встановлення не відкрилось:\n\nChrome → меню ⋮ → Встановити додаток або Додати на головний екран.'
@@ -3314,6 +3321,12 @@ if('serviceWorker' in navigator){
     en:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
+      top_menu_btn:'☰ Menu',
+      menu_account_title:'Account',
+      menu_language_title:'Language',
+      menu_not_signed:'Not signed in',
+      auth_login_change:'Sign in / Switch account',
+      auth_logout:'Sign out',
       read_free_label:'Read the book',
       ios_install_msg:'To install this site as an app on iPhone:\n\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Tap “Add”',
       manual_install_msg:'If the install window did not open:\n\nChrome → menu ⋮ → Install app or Add to Home screen.'
@@ -3321,6 +3334,12 @@ if('serviceWorker' in navigator){
     pl:{
       install_app_btn:'📲 APLIKACJA',
       install_app_short:'📲',
+      top_menu_btn:'☰ Menu',
+      menu_account_title:'Konto',
+      menu_language_title:'Język',
+      menu_not_signed:'Nie zalogowano',
+      auth_login_change:'Zaloguj / Zmień konto',
+      auth_logout:'Wyloguj',
       read_free_label:'Czytaj książkę',
       ios_install_msg:'Aby zainstalować stronę jako aplikację na iPhone:\n\n1. Naciśnij przycisk Udostępnij w Safari\n2. Wybierz “Dodaj do ekranu głównego”\n3. Naciśnij “Dodaj”',
       manual_install_msg:'Jeśli okno instalacji się nie otworzyło:\n\nChrome → menu ⋮ → Zainstaluj aplikację lub Dodaj do ekranu głównego.'
@@ -3328,6 +3347,12 @@ if('serviceWorker' in navigator){
     de:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
+      top_menu_btn:'☰ Menü',
+      menu_account_title:'Konto',
+      menu_language_title:'Sprache',
+      menu_not_signed:'Nicht angemeldet',
+      auth_login_change:'Anmelden / Konto wechseln',
+      auth_logout:'Abmelden',
       read_free_label:'Buch lesen',
       ios_install_msg:'So installierst du die Seite als App auf dem iPhone:\n\n1. Tippe in Safari auf Teilen\n2. Wähle “Zum Home-Bildschirm”\n3. Tippe auf “Hinzufügen”',
       manual_install_msg:'Wenn das Installationsfenster nicht geöffnet wurde:\n\nChrome → Menü ⋮ → App installieren oder Zum Startbildschirm hinzufügen.'
@@ -3335,6 +3360,12 @@ if('serviceWorker' in navigator){
     es:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
+      top_menu_btn:'☰ Menú',
+      menu_account_title:'Cuenta',
+      menu_language_title:'Idioma',
+      menu_not_signed:'No has iniciado sesión',
+      auth_login_change:'Iniciar sesión / Cambiar cuenta',
+      auth_logout:'Salir',
       read_free_label:'Leer libro',
       ios_install_msg:'Para instalar este sitio como app en iPhone:\n\n1. Toca Compartir en Safari\n2. Elige “Añadir a pantalla de inicio”\n3. Toca “Añadir”',
       manual_install_msg:'Si no se abrió la ventana de instalación:\n\nChrome → menú ⋮ → Instalar app o Añadir a pantalla de inicio.'
@@ -3379,6 +3410,9 @@ if('serviceWorker' in navigator){
   window.setLang = function(lang){
     if(typeof oldSetLang === 'function') oldSetLang(lang);
     applyPatchLang(lang);
+    if (typeof stanariUpdateAuthUi === 'function') {
+      try { stanariUpdateAuthUi((window.stanariAuth && window.stanariAuth.currentUser) || null); } catch(e) {}
+    }
   };
 
   document.addEventListener('DOMContentLoaded', function(){
@@ -3539,9 +3573,10 @@ if('serviceWorker' in navigator){
 })();
 </script>
 <script type="module">
-/* === STAN ARI AUTH + PURCHASE FIX v8: split login and payment for iPhone/Safari === */
+/* === STAN ARI AUTH + PURCHASE FIX v13: auth and Lemon are fully separated === */
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const STANARI_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
@@ -3556,6 +3591,8 @@ const STANARI_LEMON_CHECKOUT = "https://stanari.lemonsqueezy.com/checkout/buy/97
 let stanariApp;
 try { stanariApp = getApp(); } catch (e) { stanariApp = initializeApp(STANARI_FIREBASE_CONFIG); }
 const stanariAuth = getAuth(stanariApp);
+window.stanariAuth = stanariAuth;
+const stanariDb = getFirestore(stanariApp);
 const stanariProvider = new GoogleAuthProvider();
 stanariProvider.setCustomParameters({ prompt: "select_account" });
 setPersistence(stanariAuth, browserLocalPersistence).catch(console.warn);
@@ -3579,24 +3616,84 @@ function stanariIsMobileLike() {
   return stanariIsIOSLike() || /Android|Mobile/i.test(navigator.userAgent || "");
 }
 
+function stanariStoredEmail() {
+  return String(localStorage.getItem("stanari_last_auth_email") || localStorage.getItem("stanari_access_email") || "").trim().toLowerCase();
+}
+
+function stanariUiLang(){
+  return localStorage.getItem("sl") || localStorage.getItem("stanari_lang") || document.documentElement.lang || "uk";
+}
+function stanariAuthText(key){
+  const lang = stanariUiLang();
+  const dict = {
+    uk:{login:"Увійти / Змінити акаунт",logout:"Вийти",notSigned:"Ви не увійшли"},
+    en:{login:"Sign in / Switch account",logout:"Sign out",notSigned:"Not signed in"},
+    pl:{login:"Zaloguj / Zmień konto",logout:"Wyloguj",notSigned:"Nie zalogowano"},
+    de:{login:"Anmelden / Konto wechseln",logout:"Abmelden",notSigned:"Nicht angemeldet"},
+    es:{login:"Iniciar sesión / Cambiar cuenta",logout:"Salir",notSigned:"No has iniciado sesión"}
+  };
+  return (dict[lang] || dict.uk)[key];
+}
+
 function stanariUpdateAuthUi(user) {
-  const email = user && user.email ? user.email.trim().toLowerCase() : "";
+  const liveEmail = user && user.email ? user.email.trim().toLowerCase() : "";
+  const email = liveEmail || stanariStoredEmail();
+
   document.querySelectorAll(".stanari-account-btn .stanari-auth-label").forEach(el => {
-    el.textContent = email || "Увійти / Змінити акаунт";
+    el.textContent = email || stanariAuthText("login");
+  });
+  document.querySelectorAll(".stanari-logout-btn .stanari-auth-label").forEach(el => {
+    el.textContent = stanariAuthText("logout");
   });
   document.querySelectorAll(".stanari-logout-btn").forEach(btn => {
     btn.classList.toggle("show", !!email);
   });
+  document.querySelectorAll("#stanariMenuEmail").forEach(el => {
+    el.textContent = email || stanariAuthText("notSigned");
+  });
+
+  // IMPORTANT v13:
+  // Purchase is NOT allowed to start Google Login anymore.
+  // If signed in, the buy button is a clean direct Lemon link.
+  // If not signed in, the buy button stays on-page and asks user to use the separate Google login button.
   document.querySelectorAll('[data-t="buy_main_btn"]').forEach(btn => {
     if (email) {
       btn.setAttribute("title", "Оплатити через Lemon Squeezy");
       btn.dataset.stanariAuthReady = "1";
+      btn.setAttribute("href", stanariBuildCheckoutUrl(email));
+      btn.setAttribute("target", "_self");
+      btn.setAttribute("rel", "noopener");
+      btn.removeAttribute("aria-disabled");
     } else {
       btn.setAttribute("title", "Спочатку увійдіть через Google");
       btn.dataset.stanariAuthReady = "0";
+      btn.setAttribute("href", "#auth-first");
+      btn.setAttribute("target", "_self");
+      btn.setAttribute("rel", "noopener");
+      btn.setAttribute("aria-disabled", "true");
     }
   });
-  if (email) localStorage.setItem("stanari_last_auth_email", email);
+
+  if (liveEmail) {
+    localStorage.setItem("stanari_last_auth_email", liveEmail);
+    localStorage.setItem("stanari_login_completed", "1");
+  }
+}
+async function stanariVerifyBookAccessForMain(user) {
+  const email = user && user.email ? user.email.trim().toLowerCase() : "";
+  if (!email) return false;
+  try {
+    const snap = await getDoc(doc(stanariDb, "book_access", email));
+    if (snap.exists() && snap.data() && snap.data().access === true) {
+      localStorage.setItem("stanari_book_access", "granted_by_firestore");
+      localStorage.setItem("stanari_access_email", email);
+      localStorage.setItem("stanari_access_lang", "all");
+      return true;
+    }
+  } catch (e) {
+    console.warn("Main page access check failed:", e);
+  }
+  return false;
 }
 
 function stanariShowLoginNotice() {
@@ -3617,10 +3714,6 @@ async function stanariFinishRedirectLogin() {
     const user = (result && result.user) || stanariAuth.currentUser;
     if (user) {
       stanariUpdateAuthUi(user);
-      if (localStorage.getItem("stanari_login_for_checkout") === "1") {
-        localStorage.removeItem("stanari_login_for_checkout");
-        stanariShowLoginNotice();
-      }
     }
   } catch (e) {
     console.warn("Google redirect login result failed:", e);
@@ -3635,6 +3728,7 @@ async function stanariLoginOnly(options = {}) {
     localStorage.removeItem("stanari_book_access");
     localStorage.removeItem("stanari_access_lang");
     localStorage.removeItem("stanari_last_auth_email");
+    localStorage.removeItem("stanari_login_completed");
     stanariUpdateAuthUi(null);
   }
   stanariProvider.setCustomParameters({ prompt: "select_account" });
@@ -3665,34 +3759,39 @@ window.stanariSignOut = async function() {
     localStorage.removeItem("stanari_book_access");
     localStorage.removeItem("stanari_access_lang");
     localStorage.removeItem("stanari_last_auth_email");
-    localStorage.removeItem("stanari_login_for_checkout");
+    localStorage.removeItem("stanari_login_completed");
     stanariUpdateAuthUi(null);
   } catch (e) { console.warn("Sign out failed:", e); }
 };
 
-window.stanariBuyBook = async function() {
-  try {
-    const user = stanariAuth.currentUser;
-    const email = user && user.email ? user.email.trim().toLowerCase() : "";
-    if (!email) {
-      // iPhone/Safari safe flow: first click is only login. Second click opens Lemon directly.
-      localStorage.setItem("stanari_login_for_checkout", "1");
-      await stanariLoginOnly({ forceSelect:false });
-      return;
-    }
+window.stanariBuyBook = function() {
+  // v13: Buying never starts login. Use the separate Google login button first.
+  const email = (stanariAuth.currentUser && stanariAuth.currentUser.email ? stanariAuth.currentUser.email : stanariStoredEmail()).trim().toLowerCase();
+  if (email) {
     window.location.href = stanariBuildCheckoutUrl(email);
-  } catch (e) { console.warn("Buy button failed:", e); }
+  } else {
+    alert("Спочатку увійдіть через Google. Після входу кнопка покупки відкриє Lemon Checkout.");
+  }
 };
 
-onAuthStateChanged(stanariAuth, stanariUpdateAuthUi);
+onAuthStateChanged(stanariAuth, async (user) => { stanariUpdateAuthUi(user); if (user) await stanariVerifyBookAccessForMain(user); });
+stanariUpdateAuthUi(stanariAuth.currentUser || null);
 
 document.addEventListener("click", function(e) {
   const buy = e.target.closest('[data-t="buy_main_btn"]');
   if (!buy) return;
-  e.preventDefault();
-  window.stanariBuyBook();
+  const email = (stanariAuth.currentUser && stanariAuth.currentUser.email ? stanariAuth.currentUser.email : stanariStoredEmail()).trim().toLowerCase();
+  if (!email) {
+    e.preventDefault();
+    e.stopPropagation();
+    alert("Спочатку увійдіть через Google. Після входу натисніть купити ще раз.");
+    return false;
+  }
+  buy.setAttribute("href", stanariBuildCheckoutUrl(email));
+  buy.setAttribute("target", "_self");
+  buy.setAttribute("rel", "noopener");
 }, true);
-/* === /STAN ARI AUTH + PURCHASE FIX v8 === */
+/* === /STAN ARI AUTH + PURCHASE FIX v13 === */
 </script>
 
 </body>

@@ -1090,7 +1090,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- Кнопки читати / купити -->
 <div style="margin-top:20px;display:flex;gap:10px">
 <button class="btn btn-ghost" onclick="openReadLangModal()" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63">
-              📖 <span data-t="read_free_label">Читати безкоштовно</span>
+              📖 <span data-t="read_free_label">Читати книгу</span>
 </button>
 <a class="btn btn-gold" data-t="buy_main_btn" href="https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;box-shadow:0 4px 24px rgba(216,175,99,.35)" target="_blank">
               🛒 <span data-t="buy_label">Купити — 9.99 EUR</span>
@@ -3307,35 +3307,35 @@ if('serviceWorker' in navigator){
     uk:{
       install_app_btn:'📲 ДОДАТОК',
       install_app_short:'📲',
-      read_free_label:'Читати безкоштовно',
+      read_free_label:'Читати книгу',
       ios_install_msg:'Щоб встановити сайт як додаток на iPhone:\n\n1. Натисни кнопку “Поділитися” в Safari\n2. Обери “На екран Домівка”\n3. Натисни “Додати”',
       manual_install_msg:'Якщо вікно встановлення не відкрилось:\n\nChrome → меню ⋮ → Встановити додаток або Додати на головний екран.'
     },
     en:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
-      read_free_label:'Read for free',
+      read_free_label:'Read the book',
       ios_install_msg:'To install this site as an app on iPhone:\n\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Tap “Add”',
       manual_install_msg:'If the install window did not open:\n\nChrome → menu ⋮ → Install app or Add to Home screen.'
     },
     pl:{
       install_app_btn:'📲 APLIKACJA',
       install_app_short:'📲',
-      read_free_label:'Czytaj za darmo',
+      read_free_label:'Czytaj książkę',
       ios_install_msg:'Aby zainstalować stronę jako aplikację na iPhone:\n\n1. Naciśnij przycisk Udostępnij w Safari\n2. Wybierz “Dodaj do ekranu głównego”\n3. Naciśnij “Dodaj”',
       manual_install_msg:'Jeśli okno instalacji się nie otworzyło:\n\nChrome → menu ⋮ → Zainstaluj aplikację lub Dodaj do ekranu głównego.'
     },
     de:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
-      read_free_label:'Kostenlos lesen',
+      read_free_label:'Buch lesen',
       ios_install_msg:'So installierst du die Seite als App auf dem iPhone:\n\n1. Tippe in Safari auf Teilen\n2. Wähle “Zum Home-Bildschirm”\n3. Tippe auf “Hinzufügen”',
       manual_install_msg:'Wenn das Installationsfenster nicht geöffnet wurde:\n\nChrome → Menü ⋮ → App installieren oder Zum Startbildschirm hinzufügen.'
     },
     es:{
       install_app_btn:'📲 APP',
       install_app_short:'📲',
-      read_free_label:'Leer gratis',
+      read_free_label:'Leer libro',
       ios_install_msg:'Para instalar este sitio como app en iPhone:\n\n1. Toca Compartir en Safari\n2. Elige “Añadir a pantalla de inicio”\n3. Toca “Añadir”',
       manual_install_msg:'Si no se abrió la ventana de instalación:\n\nChrome → menú ⋮ → Instalar app o Añadir a pantalla de inicio.'
     }
@@ -3539,8 +3539,8 @@ if('serviceWorker' in navigator){
 })();
 </script>
 <script type="module">
-/* === STAN ARI AUTH + PURCHASE FIX: Google first, Lemon second === */
-import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+/* === STAN ARI AUTH + PURCHASE FIX v8: split login and payment for iPhone/Safari === */
+import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const STANARI_FIREBASE_CONFIG = {
@@ -3554,11 +3554,7 @@ const STANARI_FIREBASE_CONFIG = {
 const STANARI_LEMON_CHECKOUT = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
 
 let stanariApp;
-try {
-  stanariApp = getApp();
-} catch (e) {
-  stanariApp = initializeApp(STANARI_FIREBASE_CONFIG);
-}
+try { stanariApp = getApp(); } catch (e) { stanariApp = initializeApp(STANARI_FIREBASE_CONFIG); }
 const stanariAuth = getAuth(stanariApp);
 const stanariProvider = new GoogleAuthProvider();
 stanariProvider.setCustomParameters({ prompt: "select_account" });
@@ -3574,6 +3570,15 @@ function stanariBuildCheckoutUrl(email) {
   return url.toString();
 }
 
+function stanariIsIOSLike() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function stanariIsMobileLike() {
+  return stanariIsIOSLike() || /Android|Mobile/i.test(navigator.userAgent || "");
+}
+
 function stanariUpdateAuthUi(user) {
   const email = user && user.email ? user.email.trim().toLowerCase() : "";
   document.querySelectorAll(".stanari-account-btn .stanari-auth-label").forEach(el => {
@@ -3582,40 +3587,64 @@ function stanariUpdateAuthUi(user) {
   document.querySelectorAll(".stanari-logout-btn").forEach(btn => {
     btn.classList.toggle("show", !!email);
   });
+  document.querySelectorAll('[data-t="buy_main_btn"]').forEach(btn => {
+    if (email) {
+      btn.setAttribute("title", "Оплатити через Lemon Squeezy");
+      btn.dataset.stanariAuthReady = "1";
+    } else {
+      btn.setAttribute("title", "Спочатку увійдіть через Google");
+      btn.dataset.stanariAuthReady = "0";
+    }
+  });
   if (email) localStorage.setItem("stanari_last_auth_email", email);
 }
 
-function stanariIsIOSLike() {
-  const ua = navigator.userAgent || "";
-  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+function stanariShowLoginNotice() {
+  try {
+    const lang = localStorage.getItem('siteLang') || document.documentElement.lang || 'uk';
+    const msg = lang === 'en'
+      ? 'You are signed in. Tap the buy button again to open Lemon Checkout.'
+      : lang === 'pl'
+      ? 'Jesteś zalogowany. Kliknij ponownie przycisk zakupu, aby otworzyć Lemon Checkout.'
+      : 'Ви увійшли. Натисніть кнопку покупки ще раз, щоб відкрити Lemon Checkout.';
+    console.log('[STAN ARI AUTH]', msg);
+  } catch(e) {}
 }
 
-async function stanariHandleRedirectCheckout() {
+async function stanariFinishRedirectLogin() {
   try {
     const result = await getRedirectResult(stanariAuth);
     const user = (result && result.user) || stanariAuth.currentUser;
-    if (user) stanariUpdateAuthUi(user);
-    if (user && user.email && sessionStorage.getItem("stanari_after_login_checkout") === "1") {
-      sessionStorage.removeItem("stanari_after_login_checkout");
-      sessionStorage.setItem("stanari_payment_pending", "1");
-      window.location.href = stanariBuildCheckoutUrl(user.email);
+    if (user) {
+      stanariUpdateAuthUi(user);
+      if (localStorage.getItem("stanari_login_for_checkout") === "1") {
+        localStorage.removeItem("stanari_login_for_checkout");
+        stanariShowLoginNotice();
+      }
     }
   } catch (e) {
     console.warn("Google redirect login result failed:", e);
   }
 }
-stanariHandleRedirectCheckout();
+stanariFinishRedirectLogin();
 
-async function stanariPopupLogin(options = {}) {
-  const forCheckout = !!(options && options.checkout);
+async function stanariLoginOnly(options = {}) {
+  const forceSelect = !!options.forceSelect;
+  if (forceSelect) {
+    await signOut(stanariAuth).catch(() => {});
+    localStorage.removeItem("stanari_book_access");
+    localStorage.removeItem("stanari_access_lang");
+    localStorage.removeItem("stanari_last_auth_email");
+    stanariUpdateAuthUi(null);
+  }
+  stanariProvider.setCustomParameters({ prompt: "select_account" });
   try {
-    if (stanariIsIOSLike()) throw new Error("Use redirect login on iOS/Safari");
+    if (stanariIsMobileLike()) throw new Error("Use redirect login on mobile/Safari");
     const result = await signInWithPopup(stanariAuth, stanariProvider);
     stanariUpdateAuthUi(result.user);
     return result.user;
   } catch (e) {
-    console.warn("Popup login failed, switching to redirect:", e);
-    if (forCheckout) sessionStorage.setItem("stanari_after_login_checkout", "1");
+    console.warn("Popup login failed or mobile login selected, using redirect:", e);
     await signInWithRedirect(stanariAuth, stanariProvider);
     return null;
   }
@@ -3623,13 +3652,7 @@ async function stanariPopupLogin(options = {}) {
 
 window.stanariChangeGoogleAccount = async function() {
   try {
-    await signOut(stanariAuth).catch(() => {});
-    localStorage.removeItem("stanari_book_access");
-    localStorage.removeItem("stanari_access_lang");
-    localStorage.removeItem("stanari_last_auth_email");
-    sessionStorage.removeItem("firebase:redirectUser");
-    stanariUpdateAuthUi(null);
-    await stanariPopupLogin({ checkout:false });
+    await stanariLoginOnly({ forceSelect:true });
   } catch (e) {
     console.warn("Google account switch failed:", e);
     alert("Не вдалося відкрити Google Login. Спробуй ще раз у Safari/Chrome без приватного режиму.");
@@ -3642,25 +3665,23 @@ window.stanariSignOut = async function() {
     localStorage.removeItem("stanari_book_access");
     localStorage.removeItem("stanari_access_lang");
     localStorage.removeItem("stanari_last_auth_email");
+    localStorage.removeItem("stanari_login_for_checkout");
     stanariUpdateAuthUi(null);
-  } catch (e) {
-    console.warn("Sign out failed:", e);
-  }
+  } catch (e) { console.warn("Sign out failed:", e); }
 };
 
 window.stanariBuyBook = async function() {
   try {
-    let user = stanariAuth.currentUser;
-    if (!user || !user.email) {
-      user = await stanariPopupLogin({ checkout:true });
-    }
+    const user = stanariAuth.currentUser;
     const email = user && user.email ? user.email.trim().toLowerCase() : "";
-    if (!email) return;
-    sessionStorage.setItem("stanari_payment_pending", "1");
+    if (!email) {
+      // iPhone/Safari safe flow: first click is only login. Second click opens Lemon directly.
+      localStorage.setItem("stanari_login_for_checkout", "1");
+      await stanariLoginOnly({ forceSelect:false });
+      return;
+    }
     window.location.href = stanariBuildCheckoutUrl(email);
-  } catch (e) {
-    console.warn("Login before Lemon checkout failed:", e);
-  }
+  } catch (e) { console.warn("Buy button failed:", e); }
 };
 
 onAuthStateChanged(stanariAuth, stanariUpdateAuthUi);
@@ -3671,7 +3692,7 @@ document.addEventListener("click", function(e) {
   e.preventDefault();
   window.stanariBuyBook();
 }, true);
-/* === /STAN ARI AUTH + PURCHASE FIX === */
+/* === /STAN ARI AUTH + PURCHASE FIX v8 === */
 </script>
 
 </body>

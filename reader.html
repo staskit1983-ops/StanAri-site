@@ -533,8 +533,8 @@ function stanariIsIOSLike() {
 }
 
 function shouldUseRedirectLogin() {
-  // iPhone/Safari often blocks Firebase popups. Use redirect only when popup fails or on iOS.
-  return stanariIsIOSLike();
+  // iPhone/Safari/mobile: use full-page redirect for login only.
+  return stanariIsIOSLike() || /Android|Mobile/i.test(navigator.userAgent || '');
 }
 
 let redirectResultHandled = false;
@@ -560,21 +560,20 @@ async function signInAndCheckAccess() {
   provider.setCustomParameters({ prompt: 'select_account' });
 
   try {
-    if (shouldUseRedirectLogin()) throw new Error('Use redirect login on iOS/Safari');
+    if (shouldUseRedirectLogin()) throw new Error('Use redirect login on mobile/Safari');
     const result = await authMod.signInWithPopup(auth, provider);
     authUser = result && result.user ? result.user : auth.currentUser;
   } catch (popupErr) {
-    console.warn('Popup login failed, switching to redirect:', popupErr);
-    sessionStorage.setItem('stanari_after_login_checkout', '1');
+    console.warn('Popup login failed or mobile redirect selected:', popupErr);
+    // IMPORTANT v8: login only. Do not auto-open Lemon after redirect; Safari blocks chained actions.
+    localStorage.setItem('stanari_login_from_lock', '1');
     await authMod.signInWithRedirect(auth, provider);
     return null;
   }
 
   await checkFirestoreBookAccess();
-  if (hasAccess) {
-    cur = 0;
-    initReader();
-  }
+  // After login, rebuild the lock. If access exists it opens; if not, button becomes a direct Lemon buy button.
+  initReader();
   return authUser || null;
 }
 
@@ -591,7 +590,10 @@ async function attachStanariAuthRefresh() {
       authUser = user || null;
       const before = hasAccess;
       await checkFirestoreBookAccess();
-      if (hasAccess && (!before || document.querySelector('.lock-wrap'))) {
+      if (document.querySelector('.lock-wrap')) {
+        if (hasAccess) cur = 0;
+        initReader();
+      } else if (hasAccess && !before) {
         cur = 0;
         initReader();
       }
@@ -604,14 +606,14 @@ attachStanariAuthRefresh();
 
 // ── Handle Firebase redirect result on iOS / in-app browsers
 handleRedirectLoginResult().then(async (user) => {
-  if (user && sessionStorage.getItem('stanari_after_login_checkout') === '1') {
-    sessionStorage.removeItem('stanari_after_login_checkout');
-    authUser = user;
-    await checkFirestoreBookAccess();
-    if (!hasAccess && user.email) {
-      sessionStorage.setItem('stanari_payment_pending', '1');
-      window.location.href = buildLemonCheckoutUrl(user.email);
-    }
+  if (!user) return;
+  authUser = user;
+  await checkFirestoreBookAccess();
+  // IMPORTANT v8: after Google redirect, do not auto-open Lemon.
+  // Rebuild reader instead: access=true opens the book; no access shows a direct buy button for the next tap.
+  if (localStorage.getItem('stanari_login_from_lock') === '1') {
+    localStorage.removeItem('stanari_login_from_lock');
+    if (lang) initReader();
   }
 });
 
@@ -634,6 +636,7 @@ getFirebaseApi().then(({ authMod, auth }) => {
     authUser = user;
     await checkFirestoreBookAccess();
     await waitForAccessAfterPayment();
+    if (document.querySelector('.lock-wrap')) initReader();
     await stanariRebuildReaderIfUnlocked();
   });
 }).catch(e => console.warn('Permanent auth listener failed:', e));
@@ -829,7 +832,7 @@ document.addEventListener('mouseup', () => {
             <div class="lock-icon">🔒</div>
             <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
             <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
-            <button class="lock-btn" onclick="buyAccess()">${authUser ? (lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR') : (lang === 'uk' ? 'Увійти й купити' : lang === 'en' ? 'Sign in & buy' : 'Zaloguj i kup')}</button>
+            <button class="lock-btn" onclick="buyAccess()">${authUser ? (lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR') : (lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google')}</button>
           </div>
         </div>`;
       // Only one lock page needed
@@ -1011,8 +1014,9 @@ async function buyAccess() {
   try {
     let user = authUser || await waitForAuthUser(800);
     if (!user || !user.email) {
-      sessionStorage.setItem('stanari_after_login_checkout', '1');
-      user = await signInAndCheckAccess();
+      // v8: first tap logs in only. After returning, the lock button becomes a direct Lemon buy button.
+      await signInAndCheckAccess();
+      return;
     }
 
     const email = user && user.email ? user.email.trim().toLowerCase() : '';
@@ -1021,12 +1025,11 @@ async function buyAccess() {
     await checkFirestoreBookAccess();
     if (hasAccess) { cur = 0; initReader(); return; }
 
-    // Google/Firebase email is known before Lemon opens.
-    // Lemon receives the same email as prefilled checkout data and custom webhook data.
-    sessionStorage.setItem('stanari_payment_pending', '1');
+    // User is already authenticated. This tap is a direct user action, safe for iPhone Safari.
+    localStorage.setItem('stanari_payment_pending', '1');
     window.location.href = buildLemonCheckoutUrl(email);
   } catch(e) {
-    console.warn('Login before purchase failed:', e);
+    console.warn('Login/buy access failed:', e);
   }
 }
 

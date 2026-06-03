@@ -298,6 +298,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 }
 </style>
 
+<!-- STAN ARI FIX v5: robust Firebase app init + auth refresh -->
 </head>
 <body>
 
@@ -443,7 +444,12 @@ async function getFirebaseApi() {
   const authMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   const fsMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
-  const app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(FIREBASE_CONFIG);
+  let app;
+  try {
+    app = appMod.getApp();
+  } catch (e) {
+    app = appMod.initializeApp(FIREBASE_CONFIG);
+  }
   const auth = authMod.getAuth(app);
   try { await authMod.setPersistence(auth, authMod.browserLocalPersistence); } catch(e) { console.warn('Auth persistence setup failed:', e); }
   const db = fsMod.getFirestore(app);
@@ -572,6 +578,29 @@ async function signInAndCheckAccess() {
   return authUser || null;
 }
 
+
+
+// STAN ARI FIX v5: keep reader synced after Firebase restores login on iOS/desktop.
+let stanariAuthRefreshAttached = false;
+async function attachStanariAuthRefresh() {
+  if (stanariAuthRefreshAttached) return;
+  stanariAuthRefreshAttached = true;
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    authMod.onAuthStateChanged(auth, async (user) => {
+      authUser = user || null;
+      const before = hasAccess;
+      await checkFirestoreBookAccess();
+      if (hasAccess && (!before || document.querySelector('.lock-wrap'))) {
+        cur = 0;
+        initReader();
+      }
+    });
+  } catch (e) {
+    console.warn('Auth refresh listener failed:', e);
+  }
+}
+attachStanariAuthRefresh();
 
 // ── Handle Firebase redirect result on iOS / in-app browsers
 handleRedirectLoginResult().then(async (user) => {

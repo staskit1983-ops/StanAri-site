@@ -926,7 +926,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 @media(max-width:760px){
   #music .music-card-player{max-width:100%!important}
 }
-</style></head>
+</style><!-- STAN ARI FIX v5: robust Firebase default app init -->
+</head>
 <body>
 <!-- LIGHTBOX -->
 <div id="lb"><button id="lb-x" onclick="closeLB()">✕</button><img id="lb-img" src=""/></div>
@@ -1670,7 +1671,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   onAuthStateChanged(auth, user => {
     currentUser = user;
     updateReviewUI(user);
-    updateLikeButtons(user);
+    updateLikeButtons(user).catch(err => console.warn('Like buttons unavailable:', err));
   });
 
   function updateReviewUI(user) {
@@ -1985,7 +1986,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
       if (countEl) countEl.textContent = d.data().count || 0;
     });
   }
-  loadDownloadCounts();
+  loadDownloadCounts().catch(err => console.warn('Download counts unavailable:', err));
 
   // ── Book language modal ────────────────────────────────────────
   const bookLangUrls = {
@@ -3552,7 +3553,12 @@ const STANARI_FIREBASE_CONFIG = {
 };
 const STANARI_LEMON_CHECKOUT = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
 
-const stanariApp = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG);
+let stanariApp;
+try {
+  stanariApp = getApp();
+} catch (e) {
+  stanariApp = initializeApp(STANARI_FIREBASE_CONFIG);
+}
 const stanariAuth = getAuth(stanariApp);
 const stanariProvider = new GoogleAuthProvider();
 stanariProvider.setCustomParameters({ prompt: "select_account" });

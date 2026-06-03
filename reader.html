@@ -445,6 +445,7 @@ async function getFirebaseApi() {
 
   const app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(FIREBASE_CONFIG);
   const auth = authMod.getAuth(app);
+  try { await authMod.setPersistence(auth, authMod.browserLocalPersistence); } catch(e) { console.warn('Auth persistence setup failed:', e); }
   const db = fsMod.getFirestore(app);
   const provider = new authMod.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
@@ -453,7 +454,7 @@ async function getFirebaseApi() {
   return firebaseApi;
 }
 
-async function waitForAuthUser(timeoutMs = 2500) {
+async function waitForAuthUser(timeoutMs = 10000) {
   const { authMod, auth } = await getFirebaseApi();
   if (auth.currentUser) return auth.currentUser;
   return await new Promise(resolve => {
@@ -486,13 +487,32 @@ async function checkFirestoreBookAccess() {
       return hasAccess;
     }
 
+    console.log('[STAN ARI ACCESS] checking Firestore document:', `book_access/${email}`);
     const directRef = fsMod.doc(db, 'book_access', email);
     const directSnap = await fsMod.getDoc(directRef);
     if (directSnap.exists() && directSnap.data() && directSnap.data().access === true) {
       hasAccess = true;
       localStorage.setItem('stanari_book_access', 'granted_by_firestore');
+      localStorage.setItem('stanari_access_email', email);
       localStorage.setItem('stanari_access_lang', 'all');
+      console.log('[STAN ARI ACCESS] granted by book_access:', email);
+      return true;
     }
+
+    // Fallback for older promo/manual grants saved by uid in users/{uid}.
+    if (authUser && authUser.uid) {
+      const userRef = fsMod.doc(db, 'users', authUser.uid);
+      const userSnap = await fsMod.getDoc(userRef);
+      if (userSnap.exists() && userSnap.data() && userSnap.data().hasAccess === true) {
+        hasAccess = true;
+        localStorage.setItem('stanari_book_access', 'granted_by_users_uid');
+        localStorage.setItem('stanari_access_email', email);
+        localStorage.setItem('stanari_access_lang', 'all');
+        console.log('[STAN ARI ACCESS] granted by users/{uid}:', authUser.uid);
+        return true;
+      }
+    }
+    console.log('[STAN ARI ACCESS] no access document found for:', email);
   } catch (err) {
     console.warn('Book access check failed:', err);
   } finally {
@@ -565,6 +585,29 @@ handleRedirectLoginResult().then(async (user) => {
     }
   }
 });
+
+// iOS Safari can restore Firebase auth a little later than the first page render.
+// Keep listening after load: if access appears, rebuild the reader and remove the lock immediately.
+async function stanariRebuildReaderIfUnlocked() {
+  if (!hasAccess) return;
+  try {
+    const locked = document.querySelector('.lock-wrap');
+    if (locked || pages.length <= (LANG_CONFIG[lang]?.free || 0) + 1) {
+      cur = 0;
+      initReader();
+    }
+  } catch(e) { console.warn('Reader rebuild after unlock failed:', e); }
+}
+
+getFirebaseApi().then(({ authMod, auth }) => {
+  authMod.onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    authUser = user;
+    await checkFirestoreBookAccess();
+    await waitForAccessAfterPayment();
+    await stanariRebuildReaderIfUnlocked();
+  });
+}).catch(e => console.warn('Permanent auth listener failed:', e));
 
 function stanariPaymentReturnDetected() {
   const q = new URLSearchParams(location.search);
@@ -1039,7 +1082,7 @@ document.addEventListener('keydown', e => {
 if (new URLSearchParams(location.search).get('debugAccess') === '1') {
   setTimeout(async () => {
     await checkFirestoreBookAccess();
-    console.log('[STAN ARI ACCESS]', { email: authUser && authUser.email, hasAccess, accessChecked });
+    console.log('[STAN ARI ACCESS v3]', { email: authUser && authUser.email, hasAccess, accessChecked });
   }, 1000);
 }
 </script>

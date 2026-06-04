@@ -3225,10 +3225,8 @@ window.stanariGoogleLogin = async function(){
   try {
     localStorage.setItem("stanari_auth_return", location.href);
     provider.setCustomParameters({ prompt: "select_account" });
-    if (isMobileOrSafari()) {
-      await signInWithRedirect(auth, provider);
-      return false;
-    }
+    // Popup works on modern mobile browsers and avoids the broken
+    // signInWithRedirect storage-partitioning issue (Chrome 115+/Safari ITP).
     const result = await signInWithPopup(auth, provider);
     stanariCurrentUser = result && result.user ? result.user : auth.currentUser;
     stanariCurrentEmail = cleanEmail(stanariCurrentUser && stanariCurrentUser.email);
@@ -3242,7 +3240,7 @@ window.stanariGoogleLogin = async function(){
     return false;
   } catch(e) {
     console.warn("Google login failed:", e);
-    if (e && (e.code === "auth/popup-blocked" || e.code === "auth/popup-closed-by-user")) {
+    if (e && (e.code === "auth/popup-blocked" || e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) {
       try { await signInWithRedirect(auth, provider); } catch(e2) { console.warn("Redirect fallback failed:", e2); }
     } else {
       alert("Не вдалося відкрити Google Login. Спробуйте ще раз.");

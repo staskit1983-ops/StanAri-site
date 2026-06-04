@@ -569,14 +569,19 @@ async function signInAndCheckAccess() {
   provider.setCustomParameters({ prompt: 'select_account' });
 
   try {
-    if (shouldUseRedirectLogin()) throw new Error('Use redirect login on mobile/Safari');
+    // Popup works on modern mobile browsers and avoids the broken
+    // signInWithRedirect storage-partitioning issue (Chrome 115+/Safari ITP).
     const result = await authMod.signInWithPopup(auth, provider);
     authUser = result && result.user ? result.user : auth.currentUser;
   } catch (popupErr) {
-    console.warn('Popup login failed or mobile redirect selected:', popupErr);
-    // IMPORTANT v8: login only. Do not auto-open Lemon after redirect; Safari blocks chained actions.
-    localStorage.setItem('stanari_login_from_lock', '1');
-    await authMod.signInWithRedirect(auth, provider);
+    console.warn('Popup login failed, falling back to redirect:', popupErr);
+    var code = popupErr && popupErr.code ? popupErr.code : '';
+    if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      localStorage.setItem('stanari_login_from_lock', '1');
+      await authMod.signInWithRedirect(auth, provider);
+      return null;
+    }
+    alert('Не вдалося відкрити Google Login. Спробуйте ще раз.');
     return null;
   }
 

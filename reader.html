@@ -373,7 +373,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 </div>
 
 <script>
-console.log("[STAN ARI] reader v9 language selector fix loaded");
+console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
 // ── Config
 const LANG_CONFIG = {
   uk: { total: 133, free: 42,  folder: 'pages/ua', label: 'Українська' },
@@ -440,15 +440,10 @@ function buildLemonCheckoutUrl(email) {
   return url.toString();
 }
 
-function stanariKnownEmail() {
-  const fromAuth = authUser && authUser.email ? authUser.email : '';
-  const fromAccess = localStorage.getItem('stanari_access_email') || '';
-  const fromLast = localStorage.getItem('stanari_last_auth_email') || '';
-  return String(fromAuth || fromAccess || fromLast || '').trim().toLowerCase();
-}
-
-function stanariLoginWasCompleted() {
-  return localStorage.getItem('stanari_login_completed') === '1' || !!localStorage.getItem('stanari_last_auth_email');
+function stanariCurrentAuthEmail() {
+  // Firebase Auth is the only source of truth for the active account.
+  // localStorage may contain an old email from another device/session, so it must never unlock or buy.
+  return String(authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
 }
 
 async function getFirebaseApi() {
@@ -473,7 +468,7 @@ async function getFirebaseApi() {
   return firebaseApi;
 }
 
-async function waitForAuthUser(timeoutMs = 10000) {
+async function waitForAuthUser(timeoutMs = 2500) {
   const { authMod, auth } = await getFirebaseApi();
   if (auth.currentUser) return auth.currentUser;
   return await new Promise(resolve => {
@@ -496,20 +491,12 @@ async function checkFirestoreBookAccess() {
     await handleRedirectLoginResult();
     authUser = await waitForAuthUser();
 
-    // Verified local fallback from previous successful Firestore check on this device.
-    const accessToken = localStorage.getItem('stanari_book_access');
-    const savedAccessEmail = (localStorage.getItem('stanari_access_email') || '').trim().toLowerCase();
-    const currentOrKnownEmail = stanariKnownEmail();
-    if ((accessToken === 'granted_by_lemon' || accessToken === 'granted_by_firestore') && savedAccessEmail && savedAccessEmail === currentOrKnownEmail) {
-      hasAccess = true;
-      accessChecked = true;
-      return true;
-    }
-
+    // Access must be based on the currently authenticated Firebase user, not on a stale localStorage email.
     const email = (authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
     if (!email) {
+      hasAccess = false;
       accessChecked = true;
-      return hasAccess;
+      return false;
     }
 
     console.log('[STAN ARI ACCESS] checking Firestore document:', `book_access/${email}`);
@@ -537,6 +524,9 @@ async function checkFirestoreBookAccess() {
         return true;
       }
     }
+    hasAccess = false;
+    localStorage.removeItem('stanari_book_access');
+    localStorage.removeItem('stanari_access_email');
     console.log('[STAN ARI ACCESS] no access document found for:', email);
   } catch (err) {
     console.warn('Book access check failed:', err);
@@ -596,6 +586,39 @@ async function signInAndCheckAccess() {
   return authUser || null;
 }
 
+// ── Email magic-link sign in for the reader lock screen
+window.readerEmailSignIn = async function(){
+  const input = document.getElementById('lockEmailInput');
+  const email = input ? input.value.trim().toLowerCase() : '';
+  if (!email || email.indexOf('@') < 1) { if (input) input.focus(); alert('Введіть коректний email.'); return false; }
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    await authMod.sendSignInLinkToEmail(auth, email, { url: (location.origin + location.pathname), handleCodeInApp: true });
+    localStorage.setItem('stanari_email_for_signin', email);
+    alert('Лист із посиланням для входу надіслано на ' + email + '. Перевірте пошту (і теку «Спам»).');
+  } catch(e) {
+    console.warn('Reader email link send failed:', e);
+    alert('Не вдалося надіслати лист. Спробуйте ще раз або скористайтесь Google.');
+  }
+  return false;
+};
+async function completeReaderEmailLinkSignIn(){
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    if (!authMod.isSignInWithEmailLink(auth, location.href)) return;
+    let email = localStorage.getItem('stanari_email_for_signin') || '';
+    if (!email) { email = (window.prompt('Підтвердіть ваш email для входу:') || '').trim().toLowerCase(); }
+    if (!email) return;
+    const result = await authMod.signInWithEmailLink(auth, email, location.href);
+    localStorage.removeItem('stanari_email_for_signin');
+    authUser = result && result.user ? result.user : auth.currentUser;
+    try { history.replaceState(null, '', location.origin + location.pathname); } catch(e) {}
+    await checkFirestoreBookAccess();
+    initReader();
+  } catch(e) { console.warn('Reader email link sign-in failed:', e); }
+}
+completeReaderEmailLinkSignIn();
+
 
 
 
@@ -611,6 +634,30 @@ handleRedirectLoginResult().then(async (user) => {
     if (lang) initReader();
   }
 });
+
+// One long-lived Firebase Auth observer for the reader UI.
+getFirebaseApi().then(({ authMod, auth }) => {
+  authMod.onAuthStateChanged(auth, async (user) => {
+    authUser = user || null;
+    if (user && user.email) {
+      const email = user.email.trim().toLowerCase();
+      localStorage.setItem('stanari_last_auth_email', email);
+      localStorage.setItem('stanari_known_email', email);
+      localStorage.setItem('stanari_login_completed', '1');
+      await checkFirestoreBookAccess();
+    } else {
+      hasAccess = false;
+      localStorage.removeItem('stanari_last_auth_email');
+      localStorage.removeItem('stanari_known_email');
+      localStorage.removeItem('stanari_login_completed');
+      localStorage.removeItem('stanari_book_access');
+      localStorage.removeItem('stanari_access_email');
+    }
+    if (lang && document.getElementById('readerScreen')?.classList.contains('visible')) {
+      try { cur = Math.min(cur, pages.length ? pages.length - 1 : 0); initReader(); } catch(e) {}
+    }
+  });
+}).catch(e => console.warn('Reader auth observer setup failed:', e));
 
 // iOS Safari can restore Firebase auth a little later than the first page render.
 // Keep listening after load: if access appears, rebuild the reader and remove the lock immediately.
@@ -628,7 +675,7 @@ async function stanariRebuildReaderIfUnlocked() {
 
 function stanariPaymentReturnDetected() {
   const q = new URLSearchParams(location.search);
-  return q.get('purchase') === 'success' || q.get('payment') === 'success' || sessionStorage.getItem('stanari_payment_pending') === '1';
+  return q.get('purchase') === 'success' || q.get('payment') === 'success' || sessionStorage.getItem('stanari_payment_pending') === '1' || localStorage.getItem('stanari_payment_pending') === '1';
 }
 
 function stanariSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -640,7 +687,10 @@ async function waitForAccessAfterPayment() {
     await stanariSleep(i === 0 ? 1200 : 2000);
     await checkFirestoreBookAccess();
   }
-  if (hasAccess) sessionStorage.removeItem('stanari_payment_pending');
+  if (hasAccess) {
+    sessionStorage.removeItem('stanari_payment_pending');
+    localStorage.removeItem('stanari_payment_pending');
+  }
 }
 
 // ── Check language
@@ -823,9 +873,13 @@ document.addEventListener('mouseup', () => {
             <div class="lock-icon">🔒</div>
             <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
             <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
-            ${(authUser || stanariLoginWasCompleted() || stanariKnownEmail())
-              ? `<a class="lock-btn lemonsqueezy-button" href="${buildLemonCheckoutUrl(stanariKnownEmail() || (authUser && authUser.email) || '')}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</a>`
-              : `<button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google'}</button>`}
+            ${(authUser && authUser.email)
+              ? `<a class="lock-btn lemonsqueezy-button" href="${buildLemonCheckoutUrl(authUser.email)}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</a>`
+              : `<button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google'}</button>
+                 <div style="display:flex;gap:8px;margin-top:10px">
+                   <input id="lockEmailInput" type="email" placeholder="your@email.com" style="flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.25);border-radius:12px;padding:12px 14px;color:#fff8ed;font-size:14px;font-family:inherit;outline:none"/>
+                   <button class="lock-btn" style="width:auto;padding:12px 16px;margin:0" onclick="readerEmailSignIn()">✉</button>
+                 </div>`}
           </div>
         </div>`;
       // Only one lock page needed
@@ -1005,25 +1059,22 @@ function toggleAtmo() {
 // ── Buy access
 async function buyAccess() {
   try {
-    let email = stanariKnownEmail();
+    await handleRedirectLoginResult();
+    const { auth } = await getFirebaseApi();
+    authUser = auth.currentUser || authUser;
 
-    if (!email && !stanariLoginWasCompleted()) {
-      // First tap: login only. Safari-safe. After return, the button becomes a direct Lemon action.
+    if (!authUser || !authUser.email) {
       await signInAndCheckAccess();
       return;
     }
 
-    email = email || stanariKnownEmail();
-    if (!email) {
-      await signInAndCheckAccess();
-      return;
-    }
-
-    // If reader already proved access on this device, open the book. Otherwise go to Lemon immediately.
+    await checkFirestoreBookAccess();
     if (hasAccess) { cur = 0; initReader(); return; }
 
-    localStorage.setItem('stanari_payment_pending', '1');
-    window.location.href = buildLemonCheckoutUrl(email);
+    sessionStorage.setItem('stanari_payment_pending', '1');
+    const checkout = buildLemonCheckoutUrl(authUser.email);
+    // Fallback path: the visible lock button is an overlay link; this function is used for login and old buttons.
+    window.location.href = checkout;
   } catch(e) {
     console.warn('Login/buy access failed:', e);
   }
@@ -1115,65 +1166,105 @@ if (new URLSearchParams(location.search).get('debugAccess') === '1') {
 }
 </script>
 
-<script type="module">
-/* === STAN ARI READER AUTH CLEAN OVERRIDE v17 === */
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",authDomain:"stanari-platform.firebaseapp.com",projectId:"stanari-platform",storageBucket:"stanari-platform.firebasestorage.app",messagingSenderId:"1083904103961",appId:"1:1083904103961:web:cd1fec10d11096c8f3fc88"};
-const app=getApps().length?getApp():initializeApp(cfg);
-const auth=getAuth(app);
-const db=getFirestore(app);
-const provider=new GoogleAuthProvider();
-provider.setCustomParameters({prompt:"select_account"});
-const lemon='https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898';
-const ce=e=>(e||'').trim().toLowerCase();
-function lemonUrl(email){ const u=new URL(lemon); const e=ce(email); if(e){u.searchParams.set('checkout[email]',e);u.searchParams.set('checkout[custom][firebase_email]',e);} return u.toString(); }
-function known(){ return ce((auth.currentUser&&auth.currentUser.email)||localStorage.getItem('stanari_last_auth_email')||localStorage.getItem('stanari_known_email')||''); }
-async function access(email){ if(!email) return false; try{ const snap=await getDoc(doc(db,'book_access',email)); return snap.exists() && snap.data() && snap.data().access===true; }catch(e){console.warn('Reader access check failed',e); return false;} }
-window.buyAccess = async function(){
-  const email=known();
-  if(!email){
-    localStorage.setItem('stanari_reader_after_login','1');
-    await signInWithRedirect(auth,provider);
-    return;
-  }
-  if(await access(email)){
-    localStorage.setItem('stanari_book_access','granted_by_firestore');
-    try{ hasAccess=true; cur=0; initReader(); }catch(e){ location.reload(); }
-    return;
-  }
-  location.href=lemonUrl(email);
-};
-window.stanariReaderLogout = async function(){ try{await signOut(auth)}catch(e){} ['stanari_book_access','stanari_access_lang','stanari_last_auth_email','stanari_known_email','stanari_login_completed'].forEach(k=>localStorage.removeItem(k)); location.reload(); };
-try{ await getRedirectResult(auth); }catch(e){ console.warn('Reader redirect result ignored',e); }
-onAuthStateChanged(auth, async user=>{
-  if(user&&user.email){
-    const email=ce(user.email); localStorage.setItem('stanari_last_auth_email',email); localStorage.setItem('stanari_known_email',email); authUser=user;
-    if(await access(email)){
-      hasAccess=true; localStorage.setItem('stanari_book_access','granted_by_firestore');
-      if(document.getElementById('readerScreen')?.classList.contains('visible')){ try{cur=0; initReader();}catch(e){} }
-    } else if(document.getElementById('readerScreen')?.classList.contains('visible')) { try{initReader();}catch(e){} }
-  }
-});
-/* === /STAN ARI READER AUTH CLEAN OVERRIDE v17 === */
-</script>
-
 
 <script>
-/* === STAN ARI READER LEMON OVERLAY FIX v18 === */
-function stanariReaderRefreshLemonOverlayV18(){
+/* === STAN ARI READER LEMON OVERLAY FINAL v20 ===
+   Event-based refresh only: no endless interval that can fight mobile taps.
+*/
+let stanariReaderLemonSetupTimer = null;
+function stanariReaderRefreshLemonOverlay(){
   try {
     document.querySelectorAll('a.lock-btn[href*="lemonsqueezy.com/checkout/buy"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
       a.classList.add('lemonsqueezy-button');
       a.setAttribute('target','_self');
     });
-    if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function') window.LemonSqueezy.Setup();
+    clearTimeout(stanariReaderLemonSetupTimer);
+    stanariReaderLemonSetupTimer = setTimeout(() => {
+      try {
+        if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function') window.LemonSqueezy.Setup();
+      } catch(e) {}
+    }, 80);
   } catch(e) {}
 }
-document.addEventListener('DOMContentLoaded', stanariReaderRefreshLemonOverlayV18);
-setInterval(stanariReaderRefreshLemonOverlayV18, 1500);
-/* === /STAN ARI READER LEMON OVERLAY FIX v18 === */
+document.addEventListener('DOMContentLoaded', stanariReaderRefreshLemonOverlay);
+window.addEventListener('load', stanariReaderRefreshLemonOverlay);
+try {
+  new MutationObserver(stanariReaderRefreshLemonOverlay).observe(document.getElementById('viewer') || document.body, { childList:true, subtree:true });
+} catch(e) {}
+/* === /STAN ARI READER LEMON OVERLAY FINAL v20 === */
+</script>
+
+<script>
+/* === STAN ARI DEBUG OVERLAY (only with ?debug=1) === */
+(function(){
+  try {
+    var q = new URLSearchParams(location.search);
+    var OWNER_EMAILS = ["staskit1983@gmail.com", "stanari.art@gmail.com"];
+    function ownerEmail(){
+      var e = "";
+      try { e = (typeof authUser !== 'undefined' && authUser && authUser.email) ? authUser.email : ''; } catch(_){}
+      if (!e) { try { e = localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || ''; } catch(_){} }
+      return (e || '').trim().toLowerCase();
+    }
+    function isOwner(){ return OWNER_EMAILS.indexOf(ownerEmail()) !== -1; }
+    var forceDebug = (q.get('debug') === '1');
+    if (!forceDebug && !isOwner()) {
+      var waitTimer = setInterval(function(){
+        if (isOwner()) { clearInterval(waitTimer); startDebug(); }
+      }, 1500);
+      setTimeout(function(){ clearInterval(waitTimer); }, 30000);
+      return;
+    }
+    startDebug();
+    function startDebug(){
+
+    var box = document.createElement('div');
+    box.id = 'stanariDebugBox';
+    box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:999999;max-width:92vw;background:rgba(5,4,2,.92);border:1px solid #d8af63;border-radius:10px;padding:10px 12px;color:#ffe89b;font:12px/1.5 monospace;white-space:pre;box-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:auto';
+    document.body.appendChild(box);
+
+    function val(v){ return (v === undefined || v === null || v === '') ? '—' : v; }
+    function yn(b){ return b ? 'yes' : 'no'; }
+
+    function render(){
+      var email = '';
+      try { email = (typeof authUser !== 'undefined' && authUser && authUser.email) ? authUser.email : ''; } catch(e){}
+      var known = '';
+      try { known = (localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || ''); } catch(e){}
+      var acc = false, accChk = false;
+      try { acc = (typeof hasAccess !== 'undefined') ? hasAccess : false; } catch(e){}
+      try { accChk = (typeof accessChecked !== 'undefined') ? accessChecked : false; } catch(e){}
+      var payPending = false;
+      try { payPending = (sessionStorage.getItem('stanari_payment_pending') === '1' || localStorage.getItem('stanari_payment_pending') === '1'); } catch(e){}
+      var lemonReady = false;
+      try { lemonReady = !!(window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'); } catch(e){}
+      var swActive = false;
+      try { swActive = !!(navigator.serviceWorker && navigator.serviceWorker.controller); } catch(e){}
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      box.textContent =
+        'STAN ARI DEBUG\n' +
+        '──────────────\n' +
+        'Firebase user: ' + val(email) + '\n' +
+        'known email:   ' + val(known) + '\n' +
+        'access check ran: ' + yn(accChk) + '\n' +
+        'access: ' + yn(acc) + '\n' +
+        'Firestore path: book_access/' + val(email || known) + '\n' +
+        'payment pending: ' + yn(payPending) + '\n' +
+        'Lemon ready: ' + yn(lemonReady) + '\n' +
+        'service worker: ' + yn(swActive) + '\n' +
+        'iOS device: ' + yn(isIOS) + '\n' +
+        '(tap to close)';
+    }
+
+    box.addEventListener('click', function(){ box.remove(); clearInterval(timer); });
+    render();
+    var timer = setInterval(render, 1000);
+    }
+  } catch(e) { /* never break the reader because of debug */ }
+})();
+/* === /STAN ARI DEBUG OVERLAY === */
 </script>
 
 </body>

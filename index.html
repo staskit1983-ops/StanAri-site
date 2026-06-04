@@ -88,7 +88,7 @@
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
-<link href="manifest.json?v=20260531-2" rel="manifest"/>
+<link href="manifest.json?v=20260604-auth-v20" rel="manifest"/>
 <meta content="#d8af63" name="theme-color"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
@@ -970,7 +970,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   <div class="stanari-menu-email" id="stanariMenuEmail" data-t="menu_not_signed">Ви не увійшли</div>
   <div class="stanari-menu-actions">
     <button class="lbtn stanari-google-login-btn stanari-account-btn" id="stanariMenuGoogleBtn" type="button" onclick="stanariMenuGoogleAction();return false;" title="Увійти через Google">🔐 <span class="stanari-auth-label" data-t="auth_google_login">Увійти через Google</span></button>
-    <button class="lbtn stanari-facebook-login-btn" type="button" onclick="stanariFacebookLogin();return false;" title="Увійти через Facebook">📘 <span class="stanari-auth-label" data-t="auth_facebook_login">Увійти через Facebook</span></button>
+    <div class="stanari-menu-email-login" id="stanariMenuEmailLogin" style="display:flex;gap:6px;margin-top:6px">
+      <input id="emailInputMenu" type="email" placeholder="your@email.com" style="flex:1;min-width:0;background:rgba(255,255,255,.04);border:1px solid rgba(255,224,155,.2);border-radius:12px;padding:11px 12px;color:#fff8ed;font-size:13px;font-family:inherit;outline:none"/>
+      <button class="lbtn" type="button" onclick="signInWithEmail();return false;" title="Увійти через Email" style="white-space:nowrap;padding:11px 14px">✉</button>
+    </div>
     <button class="lbtn stanari-logout-btn" type="button" onclick="stanariSignOut();return false;" title="Вийти">⎋ <span class="stanari-auth-label" data-t="auth_logout">Вийти</span></button>
     <div class="stanari-auth-separator"></div>
     <button class="lbtn install-app-btn" data-t="install_app_btn" onclick="installApp();return false;">📲 APP</button>
@@ -1299,20 +1302,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </svg>
             Google
           </button>
-<!-- Apple -->
-<button onclick="signInWithApple()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.2);border-radius:14px;color:#fff8ed;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">
-<svg fill="white" height="18" viewbox="0 0 24 24" width="18"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.18 1.27-2.16 3.8.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"></path></svg>
-            Apple
-          </button>
-<!-- Facebook -->
-<button onclick="signInWithFacebook()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.2);border-radius:14px;color:#fff8ed;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">
-<svg fill="#1877F2" height="18" viewbox="0 0 24 24" width="18"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
-            Facebook
-          </button>
-<!-- Email -->
+<!-- Email magic link -->
 <div style="display:flex;gap:8px">
 <input id="emailInput" placeholder="your@email.com" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,224,155,.2);border-radius:14px;padding:13px 16px;color:#fff8ed;font-size:14px;font-family:inherit;outline:none" type="email"/>
-<button id="emailSendBtn" onclick="signInWithEmail()" style="padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.2);border-radius:14px;color:#fff8ed;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">
+<button id="emailSendBtn" onclick="signInWithEmail()" style="padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.2);border-radius:14px;color:#fff8ed;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap" type="button">
               ✉ Email
             </button>
 </div>
@@ -2724,7 +2717,7 @@ function updateInstallBanners(lang){
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/sw.js?v=20260531-2').then(function(reg){
+    navigator.serviceWorker.register('/sw.js?v=20260604-auth-v20').then(function(reg){
       reg.update();
     }).catch(function(err){
       console.warn('Service worker registration failed:', err);
@@ -3106,18 +3099,28 @@ if('serviceWorker' in navigator){
 
 
 <script type="module">
-/* === STAN ARI AUTH CLEAN OVERRIDE v17 ===
-   One visible account flow:
-   - One menu login button opens Google account chooser (prompt: select_account)
-   - No separate "change account" button
-   - Buy button never starts login; it is direct Lemon only after email is known
-   - Logout clears local auth helpers
+/* === STAN ARI AUTH + LEMON FINAL v20 ===
+   One Firebase app, one auth instance, one auth observer.
+   Login and purchase are separated: Google login never auto-opens Lemon.
 */
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signInWithPopup,
+  getRedirectResult,
+  onAuthStateChanged,
+  signOut,
+  setPersistence,
+  browserLocalPersistence,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const STANARI_FIREBASE_CONFIG_V17 = {
+const STANARI_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
   authDomain: "stanari-platform.firebaseapp.com",
   projectId: "stanari-platform",
@@ -3125,16 +3128,30 @@ const STANARI_FIREBASE_CONFIG_V17 = {
   messagingSenderId: "1083904103961",
   appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
 };
-const STANARI_LEMON_URL_V17 = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
-const app = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG_V17);
+const STANARI_LEMON_URL = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
+
+const app = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
+try { await setPersistence(auth, browserLocalPersistence); } catch(e) { console.warn("Auth persistence setup failed:", e); }
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
+let stanariCurrentUser = auth.currentUser || null;
+let stanariCurrentEmail = "";
+let stanariHasBookAccess = false;
+let stanariAuthReady = false;
+
 function cleanEmail(email){ return (email || "").trim().toLowerCase(); }
+function isMobileOrSafari(){
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(ua);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  return isIOS || isAndroid || isSafari;
+}
 function checkoutUrl(email){
-  const url = new URL(STANARI_LEMON_URL_V17);
+  const url = new URL(STANARI_LEMON_URL);
   const e = cleanEmail(email);
   if (e) {
     url.searchParams.set("checkout[email]", e);
@@ -3142,163 +3159,56 @@ function checkoutUrl(email){
   }
   return url.toString();
 }
-function storedEmail(){ return cleanEmail(localStorage.getItem("stanari_last_auth_email") || localStorage.getItem("stanari_known_email") || ""); }
-function currentEmail(){ return cleanEmail((auth.currentUser && auth.currentUser.email) || storedEmail()); }
-
-function setText(el, text){ if(el) el.textContent = text; }
-function updateMenuUser(user){
-  const email = cleanEmail(user && user.email ? user.email : storedEmail());
+async function verifyBookAccess(user){
+  const email = cleanEmail(user && user.email);
+  if (!email) return false;
+  try {
+    const snap = await getDoc(doc(db, "book_access", email));
+    const ok = snap.exists() && snap.data() && snap.data().access === true;
+    if (ok) {
+      localStorage.setItem("stanari_book_access", "granted_by_firestore");
+      localStorage.setItem("stanari_access_email", email);
+      localStorage.setItem("stanari_access_lang", "all");
+    } else {
+      localStorage.removeItem("stanari_book_access");
+      localStorage.removeItem("stanari_access_email");
+    }
+    return ok;
+  } catch(e) {
+    console.warn("Book access check unavailable:", e);
+    return false;
+  }
+}
+function updateMenu(){
   const menuEmail = document.getElementById("stanariMenuEmail");
   const googleBtn = document.getElementById("stanariMenuGoogleBtn");
   const logoutBtns = document.querySelectorAll(".stanari-logout-btn");
-  const switchBtn = document.getElementById("stanariMenuSwitchBtn");
-  if (switchBtn) switchBtn.style.display = "none";
-
   if (menuEmail) {
     menuEmail.removeAttribute("data-t");
-    menuEmail.textContent = email ? email : "Ви не увійшли";
+    menuEmail.textContent = stanariCurrentEmail || (stanariAuthReady ? "Ви не увійшли" : "Перевіряємо вхід…");
   }
   if (googleBtn) {
     googleBtn.style.display = "inline-flex";
     googleBtn.disabled = false;
     googleBtn.onclick = function(){ window.stanariGoogleLogin(); return false; };
     const label = googleBtn.querySelector(".stanari-auth-label");
-    if (label) label.textContent = "Увійти через Google";
-    googleBtn.setAttribute("title", "Увійти через Google");
+    if (label) label.textContent = stanariCurrentEmail ? "Змінити акаунт Google" : (stanariAuthReady ? "Увійти через Google" : "Перевіряємо…");
+    googleBtn.setAttribute("title", stanariCurrentEmail ? "Змінити акаунт Google" : "Увійти через Google");
   }
   logoutBtns.forEach(btn => {
-    btn.style.display = email ? "inline-flex" : "none";
-    btn.classList.toggle("show", !!email);
+    btn.style.display = stanariCurrentEmail ? "inline-flex" : "none";
+    btn.classList.toggle("show", !!stanariCurrentEmail);
     btn.onclick = function(){ window.stanariSignOut(); return false; };
   });
-
-  // Make buy links direct only when email exists; otherwise prevent and ask to login.
-  document.querySelectorAll('[data-t="buy_main_btn"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
-    if (!a || a.__stanariV17Bound) return;
-    a.__stanariV17Bound = true;
-    a.addEventListener("click", function(ev){
-      const e = currentEmail();
-      if (!e) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        alert("Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз.");
-        return false;
-      }
-      a.setAttribute("href", checkoutUrl(e));
-      a.setAttribute("target", "_self");
-      return true;
-    }, true);
-  });
+  prepareBuyLinks();
 }
-
-async function verifyAccess(user){
-  const email = cleanEmail(user && user.email);
-  if (!email) return false;
-  try {
-    const snap = await getDoc(doc(db, "book_access", email));
-    if (snap.exists() && snap.data() && snap.data().access === true) {
-      localStorage.setItem("stanari_book_access", "granted_by_firestore");
-      localStorage.setItem("stanari_access_lang", "all");
-      return true;
-    }
-  } catch(e) { console.warn("Book access check unavailable:", e); }
-  return false;
-}
-
-window.stanariGoogleLogin = async function(){
-  try {
-    localStorage.setItem("stanari_auth_return", location.href);
-    // If a user is already signed in, sign out first so Google shows account chooser.
-    // This replaces the old separate "Change account" button.
-    if (auth.currentUser) await signOut(auth);
-    provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithRedirect(auth, provider);
-  } catch(e) {
-    console.warn("Google redirect login failed:", e);
-    alert("Не вдалося відкрити Google Login. Спробуйте ще раз у Safari/Chrome без приватного режиму.");
-  }
-};
-window.stanariMenuGoogleAction = window.stanariGoogleLogin;
-window.stanariChangeGoogleAccount = window.stanariGoogleLogin;
-window.signInWithGoogle = window.stanariGoogleLogin;
-window.stanariFacebookLogin = function(){ alert("Facebook Login поки не налаштований. Використайте Google."); };
-window.stanariSignOut = async function(){
-  try { await signOut(auth); } catch(e) {}
-  ["stanari_book_access","stanari_access_lang","stanari_last_auth_email","stanari_known_email","stanari_login_completed","stanari_auth_return"].forEach(k => localStorage.removeItem(k));
-  updateMenuUser(null);
-};
-window.stanariBuyBook = function(){
-  const e = currentEmail();
-  if (!e) { alert("Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз."); return; }
-  location.href = checkoutUrl(e);
-};
-
-try { await getRedirectResult(auth); } catch(e) { console.warn("Redirect result ignored:", e); }
-onAuthStateChanged(auth, async (user) => {
-  if (user && user.email) {
-    const e = cleanEmail(user.email);
-    localStorage.setItem("stanari_last_auth_email", e);
-    localStorage.setItem("stanari_known_email", e);
-    localStorage.setItem("stanari_login_completed", "1");
-    await verifyAccess(user);
-  }
-  updateMenuUser(user);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateMenuUser(auth.currentUser || null);
-  const switchBtn = document.getElementById("stanariMenuSwitchBtn");
-  if (switchBtn) switchBtn.remove();
-});
-/* === /STAN ARI AUTH CLEAN OVERRIDE v17 === */
-</script>
-
-
-<script type="module">
-/* === STAN ARI LEMON OVERLAY CHECKOUT FIX v18 ===
-   Final rule:
-   - Login is separate.
-   - Buy never starts Google Login.
-   - After login, all buy buttons are real Lemon Overlay links.
-   - Lifetime access still comes from Firestore book_access/{email}.access === true via webhook.
-*/
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const STANARI_FIREBASE_CONFIG_V18 = {
-  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
-  authDomain: "stanari-platform.firebaseapp.com",
-  projectId: "stanari-platform",
-  storageBucket: "stanari-platform.firebasestorage.app",
-  messagingSenderId: "1083904103961",
-  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
-};
-const STANARI_LEMON_BASE_V18 = "https://stanari.lemonsqueezy.com/checkout/buy/9756aa04-c8af-4df2-b9b9-7a95cc00d898";
-const app18 = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG_V18);
-const auth18 = getAuth(app18);
-
-function stanariCleanEmail18(v){ return (v || "").trim().toLowerCase(); }
-function stanariEmail18(){
-  return stanariCleanEmail18((auth18.currentUser && auth18.currentUser.email) || localStorage.getItem("stanari_last_auth_email") || localStorage.getItem("stanari_known_email") || "");
-}
-function stanariCheckoutUrl18(email){
-  const url = new URL(STANARI_LEMON_BASE_V18);
-  const e = stanariCleanEmail18(email);
-  if (e) {
-    url.searchParams.set("checkout[email]", e);
-    url.searchParams.set("checkout[custom][firebase_email]", e);
-  }
-  return url.toString();
-}
-function stanariPrepareLemonButtons18(){
-  const email = stanariEmail18();
+function prepareBuyLinks(){
   document.querySelectorAll('[data-t="buy_main_btn"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
     if (!a) return;
-    if (email) {
-      a.setAttribute("href", stanariCheckoutUrl18(email));
+    if (stanariCurrentEmail) {
+      a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
       a.classList.add("lemonsqueezy-button");
       a.setAttribute("target", "_self");
-      a.removeAttribute("onclick");
       a.dataset.stanariReadyToBuy = "1";
     } else {
       a.setAttribute("href", "#login-first");
@@ -3311,54 +3221,411 @@ function stanariPrepareLemonButtons18(){
   } catch(e) {}
 }
 
-window.stanariPrepareLemonButtons18 = stanariPrepareLemonButtons18;
-window.stanariBuyBook = function(){
-  const email = stanariEmail18();
-  if (!email) {
-    alert("Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз.");
+window.stanariGoogleLogin = async function(){
+  try {
+    localStorage.setItem("stanari_auth_return", location.href);
+    provider.setCustomParameters({ prompt: "select_account" });
+    if (isMobileOrSafari()) {
+      await signInWithRedirect(auth, provider);
+      return false;
+    }
+    const result = await signInWithPopup(auth, provider);
+    stanariCurrentUser = result && result.user ? result.user : auth.currentUser;
+    stanariCurrentEmail = cleanEmail(stanariCurrentUser && stanariCurrentUser.email);
+    if (stanariCurrentEmail) {
+      localStorage.setItem("stanari_last_auth_email", stanariCurrentEmail);
+      localStorage.setItem("stanari_known_email", stanariCurrentEmail);
+      localStorage.setItem("stanari_login_completed", "1");
+    }
+    stanariHasBookAccess = await verifyBookAccess(stanariCurrentUser);
+    updateMenu();
+    return false;
+  } catch(e) {
+    console.warn("Google login failed:", e);
+    if (e && (e.code === "auth/popup-blocked" || e.code === "auth/popup-closed-by-user")) {
+      try { await signInWithRedirect(auth, provider); } catch(e2) { console.warn("Redirect fallback failed:", e2); }
+    } else {
+      alert("Не вдалося відкрити Google Login. Спробуйте ще раз.");
+    }
     return false;
   }
-  const buy = document.querySelector('[data-t="buy_main_btn"]');
-  if (buy) {
-    buy.setAttribute("href", stanariCheckoutUrl18(email));
-    buy.classList.add("lemonsqueezy-button");
-    buy.removeAttribute("onclick");
-    buy.click();
-    return false;
-  }
-  location.href = stanariCheckoutUrl18(email);
+};
+window.stanariMenuGoogleAction = window.stanariGoogleLogin;
+window.stanariChangeGoogleAccount = window.stanariGoogleLogin;
+window.signInWithGoogle = window.stanariGoogleLogin;
+window.cleanBookGoogleLogin = window.stanariGoogleLogin;
+window.stanariFacebookLogin = function(){ alert("Facebook Login поки не налаштований. Використайте Google."); };
+window.stanariSignOut = async function(){
+  try { await signOut(auth); } catch(e) {}
+  ["stanari_book_access","stanari_access_email","stanari_access_lang","stanari_last_auth_email","stanari_known_email","stanari_login_completed","stanari_auth_return"].forEach(k => localStorage.removeItem(k));
+  stanariCurrentUser = null;
+  stanariCurrentEmail = "";
+  stanariHasBookAccess = false;
+  updateMenu();
   return false;
 };
+window.stanariBuyBook = function(){
+  if (!stanariCurrentEmail) {
+    alert(stanariAuthReady ? "Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз." : "Зачекайте секунду — сайт ще перевіряє Google-вхід.");
+    return false;
+  }
+  location.href = checkoutUrl(stanariCurrentEmail);
+  return false;
+};
+window.stanariPrepareLemonButtons18 = prepareBuyLinks;
 
 document.addEventListener("click", function(ev){
   const a = ev.target.closest('[data-t="buy_main_btn"], a[href*="lemonsqueezy.com/checkout/buy"]');
   if (!a) return;
-  const email = stanariEmail18();
-  if (!email) {
+  if (!stanariCurrentEmail) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
-    alert("Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз.");
+    alert(stanariAuthReady ? "Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз." : "Зачекайте секунду — сайт ще перевіряє Google-вхід.");
     return false;
   }
-  a.setAttribute("href", stanariCheckoutUrl18(email));
+  a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
   a.classList.add("lemonsqueezy-button");
-  a.removeAttribute("onclick");
+  a.setAttribute("target", "_self");
 }, true);
 
-onAuthStateChanged(auth18, (user) => {
-  if (user && user.email) {
-    const e = stanariCleanEmail18(user.email);
-    localStorage.setItem("stanari_last_auth_email", e);
-    localStorage.setItem("stanari_known_email", e);
+try { await getRedirectResult(auth); } catch(e) { console.warn("Redirect result ignored:", e); }
+await completeEmailLinkSignIn();
+onAuthStateChanged(auth, async (user) => {
+  stanariAuthReady = true;
+  stanariCurrentUser = user || null;
+  stanariCurrentEmail = cleanEmail(user && user.email);
+  if (stanariCurrentEmail) {
+    localStorage.setItem("stanari_last_auth_email", stanariCurrentEmail);
+    localStorage.setItem("stanari_known_email", stanariCurrentEmail);
     localStorage.setItem("stanari_login_completed", "1");
+    stanariHasBookAccess = await verifyBookAccess(user);
+  } else {
+    stanariHasBookAccess = false;
+    localStorage.removeItem("stanari_last_auth_email");
+    localStorage.removeItem("stanari_known_email");
+    localStorage.removeItem("stanari_login_completed");
   }
-  stanariPrepareLemonButtons18();
+  updateMenu();
+  try { window.__stanariState = { email: stanariCurrentEmail, access: stanariHasBookAccess, ready: stanariAuthReady }; } catch(e) {}
 });
 
-document.addEventListener("DOMContentLoaded", stanariPrepareLemonButtons18);
-setTimeout(stanariPrepareLemonButtons18, 800);
-setTimeout(stanariPrepareLemonButtons18, 1800);
-/* === /STAN ARI LEMON OVERLAY CHECKOUT FIX v18 === */
+document.addEventListener("DOMContentLoaded", updateMenu);
+setTimeout(updateMenu, 800);
+setTimeout(updateMenu, 1800);
+
+/* === STAN ARI REVIEWS + RATINGS v1 (Firestore) ===
+   One Firebase, one auth (reuses `auth`, `db`, `stanariCurrentUser`).
+   Collection "reviews", doc id = email -> one review/rating per user (no duplicates).
+*/
+
+// Login methods referenced in the reviews HTML that previously had no implementation.
+window.signInWithApple = function(){ alert("Apple Login поки не налаштований. Скористайтесь Google."); return false; };
+window.signInWithFacebook = function(){ alert("Facebook Login поки не налаштований. Скористайтесь Google."); return false; };
+// Email magic-link sign in: user enters email -> gets a link -> clicks -> signed in. No password.
+const STANARI_EMAIL_LINK_SETTINGS = {
+  url: (location.origin + location.pathname),
+  handleCodeInApp: true
+};
+window.signInWithEmail = async function(){
+  const inMenu = document.getElementById("emailInputMenu");
+  const inForm = document.getElementById("emailInput");
+  // Prefer whichever field the user actually filled.
+  let email = "";
+  if (inMenu && inMenu.value.trim()) email = inMenu.value.trim().toLowerCase();
+  else if (inForm && inForm.value.trim()) email = inForm.value.trim().toLowerCase();
+  if (!email || email.indexOf("@") < 1) {
+    if (inMenu) inMenu.focus();
+    alert("Введіть коректний email.");
+    return false;
+  }
+  try {
+    await sendSignInLinkToEmail(auth, email, STANARI_EMAIL_LINK_SETTINGS);
+    localStorage.setItem("stanari_email_for_signin", email);
+    alert("Лист із посиланням для входу надіслано на " + email + ". Перевірте пошту (і теку «Спам»).");
+  } catch(e) {
+    console.warn("Email link send failed:", e);
+    alert("Не вдалося надіслати лист. Спробуйте ще раз або скористайтесь Google.");
+  }
+  return false;
+};
+// Complete email-link sign in if the page was opened from the emailed link.
+async function completeEmailLinkSignIn(){
+  try {
+    if (!isSignInWithEmailLink(auth, location.href)) return;
+    let email = localStorage.getItem("stanari_email_for_signin") || "";
+    if (!email) { email = (window.prompt("Підтвердіть ваш email для входу:") || "").trim().toLowerCase(); }
+    if (!email) return;
+    await signInWithEmailLink(auth, email, location.href);
+    localStorage.removeItem("stanari_email_for_signin");
+    // Clean the URL so the link params don't linger.
+    try { history.replaceState(null, "", location.origin + location.pathname); } catch(e) {}
+  } catch(e) { console.warn("Email link sign-in failed:", e); }
+}
+
+function escapeHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function reviewStars(n){
+  n = Math.max(0, Math.min(5, parseInt(n||0,10)));
+  return "★★★★★".slice(0,n) + "☆☆☆☆☆".slice(0,5-n);
+}
+function reviewCardHtml(r){
+  const name = escapeHtml(r.name || "Читач");
+  const text = escapeHtml(r.text || "");
+  const stars = r.rating ? `<div style="color:#d8af63;font-size:14px;margin-bottom:6px">${reviewStars(r.rating)}</div>` : "";
+  const photo = r.photo
+    ? `<img src="${escapeHtml(r.photo)}" alt="" referrerpolicy="no-referrer" style="width:32px;height:32px;border-radius:50%;object-fit:cover"/>`
+    : `<div style="width:32px;height:32px;border-radius:50%;background:rgba(216,175,99,.25);display:flex;align-items:center;justify-content:center;color:#d8af63;font-size:14px;font-weight:700">${name.charAt(0).toUpperCase()}</div>`;
+  return `<div class="review-card">
+    ${stars}
+    <div class="review-card-text">${text}</div>
+    <div class="review-card-footer" style="display:flex;align-items:center;gap:10px;margin-top:12px">${photo}<strong style="color:#fff8ed;font-size:13px">${name}</strong></div>
+  </div>`;
+}
+
+let stanariMyRating = 0;
+let stanariReviewsCache = [];
+
+async function fetchAllReviews(){
+  try {
+    const snap = await getDocs(collection(db, "reviews"));
+    const arr = [];
+    snap.forEach(d => { const v = d.data(); if (v) arr.push(v); });
+    // newest first when timestamp available
+    arr.sort((a,b) => {
+      const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
+      const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
+      return tb - ta;
+    });
+    return arr;
+  } catch(e) { console.warn("Reviews load failed:", e); return []; }
+}
+
+function renderRatingSummary(reviews){
+  const rated = reviews.filter(r => r.rating && r.rating > 0);
+  const avgEl = document.getElementById("avgRating");
+  const starsEl = document.getElementById("starsDisplay");
+  const totalEl = document.getElementById("totalRatings");
+  const barsEl = document.getElementById("ratingBars");
+  if (!rated.length) {
+    if (avgEl) avgEl.textContent = "—";
+    if (starsEl) starsEl.textContent = "☆☆☆☆☆";
+    if (totalEl) totalEl.textContent = "0 оцінок";
+    if (barsEl) barsEl.innerHTML = "";
+    return;
+  }
+  const sum = rated.reduce((s,r) => s + r.rating, 0);
+  const avg = sum / rated.length;
+  if (avgEl) avgEl.textContent = avg.toFixed(1);
+  if (starsEl) starsEl.textContent = reviewStars(Math.round(avg));
+  if (totalEl) totalEl.textContent = rated.length + (rated.length === 1 ? " оцінка" : " оцінок");
+  if (barsEl) {
+    let html = "";
+    for (let s = 5; s >= 1; s--) {
+      const c = rated.filter(r => r.rating === s).length;
+      const pct = Math.round(c / rated.length * 100);
+      html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;color:var(--muted)">
+        <span style="width:10px">${s}</span>
+        <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#d8af63"></div></div>
+        <span style="width:28px;text-align:right">${c}</span></div>`;
+    }
+    barsEl.innerHTML = html;
+  }
+}
+
+window.loadReviews = async function(){
+  const reviews = await fetchAllReviews();
+  stanariReviewsCache = reviews;
+  renderRatingSummary(reviews);
+  const withText = reviews.filter(r => r.text && r.text.trim());
+  const preview = document.getElementById("reviewsPreview");
+  const showAll = document.getElementById("showAllBtn");
+  if (preview) {
+    preview.innerHTML = withText.slice(0,3).map(reviewCardHtml).join("");
+  }
+  if (showAll) showAll.style.display = withText.length > 3 ? "block" : "none";
+  // Reflect this user's existing rating in the picker.
+  if (stanariCurrentEmail) {
+    const mine = reviews.find(r => (r.email||"").toLowerCase() === stanariCurrentEmail);
+    if (mine && mine.rating) { stanariMyRating = mine.rating; paintStars(mine.rating); }
+  }
+};
+
+function paintStars(n){
+  document.querySelectorAll("#starPicker .star-btn").forEach(btn => {
+    const s = parseInt(btn.getAttribute("data-star"),10);
+    btn.style.opacity = s <= n ? "1" : ".4";
+  });
+}
+
+window.rateBook = async function(n){
+  const msg = document.getElementById("ratingMsg");
+  if (!stanariCurrentEmail) {
+    if (msg) msg.textContent = "Спочатку увійдіть через Google, щоб оцінити.";
+    return;
+  }
+  stanariMyRating = n;
+  paintStars(n);
+  try {
+    const u = stanariCurrentUser;
+    await setDoc(doc(db, "reviews", stanariCurrentEmail), {
+      email: stanariCurrentEmail,
+      name: (u && u.displayName) ? u.displayName : (stanariCurrentEmail.split("@")[0]),
+      photo: (u && u.photoURL) ? u.photoURL : "",
+      rating: n,
+      lang: (window.lang || "uk"),
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    if (msg) msg.textContent = "Дякуємо за оцінку!";
+    window.loadReviews();
+  } catch(e) {
+    console.warn("Rating save failed:", e);
+    if (msg) msg.textContent = "Не вдалося зберегти оцінку. Спробуйте ще раз.";
+  }
+};
+
+window.submitReview = async function(ev){
+  if (ev && ev.preventDefault) ev.preventDefault();
+  const ta = document.getElementById("reviewText");
+  const okMsg = document.getElementById("reviewSuccessMsg");
+  const btn = document.getElementById("reviewSubmitBtn");
+  const text = ta ? ta.value.trim() : "";
+  if (!stanariCurrentEmail) { alert("Спочатку увійдіть через Google."); return false; }
+  if (!text) { if (ta) ta.focus(); return false; }
+  if (btn) { btn.disabled = true; }
+  try {
+    const u = stanariCurrentUser;
+    await setDoc(doc(db, "reviews", stanariCurrentEmail), {
+      email: stanariCurrentEmail,
+      name: (u && u.displayName) ? u.displayName : (stanariCurrentEmail.split("@")[0]),
+      photo: (u && u.photoURL) ? u.photoURL : "",
+      text: text,
+      rating: stanariMyRating || 0,
+      lang: (window.lang || "uk"),
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    if (ta) ta.value = "";
+    if (okMsg) { okMsg.style.display = "block"; setTimeout(() => { okMsg.style.display = "none"; }, 4000); }
+    window.loadReviews();
+  } catch(e) {
+    console.warn("Review submit failed:", e);
+    alert("Не вдалося надіслати відгук. Спробуйте ще раз.");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+  return false;
+};
+
+window.openReviewsModal = function(){
+  const modal = document.getElementById("reviewsModal");
+  const list = document.getElementById("reviewsModalList");
+  if (list) {
+    const withText = stanariReviewsCache.filter(r => r.text && r.text.trim());
+    list.innerHTML = withText.length ? withText.map(reviewCardHtml).join("") : "<p style='color:var(--muted)'>Відгуків ще немає.</p>";
+  }
+  if (modal) modal.style.display = "block";
+};
+window.closeReviewsModal = function(){
+  const modal = document.getElementById("reviewsModal");
+  if (modal) modal.style.display = "none";
+};
+
+// Show the review form once the user is signed in; show login buttons otherwise.
+function updateReviewFormVisibility(){
+  const loginBox = document.getElementById("reviewGoogleBtn");
+  const form = document.getElementById("reviewFormInner");
+  if (loginBox) loginBox.style.display = stanariCurrentEmail ? "none" : "flex";
+  if (form) form.style.display = stanariCurrentEmail ? "flex" : "none";
+  const menuEmailLogin = document.getElementById("stanariMenuEmailLogin");
+  if (menuEmailLogin) menuEmailLogin.style.display = stanariCurrentEmail ? "none" : "flex";
+}
+// Hook into the existing menu refresh so login state changes also update the reviews UI.
+const stanariBaseUpdateMenu = updateMenu;
+updateMenu = function(){
+  try { stanariBaseUpdateMenu(); } catch(e) {}
+  try { updateReviewFormVisibility(); } catch(e) {}
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  try { updateReviewFormVisibility(); } catch(e) {}
+  if (window.loadReviews) window.loadReviews();
+});
+setTimeout(() => { if (window.loadReviews) window.loadReviews(); }, 1500);
+/* === /STAN ARI REVIEWS + RATINGS v1 === */
+/* === /STAN ARI AUTH + LEMON FINAL v20 === */
+</script>
+
+<script>
+/* === STAN ARI DEBUG OVERLAY (only with ?debug=1) === */
+(function(){
+  try {
+    var q = new URLSearchParams(location.search);
+    var OWNER_EMAILS = ["staskit1983@gmail.com", "stanari.art@gmail.com"];
+    function isOwner(){
+      try {
+        var e = "";
+        var st = window.__stanariState || {};
+        e = (st.email || localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || "").trim().toLowerCase();
+        return OWNER_EMAILS.indexOf(e) !== -1;
+      } catch(_) { return false; }
+    }
+    var forceDebug = (q.get('debug') === '1');
+    if (!forceDebug && !isOwner()) {
+      // Not the owner yet — keep checking, owner may log in after page load.
+      var waitTimer = setInterval(function(){
+        if (isOwner()) { clearInterval(waitTimer); startDebug(); }
+      }, 1500);
+      // Stop waiting after 30s if owner never logs in.
+      setTimeout(function(){ clearInterval(waitTimer); }, 30000);
+      return;
+    }
+    startDebug();
+    function startDebug(){
+
+    var box = document.createElement('div');
+    box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:999999;max-width:92vw;background:rgba(5,4,2,.92);border:1px solid #d8af63;border-radius:10px;padding:10px 12px;color:#ffe89b;font:12px/1.5 monospace;white-space:pre;box-shadow:0 4px 20px rgba(0,0,0,.5)';
+    document.body.appendChild(box);
+
+    function val(v){ return (v === undefined || v === null || v === '') ? '—' : v; }
+    function yn(b){ return b ? 'yes' : 'no'; }
+
+    function render(){
+      var st = window.__stanariState || {};
+      var known = '';
+      try { known = (localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || ''); } catch(e){}
+      var loginDone = false;
+      try { loginDone = (localStorage.getItem('stanari_login_completed') === '1'); } catch(e){}
+      var lemonReady = false;
+      try { lemonReady = !!(window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'); } catch(e){}
+      var swActive = false;
+      try { swActive = !!(navigator.serviceWorker && navigator.serviceWorker.controller); } catch(e){}
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      box.textContent =
+        'STAN ARI DEBUG (home)\n' +
+        '──────────────\n' +
+        'Firebase user: ' + val(st.email) + '\n' +
+        'known email:   ' + val(known) + '\n' +
+        'auth ready: ' + yn(st.ready) + '\n' +
+        'access: ' + yn(st.access) + '\n' +
+        'login completed: ' + yn(loginDone) + '\n' +
+        'Firestore path: book_access/' + val(st.email || known) + '\n' +
+        'Lemon ready: ' + yn(lemonReady) + '\n' +
+        'service worker: ' + yn(swActive) + '\n' +
+        'iOS device: ' + yn(isIOS) + '\n' +
+        '(tap to close)';
+    }
+
+    box.addEventListener('click', function(){ box.remove(); clearInterval(timer); });
+    render();
+    var timer = setInterval(render, 1000);
+    }
+  } catch(e) {}
+})();
+/* === /STAN ARI DEBUG OVERLAY === */
 </script>
 
 </body>

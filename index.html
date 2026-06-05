@@ -1168,6 +1168,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
               🛒 <span data-t="buy_label">Купити — 9.99 EUR</span>
 </a>
 </div>
+<div style="margin-top:10px;opacity:.5;pointer-events:none;cursor:not-allowed">
+<button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:14px;padding:13px 10px;font-weight:700;border-color:rgba(216,175,99,.4);color:var(--gold2)">🎧 <span data-t="audiobook_bundle_btn">eBook + Audio — 19.99 EUR</span></button>
+</div>
 <!-- Amazon Google Apple -->
 <p data-t="also_available" style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase">Також доступно на</p>
 <div style="display:flex;flex-direction:row;gap:12px;justify-content:center;align-items:center;margin-top:10px">
@@ -1203,13 +1206,24 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <p class="sub" style="font-size:15px;margin-top:6px">Your Consciousness Is the Key</p>
 <p class="lead" data-t="book2_text" style="margin-top:12px">Продовження великої лінії — глибше, ширше, сильніше.</p>
 <div class="chips" style="margin-top:12px">
+<div class="chip"><div class="chip-t" data-t="lang_label">Мови</div><div class="chip-v">UA • EN • PL</div></div>
 <div class="chip"><div class="chip-t" data-t="genre_label">Жанр</div><div class="chip-v" data-t="genre_value">Саморозвиток · Особиста трансформація · Філософія · Свідомість</div></div>
 </div>
-<div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
-<!-- Потухла кнопка купити -->
-<a class="btn" data-t="buy_t2" href="#" style="width:100%;justify-content:center;font-size:16px;padding:16px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);cursor:not-allowed;pointer-events:none">🛒 Купити — 14.99 EUR</a>
-<!-- Потухлі магазини -->
-<div style="display:flex;gap:8px;opacity:.35;pointer-events:none">
+<!-- Кнопки — Скоро -->
+<div style="margin-top:20px;display:flex;gap:10px;opacity:.5;pointer-events:none;cursor:not-allowed">
+<button class="btn btn-ghost" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em;border:2px solid #d8af63;color:#d8af63">
+  📖 <span data-t="read_free_label">Читати книгу</span>
+</button>
+<button class="btn btn-gold" style="flex:1;justify-content:center;font-size:15px;padding:16px 10px;font-weight:800;letter-spacing:.02em">
+  <span data-t="buy_t2">Купити — 14.99 EUR</span>
+</button>
+</div>
+<div style="margin-top:10px;opacity:.5;pointer-events:none;cursor:not-allowed">
+<button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:14px;padding:13px 10px;font-weight:700;border-color:rgba(216,175,99,.4);color:var(--gold2)">🎧 eBook + Audio — 24.99 EUR</button>
+</div>
+<!-- Amazon Google Apple -->
+<p data-t="also_available" style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase">Також доступно на</p>
+<div style="display:flex;flex-direction:row;gap:12px;justify-content:center;align-items:center;margin-top:10px;opacity:.35;pointer-events:none">
 <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
 <img alt="Amazon" height="22" src="https://cdn.simpleicons.org/amazon/ffffff" width="22"/>
 <span style="font-size:10px">Amazon</span>
@@ -1233,43 +1247,76 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </section>
 <!-- АУДІОКНИГА -->
 <section class="section-sm" id="audiobook" style="border-top:1px solid var(--border)">
-<div class="container" style="max-width:560px;margin:0 auto">
-<div class="kicker" style="justify-content:center;margin-bottom:20px"><span class="kicker-dot"></span><span data-t="audiobook_kicker">Аудіокнига</span></div>
-<div style="text-align:center;margin-bottom:24px">
-<img alt="The Life Operator Audiobook" src="images/img_4.png" style="max-width:300px;width:100%;border-radius:50%;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 50px rgba(216,175,99,.4);display:block;margin:0 auto"/>
+<div class="container">
+<div class="kicker" style="justify-content:center;margin-bottom:32px"><span class="kicker-dot"></span><span data-t="audiobook_kicker">Аудіокнига</span></div>
+<div class="two-col" style="gap:24px;align-items:start">
+
+<!-- Аудіокнига Том 1 (золота) -->
+<div class="card" style="opacity:.92">
+  <div class="photo-full">
+    <img alt="The Life Operator Audiobook Vol.1" class="cover" src="audio-cover-1.png"/>
+    <div style="position:absolute;top:12px;left:12px"><span class="tag tag-dim" data-t="book2_tag">Coming soon</span></div>
+  </div>
+  <div class="card-body">
+    <h3>The Life Operator</h3>
+    <p class="sub" style="font-size:15px;margin-top:6px" data-t="tom1_sub">Том 1 — Rewrite Your Inner Code</p>
+    <p class="lead" data-t="audiobook_lead" style="margin-top:12px">Слухай книгу де зручно — у дорозі, вдома, в будь-який момент.</p>
+    <div class="chips" style="margin-top:12px">
+      <div class="chip"><div class="chip-t" data-t="lang_label">Мови</div><div class="chip-v">UA • EN • PL</div></div>
+      <div class="chip"><div class="chip-t">MP3 / MP4</div><div class="chip-v">Audio</div></div>
+    </div>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;opacity:.5;pointer-events:none;cursor:not-allowed">
+      <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:15px;padding:14px 10px;font-weight:800"><span data-t="audiobook_btn">Аудіокнига — 14.99 EUR</span></button>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:14px;padding:13px 10px;font-weight:700;border-color:rgba(216,175,99,.4);color:var(--gold2)">🎧 <span data-t="audiobook_bundle_btn">eBook + Audio — 19.99 EUR</span></button>
+    </div>
+    <p data-t="also_available" style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase">Також доступно на</p>
+    <div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Amazon" height="22" src="https://cdn.simpleicons.org/amazon/ffffff" width="22"/><span style="font-size:10px">Amazon</span>
+      </div>
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Google Play" height="22" src="https://cdn.simpleicons.org/googleplay/ffffff" width="22"/><span style="font-size:10px">Google Play</span>
+      </div>
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Apple Books" height="22" src="https://cdn.simpleicons.org/apple/ffffff" width="22"/><span style="font-size:10px">Apple Books</span>
+      </div>
+    </div>
+  </div>
 </div>
-<p data-t="audiobook_tom_label" style="text-align:center;font-size:13px;color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Том 1</p>
-<h2 style="text-align:center;margin-bottom:8px">The Life Operator</h2>
-<div style="display:flex;justify-content:center;margin-bottom:8px">
-<div class="chip"><div class="chip-t" data-t="genre_label">Жанр</div><div class="chip-v" data-t="genre_value">Саморозвиток · Особиста трансформація · Філософія · Свідомість</div></div>
+
+<!-- Аудіокнига Том 2 (срібна) -->
+<div class="card" style="opacity:.88">
+  <div class="photo-full">
+    <img alt="The Life Operator Audiobook Vol.2" class="cover" src="audio-cover-2.png"/>
+    <div style="position:absolute;top:12px;left:12px"><span class="tag tag-dim" data-t="book2_tag">Coming soon</span></div>
+  </div>
+  <div class="card-body">
+    <h3 data-t="book2_title">Том 2 — у процесі народження</h3>
+    <p class="sub" style="font-size:15px;margin-top:6px">Your Consciousness Is the Key</p>
+    <p class="lead" data-t="audiobook_lead" style="margin-top:12px">Слухай книгу де зручно — у дорозі, вдома, в будь-який момент.</p>
+    <div class="chips" style="margin-top:12px">
+      <div class="chip"><div class="chip-t" data-t="lang_label">Мови</div><div class="chip-v">UA • EN • PL</div></div>
+      <div class="chip"><div class="chip-t">MP3 / MP4</div><div class="chip-v">Audio</div></div>
+    </div>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;opacity:.5;pointer-events:none;cursor:not-allowed">
+      <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:15px;padding:14px 10px;font-weight:800">🎧 Аудіокнига — 17.99 EUR</button>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:14px;padding:13px 10px;font-weight:700;border-color:rgba(216,175,99,.4);color:var(--gold2)">🎧 eBook + Audio — 24.99 EUR</button>
+    </div>
+    <p data-t="also_available" style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase">Також доступно на</p>
+    <div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Amazon" height="22" src="https://cdn.simpleicons.org/amazon/ffffff" width="22"/><span style="font-size:10px">Amazon</span>
+      </div>
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Google Play" height="22" src="https://cdn.simpleicons.org/googleplay/ffffff" width="22"/><span style="font-size:10px">Google Play</span>
+      </div>
+      <div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:5px;padding:10px 4px;min-height:52px;justify-content:center;align-items:center">
+        <img alt="Apple Books" height="22" src="https://cdn.simpleicons.org/apple/ffffff" width="22"/><span style="font-size:10px">Apple Books</span>
+      </div>
+    </div>
+  </div>
 </div>
-<p class="lead" data-t="audiobook_lead" style="text-align:center;margin-bottom:28px;color:var(--muted)">Слухай книгу де зручно — у дорозі, вдома, в будь-який момент.</p>
-<div style="display:flex;flex-direction:column;gap:12px">
-<a class="btn btn-gold" data-t="audiobook_btn" href="#" style="width:100%;justify-content:center;font-size:17px;padding:18px 20px;font-weight:800;box-shadow:0 4px 24px rgba(216,175,99,.35);opacity:.35;pointer-events:none;cursor:default">🎧 Аудіокнига — 14.99 EUR</a>
-<a class="btn btn-ghost" data-t="audiobook_bundle_btn" href="#" style="width:100%;justify-content:center;font-size:16px;padding:16px 20px;border-color:rgba(216,175,99,.6);color:#d8af63;font-weight:700">eBook + Audio — 19.99 EUR</a>
-</div>
-<div style="margin-top:16px">
-<p data-t="also_available" style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase">Також доступно на</p>
-<div style="display:flex;gap:8px;justify-content:center">
-<a class="btn btn-ghost btn-sm" href="#" style="flex:1;max-width:120px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
-<svg height="16" viewbox="0 0 120 36" width="26" xmlns="http://www.w3.org/2000/svg">
-<text fill="#FF9900" font-family="Arial,sans-serif" font-size="28" font-weight="900" x="0" y="26">amazon</text>
-</svg>
-<svg height="10" viewbox="0 0 80 20" width="26" xmlns="http://www.w3.org/2000/svg">
-<path d="M4 10 Q25 20 45 14 Q60 8 74 14" fill="none" stroke="#FF9900" stroke-linecap="round" stroke-width="3.5"></path>
-<path d="M68 8 L76 14 L68 20" fill="none" stroke="#FF9900" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
-</svg>
-<span style="font-size:10px">Amazon</span>
-</a>
-<div class="btn btn-ghost btn-sm" style="flex:none;width:90px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
-<img alt="Google Play" height="26" src="https://cdn.simpleicons.org/googleplay/ffffff" width="26"/>
-<span style="font-size:10px">Google Play</span>
-</div>
-<div class="btn btn-ghost btn-sm" style="flex:none;width:90px;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
-<img alt="Apple Books" height="26" src="https://cdn.simpleicons.org/apple/ffffff" width="26"/>
-<span style="font-size:10px">Apple Books</span>
-</div>
-</div>
+
 </div>
 </div>
 </section>
@@ -3160,7 +3207,7 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const STANARI_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
@@ -3638,12 +3685,16 @@ window.toggleLike = async function(songId){
 };
 
 // Load like counts on page init
-async function loadLikeCounts(){
-  if (!window.db) return;
-  const songs = ['code-of-cold','chome-sonce','threaded-silence','ty-miy-vsesvit','the-mirror'];
-  for (const songId of songs) {
-    try {
-      const snap = await getDoc(doc(db, "music_likes", songId));
+// Real-time like counts — updates for all users instantly via Firestore onSnapshot
+const MUSIC_SONGS = ['code-of-cold','chome-sonce','threaded-silence','ty-miy-vsesvit','the-mirror'];
+const stanariLikeUnsubs = [];
+
+function startLikeListeners(){
+  // Unsubscribe previous listeners to avoid duplicates
+  stanariLikeUnsubs.forEach(fn => { try { fn(); } catch(e) {} });
+  stanariLikeUnsubs.length = 0;
+  MUSIC_SONGS.forEach(songId => {
+    const unsub = onSnapshot(doc(db, "music_likes", songId), snap => {
       const likers = (snap.exists() && snap.data().likedBy) ? snap.data().likedBy : [];
       const isLiked = stanariCurrentEmail && likers.includes(stanariCurrentEmail);
       document.querySelectorAll('[data-song="'+songId+'"]').forEach(btn => {
@@ -3651,8 +3702,14 @@ async function loadLikeCounts(){
         if (countEl) countEl.textContent = likers.length;
         btn.classList.toggle('liked', !!isLiked);
       });
-    } catch(e) {}
-  }
+    }, err => { console.warn('Like listener error:', err); });
+    stanariLikeUnsubs.push(unsub);
+  });
+}
+
+async function loadLikeCounts(){
+  // Kept for backward compatibility — now delegates to real-time listeners
+  startLikeListeners();
 }
 document.addEventListener("DOMContentLoaded", () => {
   try { updateReviewFormVisibility(); } catch(e) {}

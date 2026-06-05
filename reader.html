@@ -378,7 +378,7 @@ console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
 // ── Config
 const LANG_CONFIG = {
   uk: { total: 133, free: 42,  folder: 'pages/ua', label: 'Українська' },
-  en: { total: 210, free: 63,  folder: 'pages/en', label: 'English' },
+  en: { total: 209, free: 63,  folder: 'pages/en', label: 'English' },
   pl: { total: 181, free: 63,  folder: 'pages/pl', label: 'Polski' },
 };
 
@@ -893,11 +893,7 @@ document.addEventListener('mouseup', () => {
             <div class="lock-title">${lt.title}</div>
             ${(authUser && authUser.email)
               ? `<a class="lock-btn lemonsqueezy-button" href="${checkoutUrl}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lt.btn}</a>`
-              : `<button class="lock-btn" onclick="readerShowLoginModal()">${lt.btn}</button>
-                 <div style="display:flex;gap:8px;margin-top:10px">
-                   <input id="lockEmailInput" type="email" placeholder="your@email.com" style="flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.25);border-radius:12px;padding:12px 14px;color:#fff8ed;font-size:14px;font-family:inherit;outline:none"/>
-                   <button class="lock-btn" style="width:auto;padding:12px 16px;margin:0" onclick="readerEmailSignIn()">✉</button>
-                 </div>`}
+              : `<button class="lock-btn" onclick="readerShowLoginModal()">${lt.btn}</button>`}
           </div>
         </div>
         <div id="readerLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">

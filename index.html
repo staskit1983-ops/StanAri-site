@@ -605,10 +605,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 
 </style>
 <style>
-.like-btn.active{
-  border-color:rgba(255,255,255,.3)!important;
-  background:rgba(255,255,255,.15)!important;
-}
 .like-count{
   display:inline-flex;
   align-items:center;
@@ -666,8 +662,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 .stream-btn.youtube:hover{background:rgba(255,255,255,.15);color:#fff}
 .stream-btn.apple{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
 .stream-btn.apple:hover{background:rgba(255,255,255,.15);color:#fff}
-.stream-btn.like-btn{background:rgba(255,255,255,.08);color:#fff!important;border-color:rgba(255,255,255,.18);font-size:14px;padding:6px 12px}
-.stream-btn.like-btn:hover{background:rgba(255,255,255,.15)}
+.stream-btn.like-btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.25);font-size:14px;padding:6px 12px}
+.stream-btn.like-btn:hover{background:rgba(255,255,255,.1)}
+.stream-btn.like-btn.liked{background:#fff!important;color:#1a1410!important;border-color:#fff!important}
 .stream-btn svg{width:14px;height:14px;flex-shrink:0}
 .music-actions .btn{white-space:nowrap}
 .like-count{display:inline-flex;min-width:22px;justify-content:center;margin-left:6px}
@@ -3430,6 +3427,8 @@ onAuthStateChanged(auth, async (user) => {
     if (s) s.textContent = bm.sub;
     if (b) b.textContent = bm.btn;
   } catch(e) {}
+  // Reload like counts now that we know the user's email
+  try { loadLikeCounts(); } catch(e) {}
 });
 
 document.addEventListener("DOMContentLoaded", updateMenu);
@@ -3631,9 +3630,7 @@ window.toggleLike = async function(songId){
     document.querySelectorAll('[data-song="'+songId+'"]').forEach(btn => {
       const countEl = btn.querySelector('.like-count');
       if (countEl) countEl.textContent = newCount;
-      btn.style.color = newLiked ? 'var(--gold)' : '';
-      const label = btn.querySelector('[data-t="like_btn"]');
-      if (label) label.textContent = newLiked ? '❤ Уподобано' : '❤ Уподобати';
+      btn.classList.toggle('liked', !!newLiked);
     });
   } catch(e) {
     console.warn("Like failed:", e);
@@ -3652,11 +3649,7 @@ async function loadLikeCounts(){
       document.querySelectorAll('[data-song="'+songId+'"]').forEach(btn => {
         const countEl = btn.querySelector('.like-count');
         if (countEl) countEl.textContent = likers.length;
-        if (isLiked) {
-          btn.style.color = 'var(--gold)';
-          const label = btn.querySelector('[data-t="like_btn"]');
-          if (label) label.textContent = '❤ Уподобано';
-        }
+        btn.classList.toggle('liked', !!isLiked);
       });
     } catch(e) {}
   }

@@ -378,8 +378,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   -webkit-appearance:none}
 
 /* ── ATMOSPHERE BTN ───────────────────────── */
-#atm-wrap{position:fixed;right:20px;bottom:20px;z-index:60}
-@media(max-width:768px){#atm-wrap{display:none}}
+#atm-wrap{display:none}
 #atm-btn{height:44px;padding:0 18px;
   background:linear-gradient(180deg,rgba(22,18,12,.97),rgba(12,10,8,.99));
   border:1px solid rgba(255,224,155,.22);border-radius:99px;
@@ -970,7 +969,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   #music .music-card-player{max-width:100%!important}
 }
 </style><!-- STAN ARI FIX v15: mobile menu account/login buttons -->
-<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" async></script>
 </head>
 <body>
 <!-- LIGHTBOX -->
@@ -1047,6 +1046,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <button onclick="pickLang('es','langDropDesktop')">🇪🇸 ES</button>
   </div>
 </div>
+<button id="atm-btn-desktop" onclick="toggleAtm()" style="height:36px;padding:0 14px;background:linear-gradient(180deg,rgba(22,18,12,.97),rgba(12,10,8,.99));border:1px solid rgba(255,224,155,.22);border-radius:99px;color:var(--gold2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">🎵 Атмосфера</button>
 <button class="lbtn stanari-menu-open-btn" data-t="top_menu_btn" type="button" onclick="openMenu();return false;">☰ Меню</button>
 </div>
 <div class="hdr-mobile">
@@ -1815,10 +1815,12 @@ function stopAtm(){
 function updAtm(){
   var b=document.getElementById('atm-btn');
   var bh=document.getElementById('atm-btn-hdr');
+  var bd=document.getElementById('atm-btn-desktop');
   var d=T[lang]||T.uk;
   var label=atmOn?(d.atm_off||'&#128263; Вимкнути'):(d.atm_on||'&#127925; Атмосфера');
   if(b) b.innerHTML=label;
   if(bh) bh.innerHTML=label;
+  if(bd) bd.innerHTML=label;
 }
 
 
@@ -3264,6 +3266,23 @@ function prepareBuyLinks(){
   } catch(e) {}
 }
 
+// Wait for lemon.js to load and call Setup()
+function waitForLemonAndSetup(callback, maxWaitMs){
+  maxWaitMs = maxWaitMs || 8000;
+  var start = Date.now();
+  var interval = setInterval(function(){
+    if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === "function"){
+      clearInterval(interval);
+      try { window.LemonSqueezy.Setup(); } catch(e){}
+      if (callback) callback();
+    } else if (Date.now() - start > maxWaitMs) {
+      clearInterval(interval);
+    }
+  }, 100);
+}
+// Call Setup() as soon as lemon.js is ready
+waitForLemonAndSetup();
+
 window.stanariGoogleLogin = async function(){
   try {
     localStorage.setItem("stanari_auth_return", location.href);
@@ -3320,6 +3339,11 @@ window.stanariBuyBook = function(){
     modal.style.display = 'flex';
     return false;
   }
+  if (stanariHasBookAccess) {
+    var modal = document.getElementById('stanariAlreadyBoughtModal');
+    if (modal) modal.style.display = 'flex';
+    return false;
+  }
   location.href = checkoutUrl(stanariCurrentEmail);
   return false;
 };
@@ -3344,9 +3368,29 @@ document.addEventListener("click", function(ev){
     modal.style.display = 'flex';
     return false;
   }
+  // Already purchased — show "already bought" modal
+  if (stanariHasBookAccess) {
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    var modal = document.getElementById('stanariAlreadyBoughtModal');
+    if (modal) modal.style.display = 'flex';
+    return false;
+  }
   a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
   a.classList.add("lemonsqueezy-button");
   a.setAttribute("target", "_self");
+  // If Lemon.js not ready yet — wait then trigger click
+  if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== "function") {
+    var origText = a.innerHTML;
+    a.innerHTML = "⏳ Завантаження...";
+    a.style.pointerEvents = "none";
+    waitForLemonAndSetup(function(){
+      a.innerHTML = origText;
+      a.style.pointerEvents = "";
+      a.click();
+    }, 6000);
+    return false;
+  }
 }, true);
 
 try { await getRedirectResult(auth); } catch(e) { console.warn("Redirect result ignored:", e); }
@@ -3368,6 +3412,24 @@ onAuthStateChanged(auth, async (user) => {
   }
   updateMenu();
   try { window.__stanariState = { email: stanariCurrentEmail, access: stanariHasBookAccess, ready: stanariAuthReady }; } catch(e) {}
+  // Update already-bought modal text in current language
+  try {
+    var l = window.lang || 'uk';
+    var boughtMsg = {
+      uk: {title:'Книгу вже придбано ✅', sub:'У вас є повний доступ до читання. Відкрийте читалку, щоб продовжити.', btn:'📖 Читати книгу'},
+      en: {title:'Book already purchased ✅', sub:'You have full access to read. Open the reader to continue.', btn:'📖 Read the book'},
+      pl: {title:'Książka już kupiona ✅', sub:'Masz pełny dostęp do czytania. Otwórz czytnik, aby kontynuować.', btn:'📖 Czytaj książkę'},
+      de: {title:'Buch bereits gekauft ✅', sub:'Sie haben vollen Lesezugang. Öffnen Sie den Reader, um fortzufahren.', btn:'📖 Buch lesen'},
+      es: {title:'Libro ya comprado ✅', sub:'Tienes acceso completo de lectura. Abre el lector para continuar.', btn:'📖 Leer el libro'}
+    };
+    var bm = boughtMsg[l] || boughtMsg.en;
+    var t = document.getElementById('stanariAlreadyBoughtText');
+    var s = document.getElementById('stanariAlreadyBoughtSub');
+    var b = document.getElementById('stanariGoReadBtn');
+    if (t) t.textContent = bm.title;
+    if (s) s.textContent = bm.sub;
+    if (b) b.textContent = bm.btn;
+  } catch(e) {}
 });
 
 document.addEventListener("DOMContentLoaded", updateMenu);
@@ -3827,6 +3889,16 @@ document.addEventListener('click', function(e){
 /* === /STAN ARI DEBUG OVERLAY === */
 </script>
 
+<!-- Already bought modal -->
+<div id="stanariAlreadyBoughtModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#13110e;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.6)">
+    <div style="font-size:48px;margin-bottom:12px">✅</div>
+    <div id="stanariAlreadyBoughtText" style="color:#f8f2e8;font-size:16px;line-height:1.6;margin-bottom:8px;font-weight:700"></div>
+    <div id="stanariAlreadyBoughtSub" style="color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:24px"></div>
+    <a href="/reader.html" style="display:block;background:var(--gold);color:#1a1410;border:none;border-radius:12px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;text-decoration:none;box-sizing:border-box;margin-bottom:10px" id="stanariGoReadBtn">📖 Читати книгу</a>
+    <button onclick="document.getElementById('stanariAlreadyBoughtModal').style.display='none'" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--muted);border-radius:12px;padding:11px 28px;font-size:14px;cursor:pointer;font-family:inherit;width:100%">OK</button>
+  </div>
+</div>
 <!-- Login required modal -->
 <div id="stanariLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
   <div style="background:#13110e;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.6)">

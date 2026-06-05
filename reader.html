@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="google" content="notranslate"/>
 <title>The Life Operator — Читалка</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -377,7 +378,7 @@ console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
 // ── Config
 const LANG_CONFIG = {
   uk: { total: 133, free: 42,  folder: 'pages/ua', label: 'Українська' },
-  en: { total: 209, free: 63,  folder: 'pages/en', label: 'English' },
+  en: { total: 210, free: 63,  folder: 'pages/en', label: 'English' },
   pl: { total: 181, free: 63,  folder: 'pages/pl', label: 'Polski' },
 };
 
@@ -592,6 +593,10 @@ async function signInAndCheckAccess() {
 }
 
 // ── Email magic-link sign in for the reader lock screen
+window.readerShowLoginModal = function(){
+  const modal = document.getElementById('readerLoginModal');
+  if (modal) modal.style.display = 'flex';
+};
 window.readerEmailSignIn = async function(){
   const input = document.getElementById('lockEmailInput');
   const email = input ? input.value.trim().toLowerCase() : '';
@@ -872,22 +877,36 @@ document.addEventListener('mouseup', () => {
     const isLocked = !hasAccess && i > cfg.free;
 
     if (isLocked) {
+      const lockTexts = {
+        uk: { title: 'Ви прочитали безкоштовні 4 глави', btn: '🛒 Купити — 9.99 EUR', msg: 'Для покупки книги авторизуйтесь на сайті в меню у верхній панелі.' },
+        en: { title: 'You have read the 4 free chapters', btn: '🛒 Buy — 9.99 EUR', msg: 'To purchase the book, please sign in via the menu in the top panel.' },
+        pl: { title: 'Przeczytałeś 4 bezpłatne rozdziały', btn: '🛒 Kup — 9.99 EUR', msg: 'Aby kupić książkę, zaloguj się przez menu w górnym panelu.' },
+        de: { title: 'Sie haben die 4 kostenlosen Kapitel gelesen', btn: '🛒 Kaufen — 9.99 EUR', msg: 'Um das Buch zu kaufen, melden Sie sich über das Menü oben an.' },
+        es: { title: 'Has leído los 4 capítulos gratuitos', btn: '🛒 Comprar — 9.99 EUR', msg: 'Para comprar el libro, inicia sesión en el menú del panel superior.' }
+      };
+      const lt = lockTexts[lang] || lockTexts.en;
+      const checkoutUrl = (authUser && authUser.email) ? buildLemonCheckoutUrl(authUser.email) : '#';
       wrap.innerHTML = `
         <div class="lock-wrap">
           <div class="lock-box">
             <div class="lock-icon">🔒</div>
-            <div class="lock-title">${lang === 'uk' ? 'Глава 5 та далі' : lang === 'en' ? 'Chapter 5 onwards' : 'Rozdział 5 i dalej'}</div>
-            <div class="lock-text">${lang === 'uk' ? 'Ви прочитали 4 безкоштовні глави. Купіть повний доступ щоб читати далі.' : lang === 'en' ? 'You have read 4 free chapters. Buy full access to continue reading.' : 'Przeczytałeś 4 darmowe rozdziały. Kup pełny dostęp, aby czytać dalej.'}</div>
+            <div class="lock-title">${lt.title}</div>
             ${(authUser && authUser.email)
-              ? `<a class="lock-btn lemonsqueezy-button" href="${buildLemonCheckoutUrl(authUser.email)}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lang === 'uk' ? '🛒 Купити — 9.99 EUR' : lang === 'en' ? '🛒 Buy — 9.99 EUR' : '🛒 Kup — 9.99 EUR'}</a>`
-              : `<button class="lock-btn" onclick="buyAccess()">${lang === 'uk' ? 'Увійти через Google' : lang === 'en' ? 'Sign in with Google' : 'Zaloguj przez Google'}</button>
+              ? `<a class="lock-btn lemonsqueezy-button" href="${checkoutUrl}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lt.btn}</a>`
+              : `<button class="lock-btn" onclick="readerShowLoginModal()">${lt.btn}</button>
                  <div style="display:flex;gap:8px;margin-top:10px">
                    <input id="lockEmailInput" type="email" placeholder="your@email.com" style="flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,224,155,.25);border-radius:12px;padding:12px 14px;color:#fff8ed;font-size:14px;font-family:inherit;outline:none"/>
                    <button class="lock-btn" style="width:auto;padding:12px 16px;margin:0" onclick="readerEmailSignIn()">✉</button>
                  </div>`}
           </div>
+        </div>
+        <div id="readerLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
+          <div style="background:#13110e;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 28px;max-width:380px;width:100%;text-align:center">
+            <div style="font-size:36px;margin-bottom:16px">🔐</div>
+            <div style="color:#f8f2e8;font-size:16px;line-height:1.6;margin-bottom:24px">${lt.msg}</div>
+            <button onclick="document.getElementById('readerLoginModal').style.display='none'" style="background:#d8af63;color:#1a1410;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">OK</button>
+          </div>
         </div>`;
-      // Only one lock page needed
       pages.push(wrap);
       break;
     } else {

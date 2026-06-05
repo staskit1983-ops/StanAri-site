@@ -594,9 +594,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </style>
 <style>
 .like-btn.active{
-  border-color:rgba(255,224,155,.35)!important;
-  background:rgba(255,237,188,.09)!important;
-  color:var(--gold2)!important;
+  border-color:rgba(255,255,255,.3)!important;
+  background:rgba(255,255,255,.15)!important;
 }
 .like-count{
   display:inline-flex;
@@ -604,8 +603,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   justify-content:center;
   min-width:22px;
   margin-left:6px;
-  color:var(--gold2);
-}
+  }
 </style>
 <style>
 .book-cover-viewer{
@@ -638,15 +636,22 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 .music-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .stream-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .stream-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-decoration:none;transition:all .2s;border:1px solid transparent}
-.stream-btn.spotify{background:#1DB954;color:#000;border-color:#1DB954}
-.stream-btn.spotify:hover{background:#1ed760}
-.stream-btn.youtube{background:#FF0000;color:#fff;border-color:#FF0000}
-.stream-btn.youtube:hover{background:#cc0000}
-.stream-btn.apple{background:#FC3C44;color:#fff;border-color:#FC3C44}
-.stream-btn.apple:hover{background:#e0353d}
+@media(max-width:600px){
+  .stream-btns{flex-wrap:nowrap;gap:5px}
+  .stream-btn{padding:6px 10px;font-size:10px;letter-spacing:.04em}
+  .stream-btn svg{width:12px;height:12px}
+}
+.stream-btn.spotify{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.stream-btn.spotify:hover{background:rgba(255,255,255,.15);color:#fff}
+.stream-btn.youtube{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.stream-btn.youtube:hover{background:rgba(255,255,255,.15);color:#fff}
+.stream-btn.apple{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.stream-btn.apple:hover{background:rgba(255,255,255,.15);color:#fff}
+.stream-btn.like-btn{background:rgba(255,255,255,.08);color:#fff!important;border-color:rgba(255,255,255,.18);font-size:14px;padding:6px 12px}
+.stream-btn.like-btn:hover{background:rgba(255,255,255,.15)}
 .stream-btn svg{width:14px;height:14px;flex-shrink:0}
 .music-actions .btn{white-space:nowrap}
-.like-count{display:inline-flex;min-width:22px;justify-content:center;margin-left:6px;color:var(--gold2)}
+.like-count{display:inline-flex;min-width:22px;justify-content:center;margin-left:6px}
 #books img[src*="book1-mockup"],#books img[src*="book2-mockup"]{
   cursor:pointer;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.55);
 }
@@ -994,7 +999,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- HEADER -->
 <header class="hdr">
 <div class="container hdr-inner">
-<a class="brand" href="#" style="display:flex;align-items:center"><img alt="STAN ARI" src="images/img_1.png" style="height:44px;width:44px;object-fit:contain;border-radius:50%"/></a>
+<a class="brand" href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+  <img alt="STAN ARI" src="images/img_1.png" style="height:44px;width:44px;object-fit:contain;border-radius:50%" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+  <span style="display:none;font-size:15px;font-weight:800;letter-spacing:.12em;color:var(--gold2)">STAN ARI</span>
+</a>
 <nav class="main-nav">
 <a data-t="nav_mission" href="#mission">Місія</a>
 <a data-t="nav_books" href="#books">Книги</a>
@@ -1044,7 +1052,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <img alt="Stan Ari" src="images/img_2.png" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"/>
 <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 24px;background:linear-gradient(0,rgba(5,4,2,.98) 0%,rgba(5,4,2,.7) 60%,transparent 100%)">
 <div style="font-size:28px;font-weight:800;color:#fff8ed;letter-spacing:.04em">Stan Ari</div>
-<div data-t="stan_role" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-top:4px">Автор · Письменник · Мислитель</div>
+<div data-t="stan_role" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Автор · Письменник · Мислитель</div>
 </div>
 </div>
 </div>
@@ -1054,7 +1062,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <img alt="Aria" src="images/img_3.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block"/>
 <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 24px;background:linear-gradient(0,rgba(5,4,2,.98) 0%,rgba(5,4,2,.7) 60%,transparent 100%)">
 <div style="font-size:28px;font-weight:800;color:#fff8ed;letter-spacing:.04em;font-family:inherit">Aria</div>
-<div data-t="aria_role" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-top:4px">Співавтор · Муза · Серце проєкту</div>
+<div data-t="aria_role" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Співавтор · Муза · Серце проєкту</div>
 </div>
 </div>
 <div>
@@ -1371,10 +1379,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
+<button class="stream-btn like-btn" data-song="code-of-cold" data-track="code-of-cold" onclick="toggleLike('code-of-cold')">❤ <span class="like-count">0</span></button>
 </div></div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="code-of-cold" data-track="code-of-cold" onclick="toggleLike('code-of-cold')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
 </article><article class="music-final-card">
 <div class="music-final-info">
 <span class="tag" data-t="music_card_tag">Музика</span>
@@ -1403,10 +1409,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
+<button class="stream-btn like-btn" data-song="chome-sonce" data-track="chome-sonce" onclick="toggleLike('chome-sonce')">❤ <span class="like-count">0</span></button>
 </div></div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="chome-sonce" data-track="chome-sonce" onclick="toggleLike('chome-sonce')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
 </article>
 </div>
 <!-- Stan Ari block -->
@@ -1443,10 +1447,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
+<button class="stream-btn like-btn" data-song="threaded-silence" data-track="threaded-silence" onclick="toggleLike('threaded-silence')">❤ <span class="like-count">0</span></button>
 </div></div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="threaded-silence" data-track="threaded-silence" onclick="toggleLike('threaded-silence')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
 </article><article class="music-final-card">
 <div class="music-final-info">
 <span class="tag" data-t="music_card_tag">Музика</span>
@@ -1475,10 +1477,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
+<button class="stream-btn like-btn" data-song="ty-miy-vsesvit" data-track="ty-miy-vsesvit" onclick="toggleLike('ty-miy-vsesvit')">❤ <span class="like-count">0</span></button>
 </div></div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="ty-miy-vsesvit" data-track="ty-miy-vsesvit" onclick="toggleLike('ty-miy-vsesvit')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
 </article><article class="music-final-card">
 <div class="music-final-info">
 <span class="tag" data-t="music_card_tag">Музика</span>
@@ -1507,33 +1507,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
             Apple Music
           </a>
+<button class="stream-btn like-btn" data-song="the-mirror" data-track="the-mirror" onclick="toggleLike('the-mirror')">❤ <span class="like-count">0</span></button>
 </div></div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="the-mirror" data-track="the-mirror" onclick="toggleLike('the-mirror')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
-</article><article class="music-final-card">
-<div class="music-final-info">
-<span class="tag" data-t="music_card_tag">Музика</span>
-<h3 data-t="song1_title">Я прокидався — ніби не свій</h3>
-<p><span data-t="author_label">Автор</span>: STAN ARI</p>
-</div>
-<div class="stream-btns">
-<a class="stream-btn spotify" href="#" target="_blank">
-<svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>
-            Spotify
-          </a>
-<a class="stream-btn youtube" href="#" target="_blank">
-<svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"></path></svg>
-            YouTube
-          </a>
-<a class="stream-btn apple" href="#" target="_blank">
-<svg fill="currentColor" viewbox="0 0 24 24"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A4.98 4.98 0 0 0 .05 4.822C.017 5.198 0 5.575 0 5.95v12.156c.01.26.017.51.046.76.07.76.27 1.48.69 2.13.56.87 1.35 1.48 2.3 1.84.63.24 1.29.34 1.96.36.28.01.56.02.84.02h12.28c.31 0 .62-.01.93-.03.64-.04 1.27-.15 1.87-.41.98-.42 1.75-1.09 2.28-2.01.35-.6.53-1.26.6-1.95.02-.2.03-.4.04-.6V6.12c0 0 0-.002-.003-.002zm-6.953 9.658a3.29 3.29 0 0 1-.882.42 3.16 3.16 0 0 1-.909.13c-.48 0-.9-.1-1.27-.3a2.76 2.76 0 0 1-.91-.83 2.84 2.84 0 0 1-.46-1.02 3.23 3.23 0 0 1 .12-1.7c.17-.5.44-.9.82-1.22.37-.32.82-.49 1.34-.52.24-.01.47.02.7.08.3.08.57.21.81.4.24.18.43.41.58.68l-1.02.59a1.1 1.1 0 0 0-.36-.4 1 1 0 0 0-.57-.15c-.23 0-.43.06-.61.18a1.27 1.27 0 0 0-.43.49c-.1.21-.15.44-.15.69 0 .26.05.5.16.72.11.22.27.39.47.52.2.13.43.19.69.19.2 0 .38-.04.55-.11.17-.07.3-.17.42-.3l.94.62zM12 8.25a3.75 3.75 0 1 1 0 7.5 3.75 3.75 0 0 1 0-7.5zm0 1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5z"></path></svg>
-            Apple Music
-          </a>
-</div>
-<div class="music-actions">
-<button class="btn btn-ghost btn-sm like-btn" data-song="ya-prokidavsya" data-track="ya-prokidavsya" onclick="toggleLike('ya-prokidavsya')"><span data-t="like_btn">❤ Уподобати</span> <span class="like-count">0</span></button>
-</div>
 </article>
 </div>
 </div>
@@ -1839,7 +1814,21 @@ function toggleExcerpt(){
   }
 }
 
-try{var sl=localStorage.getItem('sl');if(sl)setLang(sl);}catch(e){}
+try{
+  var sl=localStorage.getItem('sl');
+  if(sl){
+    setLang(sl);
+  } else {
+    // First visit — detect browser language automatically
+    var nl=(navigator.language||navigator.userLanguage||'en').toLowerCase();
+    var autoLang='en'; // default for all unsupported languages
+    if(nl.startsWith('uk')||nl.startsWith('ru')) autoLang='uk';
+    else if(nl.startsWith('pl')) autoLang='pl';
+    else if(nl.startsWith('de')) autoLang='de';
+    else if(nl.startsWith('es')) autoLang='es';
+    setLang(autoLang);
+  }
+}catch(e){}
 </script>
 <!-- READING MODAL -->
 <div class="modal-overlay" id="readModal" style="position:fixed;inset:0;z-index:500;background:rgba(2,1,1,.97);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);overflow-y:auto;-webkit-overflow-scrolling:touch">
@@ -3119,7 +3108,7 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const STANARI_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
@@ -3265,7 +3254,17 @@ window.stanariSignOut = async function(){
 };
 window.stanariBuyBook = function(){
   if (!stanariCurrentEmail) {
-    alert(stanariAuthReady ? "Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз." : "Зачекайте секунду — сайт ще перевіряє Google-вхід.");
+    var loginMsg = {
+      uk: 'Для покупки книги авторизуйтесь на сайті в меню у верхній панелі.',
+      en: 'To purchase the book, please sign in via the menu in the top panel.',
+      pl: 'Aby kupić książkę, zaloguj się przez menu w górnym panelu.',
+      de: 'Um das Buch zu kaufen, melden Sie sich über das Menü an.',
+      es: 'Para comprar el libro, inicia sesión en el menú del panel superior.'
+    };
+    var lang = window.lang || 'uk';
+    var modal = document.getElementById('stanariLoginModal');
+    document.getElementById('stanariLoginModalText').textContent = loginMsg[lang] || loginMsg.en;
+    modal.style.display = 'flex';
     return false;
   }
   location.href = checkoutUrl(stanariCurrentEmail);
@@ -3279,7 +3278,17 @@ document.addEventListener("click", function(ev){
   if (!stanariCurrentEmail) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
-    alert(stanariAuthReady ? "Спочатку увійдіть через Google. Потім натисніть «Купити» ще раз." : "Зачекайте секунду — сайт ще перевіряє Google-вхід.");
+    var loginMsg = {
+      uk: 'Для покупки книги авторизуйтесь на сайті в меню у верхній панелі.',
+      en: 'To purchase the book, please sign in via the menu in the top panel.',
+      pl: 'Aby kupić książkę, zaloguj się przez menu w górnym panelu.',
+      de: 'Um das Buch zu kaufen, melden Sie sich über das Menü in der oberen Leiste an.',
+      es: 'Para comprar el libro, inicia sesión en el menú del panel superior.'
+    };
+    var lang = window.lang || 'uk';
+    var modal = document.getElementById('stanariLoginModal');
+    document.getElementById('stanariLoginModalText').textContent = loginMsg[lang] || loginMsg.en;
+    modal.style.display = 'flex';
     return false;
   }
   a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
@@ -3445,13 +3454,103 @@ window.loadReviews = async function(){
     preview.innerHTML = withText.slice(0,3).map(reviewCardHtml).join("");
   }
   if (showAll) showAll.style.display = withText.length > 3 ? "block" : "none";
-  // Reflect this user's existing rating in the picker.
+  // Pre-fill existing review and lock stars if user already rated
   if (stanariCurrentEmail) {
     const mine = reviews.find(r => (r.email||"").toLowerCase() === stanariCurrentEmail);
-    if (mine && mine.rating) { stanariMyRating = mine.rating; paintStars(mine.rating); }
+    if (mine) {
+      // Pre-fill review text
+      const ta = document.getElementById("reviewText");
+      if (ta && mine.text) ta.value = mine.text;
+      const btn = document.getElementById("reviewSubmitBtn");
+      if (btn) btn.textContent = "Оновити відгук";
+      // Lock stars if already rated
+      if (mine.rating) {
+        stanariMyRating = mine.rating;
+        paintStars(mine.rating);
+        document.querySelectorAll("#starPicker .star-btn").forEach(btn => {
+          btn.disabled = true;
+          btn.style.cursor = "default";
+          btn.onclick = null;
+        });
+        const msg = document.getElementById("ratingMsg");
+        if (msg && !msg.textContent) msg.textContent = "Ваша оцінка збережена.";
+      }
+    }
   }
 };
 
+/* === MUSIC LIKES === */
+window.toggleLike = async function(songId){
+  if (!stanariCurrentEmail) {
+    var loginMsg = {
+      uk: 'Щоб поставити лайк, увійдіть через Google в меню у верхній панелі.',
+      en: 'To like a song, sign in via the menu in the top panel.',
+      pl: 'Aby polubić utwór, zaloguj się przez menu w górnym panelu.',
+      de: 'Um einen Song zu liken, melden Sie sich über das Menü an.',
+      es: 'Para dar me gusta, inicia sesión en el menú.'
+    };
+    var lang = window.lang || 'uk';
+    var modal = document.getElementById('stanariLoginModal');
+    document.getElementById('stanariLoginModalText').textContent = loginMsg[lang] || loginMsg.en;
+    modal.style.display = 'flex';
+    return;
+  }
+  try {
+    const likeRef = doc(db, "music_likes", songId);
+    const snap = await getDoc(likeRef);
+    const likers = (snap.exists() && snap.data().likedBy) ? snap.data().likedBy : [];
+    const alreadyLiked = likers.includes(stanariCurrentEmail);
+    if (alreadyLiked) {
+      await updateDoc(likeRef, { likedBy: arrayRemove(stanariCurrentEmail) });
+    } else {
+      if (snap.exists()) {
+        await updateDoc(likeRef, { likedBy: arrayUnion(stanariCurrentEmail) });
+      } else {
+        await setDoc(likeRef, { likedBy: [stanariCurrentEmail] });
+      }
+    }
+    // Update UI
+    const newSnap = await getDoc(likeRef);
+    const newCount = (newSnap.exists() && newSnap.data().likedBy) ? newSnap.data().likedBy.length : 0;
+    const newLiked = newSnap.exists() && newSnap.data().likedBy && newSnap.data().likedBy.includes(stanariCurrentEmail);
+    document.querySelectorAll('[data-song="'+songId+'"]').forEach(btn => {
+      const countEl = btn.querySelector('.like-count');
+      if (countEl) countEl.textContent = newCount;
+      btn.style.color = newLiked ? 'var(--gold)' : '';
+      const label = btn.querySelector('[data-t="like_btn"]');
+      if (label) label.textContent = newLiked ? '❤ Уподобано' : '❤ Уподобати';
+    });
+  } catch(e) {
+    console.warn("Like failed:", e);
+  }
+};
+
+// Load like counts on page init
+async function loadLikeCounts(){
+  if (!window.db) return;
+  const songs = ['code-of-cold','chome-sonce','threaded-silence','ty-miy-vsesvit','the-mirror'];
+  for (const songId of songs) {
+    try {
+      const snap = await getDoc(doc(db, "music_likes", songId));
+      const likers = (snap.exists() && snap.data().likedBy) ? snap.data().likedBy : [];
+      const isLiked = stanariCurrentEmail && likers.includes(stanariCurrentEmail);
+      document.querySelectorAll('[data-song="'+songId+'"]').forEach(btn => {
+        const countEl = btn.querySelector('.like-count');
+        if (countEl) countEl.textContent = likers.length;
+        if (isLiked) {
+          btn.style.color = 'var(--gold)';
+          const label = btn.querySelector('[data-t="like_btn"]');
+          if (label) label.textContent = '❤ Уподобано';
+        }
+      });
+    } catch(e) {}
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+  try { updateReviewFormVisibility(); } catch(e) {}
+  if (window.loadReviews) window.loadReviews();
+  loadLikeCounts();
+});
 function paintStars(n){
   document.querySelectorAll("#starPicker .star-btn").forEach(btn => {
     const s = parseInt(btn.getAttribute("data-star"),10);
@@ -3465,8 +3564,19 @@ window.rateBook = async function(n){
     if (msg) msg.textContent = "Спочатку увійдіть через Google, щоб оцінити.";
     return;
   }
+  // Block if already rated
+  if (stanariMyRating > 0) {
+    if (msg) msg.textContent = "Ви вже оцінили цю книгу.";
+    return;
+  }
   stanariMyRating = n;
   paintStars(n);
+  // Disable all star buttons permanently
+  document.querySelectorAll("#starPicker .star-btn").forEach(btn => {
+    btn.disabled = true;
+    btn.style.cursor = "default";
+    btn.onclick = null;
+  });
   try {
     const u = stanariCurrentUser;
     await setDoc(doc(db, "reviews", stanariCurrentEmail), {
@@ -3627,5 +3737,13 @@ setTimeout(() => { if (window.loadReviews) window.loadReviews(); }, 1500);
 /* === /STAN ARI DEBUG OVERLAY === */
 </script>
 
+<!-- Login required modal -->
+<div id="stanariLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#13110e;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.6)">
+    <div style="font-size:36px;margin-bottom:16px">🔐</div>
+    <div id="stanariLoginModalText" style="color:#f8f2e8;font-size:16px;line-height:1.6;margin-bottom:24px"></div>
+    <button onclick="document.getElementById('stanariLoginModal').style.display='none'" style="background:var(--gold);color:#1a1410;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">OK</button>
+  </div>
+</div>
 </body>
 </html>

@@ -1215,6 +1215,44 @@ try {
 </script>
 
 <script>
+/* === WAKE LOCK — screen stays on while reading (Android Chrome) === */
+(function(){
+  if (!('wakeLock' in navigator)) return; // not supported (e.g. iPhone)
+  var lock = null;
+  async function requestWakeLock(){
+    try {
+      lock = await navigator.wakeLock.request('screen');
+    } catch(e) { /* silently ignore — user denied or not supported */ }
+  }
+  function releaseWakeLock(){
+    if (lock) { lock.release().catch(function(){}); lock = null; }
+  }
+  // Acquire when reader screen becomes visible
+  var observer = new MutationObserver(function(){
+    var screen = document.getElementById('readerScreen');
+    if (screen && screen.classList.contains('visible')) {
+      requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    var screen = document.getElementById('readerScreen');
+    if (screen) observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+  });
+  // Re-acquire after tab becomes visible again (browser releases lock when tab hidden)
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible') {
+      var screen = document.getElementById('readerScreen');
+      if (screen && screen.classList.contains('visible')) requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+  });
+})();
+/* === /WAKE LOCK === */
+
+<script>
 /* === STAN ARI DEBUG OVERLAY (only with ?debug=1) === */
 (function(){
   try {

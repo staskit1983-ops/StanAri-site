@@ -736,24 +736,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 // Auto-detect browser language on first visit
 (function() {
   try {
-    var saved = localStorage.getItem('sl');
-    if (saved) return; // user already chose manually — respect their choice
-
-    var nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-    var lang = 'en'; // default
-
-    if (nav.startsWith('en')) lang = 'en';
-    else if (nav.startsWith('pl')) lang = 'pl';
-    else if (nav.startsWith('de')) lang = 'de';
-    else if (nav.startsWith('es')) lang = 'es';
-    else if (nav.startsWith('uk') || nav.startsWith('ru')) lang = 'uk';
-
-    if (lang !== 'uk') {
-      // Apply after page loads
-      document.addEventListener('DOMContentLoaded', function() {
-        if (typeof setLang === 'function') setLang(lang);
-      });
-    }
+    // Language auto-detection handled by main detector below
   } catch(e) {}
 })();
 </script>
@@ -2909,7 +2892,7 @@ if('serviceWorker' in navigator){
       top_menu_btn:'☰ Меню',
       menu_account_title:'Акаунт',
       menu_language_title:'Мова',
-      menu_not_signed:'Ви не увійшли',
+      menu_not_signed:'Ви не увійшли',menu_checking:'Перевіряємо вхід…',
       auth_login_change:'Увійти / Змінити акаунт',
       auth_google_login:'Увійти через Google',
       auth_switch_account:'Змінити акаунт',
@@ -2925,7 +2908,7 @@ if('serviceWorker' in navigator){
       top_menu_btn:'☰ Menu',
       menu_account_title:'Account',
       menu_language_title:'Language',
-      menu_not_signed:'Not signed in',
+      menu_not_signed:'Not signed in',menu_checking:'Checking…',
       auth_login_change:'Sign in / Switch account',
       auth_google_login:'Sign in with Google',
       auth_switch_account:'Switch account',
@@ -2941,7 +2924,7 @@ if('serviceWorker' in navigator){
       top_menu_btn:'☰ Menu',
       menu_account_title:'Konto',
       menu_language_title:'Język',
-      menu_not_signed:'Nie zalogowano',
+      menu_not_signed:'Nie zalogowano',menu_checking:'Sprawdzanie…',
       auth_login_change:'Zaloguj / Zmień konto',
       auth_google_login:'Zaloguj przez Google',
       auth_switch_account:'Zmień konto',
@@ -2957,7 +2940,7 @@ if('serviceWorker' in navigator){
       top_menu_btn:'☰ Menü',
       menu_account_title:'Konto',
       menu_language_title:'Sprache',
-      menu_not_signed:'Nicht angemeldet',
+      menu_not_signed:'Nicht angemeldet',menu_checking:'Wird geprüft…',
       auth_login_change:'Anmelden / Konto wechseln',
       auth_google_login:'Mit Google anmelden',
       auth_switch_account:'Konto wechseln',
@@ -2973,7 +2956,7 @@ if('serviceWorker' in navigator){
       top_menu_btn:'☰ Menú',
       menu_account_title:'Cuenta',
       menu_language_title:'Idioma',
-      menu_not_signed:'No has iniciado sesión',
+      menu_not_signed:'No has iniciado sesión',menu_checking:'Verificando…',
       auth_login_change:'Iniciar sesión / Cambiar cuenta',
       auth_google_login:'Iniciar sesión con Google',
       auth_switch_account:'Cambiar cuenta',
@@ -3274,15 +3257,19 @@ function updateMenu(){
   const logoutBtns = document.querySelectorAll(".stanari-logout-btn");
   if (menuEmail) {
     menuEmail.removeAttribute("data-t");
-    menuEmail.textContent = stanariCurrentEmail || (stanariAuthReady ? "Ви не увійшли" : "Перевіряємо вхід…");
+    var d = T[lang] || T.uk;
+    menuEmail.textContent = stanariCurrentEmail || (stanariAuthReady ? (d.menu_not_signed || 'Ви не увійшли') : (d.menu_checking || 'Перевіряємо вхід…'));
   }
   if (googleBtn) {
     googleBtn.style.display = "inline-flex";
     googleBtn.disabled = false;
     googleBtn.onclick = function(){ window.stanariGoogleLogin(); return false; };
     const label = googleBtn.querySelector(".stanari-auth-label");
-    if (label) label.textContent = stanariCurrentEmail ? "Змінити акаунт Google" : (stanariAuthReady ? "Увійти через Google" : "Перевіряємо…");
-    googleBtn.setAttribute("title", stanariCurrentEmail ? "Змінити акаунт Google" : "Увійти через Google");
+    const d2 = T[lang] || T.uk;
+    if (label) label.textContent = stanariCurrentEmail
+      ? (d2.auth_switch_account || 'Змінити акаунт Google')
+      : (stanariAuthReady ? (d2.auth_google_login || 'Увійти через Google') : (d2.menu_checking || 'Перевіряємо…'));
+    googleBtn.setAttribute("title", label ? label.textContent : "Google");
   }
   logoutBtns.forEach(btn => {
     btn.style.display = stanariCurrentEmail ? "inline-flex" : "none";

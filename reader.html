@@ -1256,22 +1256,25 @@ try {
 /* === READER UI TRANSLATIONS === */
 (function(){
   var readerT = {
-    uk: { zoomIn:'Збільшити', zoomOut:'Зменшити', backSite:'Повернутись на сайт' },
-    en: { zoomIn:'Zoom in', zoomOut:'Zoom out', backSite:'Back to site' },
-    pl: { zoomIn:'Powiększ', zoomOut:'Pomniejsz', backSite:'Powrót do strony' },
-    de: { zoomIn:'Vergrößern', zoomOut:'Verkleinern', backSite:'Zurück zur Website' },
-    es: { zoomIn:'Ampliar', zoomOut:'Reducir', backSite:'Volver al sitio' }
+    uk: { zoomIn:'Збільшити', zoomOut:'Зменшити', backSite:'Повернутись на сайт', skip:'Пропустити →' },
+    en: { zoomIn:'Zoom in', zoomOut:'Zoom out', backSite:'Back to site', skip:'Skip →' },
+    pl: { zoomIn:'Powiększ', zoomOut:'Pomniejsz', backSite:'Powrót do strony', skip:'Pomiń →' },
+    de: { zoomIn:'Vergrößern', zoomOut:'Verkleinern', backSite:'Zurück zur Website', skip:'Überspringen →' },
+    es: { zoomIn:'Ampliar', zoomOut:'Reducir', backSite:'Volver al sitio', skip:'Omitir →' }
   };
   function applyReaderTitles(){
     var l = (typeof lang !== 'undefined' ? lang : null)
+          || localStorage.getItem('readerLang')
           || localStorage.getItem('sl') || 'uk';
     var t = readerT[l] || readerT.uk;
     var zi = document.getElementById('btnZoomIn');
     var zo = document.getElementById('btnZoomOut');
     var bk = document.getElementById('btnBackSite');
+    var sk = document.getElementById('skipBtn');
     if (zi) zi.title = t.zoomIn;
     if (zo) zo.title = t.zoomOut;
     if (bk) bk.title = t.backSite;
+    if (sk) sk.textContent = t.skip;
   }
   document.addEventListener('DOMContentLoaded', applyReaderTitles);
   setTimeout(applyReaderTitles, 800);

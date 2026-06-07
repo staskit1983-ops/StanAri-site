@@ -1018,8 +1018,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
   </button>
   <div class="lang-drop-menu">
-    <button onclick="pickLang('uk','langDropDesktop')">🇺🇦 UA</button>
     <button onclick="pickLang('en','langDropDesktop')">🇬🇧 EN</button>
+    <button onclick="pickLang('uk','langDropDesktop')">🇺🇦 UA</button>
     <button onclick="pickLang('pl','langDropDesktop')">🇵🇱 PL</button>
     <button onclick="pickLang('de','langDropDesktop')">🇩🇪 DE</button>
     <button onclick="pickLang('es','langDropDesktop')">🇪🇸 ES</button>
@@ -1035,8 +1035,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
   </button>
   <div class="lang-drop-menu">
-    <button onclick="pickLang('uk','langDropMobile')">🇺🇦 UA</button>
     <button onclick="pickLang('en','langDropMobile')">🇬🇧 EN</button>
+    <button onclick="pickLang('uk','langDropMobile')">🇺🇦 UA</button>
     <button onclick="pickLang('pl','langDropMobile')">🇵🇱 PL</button>
     <button onclick="pickLang('de','langDropMobile')">🇩🇪 DE</button>
     <button onclick="pickLang('es','langDropMobile')">🇪🇸 ES</button>
@@ -3854,6 +3854,19 @@ document.addEventListener('click', function(e){
     });
   };
 })();
+// Init dropdown label after page loads based on current lang
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    var l = localStorage.getItem('sl') || 'en';
+    document.querySelectorAll('.lang-drop-current').forEach(function(el){
+      el.textContent = LANG_LABELS[l] || l.toUpperCase();
+    });
+    document.querySelectorAll('.lang-drop-menu button').forEach(function(btn){
+      var oc = btn.getAttribute('onclick') || '';
+      btn.classList.toggle('active', oc.indexOf("'"+l+"'") > -1);
+    });
+  } catch(e) {}
+});
 /* === /LANGUAGE DROPDOWN === */
 
 /* === STAN ARI DEBUG OVERLAY (only with ?debug=1) === */

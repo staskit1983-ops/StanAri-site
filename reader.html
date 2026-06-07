@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   </video>
   <div id="introFade"></div>
   <button id="startIntroBtn" onclick="manualStartIntro()">▶ START</button>
-  <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
+  <button id="skipBtn" onclick="skipIntro()">→</button>
 </div>
 
 <!-- ══ READER ══ -->
@@ -759,6 +759,12 @@ function startReader(l) {
 function playIntro() {
   const intro = document.getElementById('introScreen');
   intro.style.display = 'flex';
+  // Update skip button text based on selected language
+  const skipBtn = document.getElementById('skipBtn');
+  if (skipBtn) {
+    const skipLabels = { uk: 'Пропустити →', en: 'Skip →', pl: 'Pomiń →' };
+    skipBtn.textContent = skipLabels[lang] || skipLabels.en;
+  }
   const video = document.getElementById('introVideo');
   const startBtn = document.getElementById('startIntroBtn');
 
@@ -1256,25 +1262,22 @@ try {
 /* === READER UI TRANSLATIONS === */
 (function(){
   var readerT = {
-    uk: { zoomIn:'Збільшити', zoomOut:'Зменшити', backSite:'Повернутись на сайт', skip:'Пропустити →' },
-    en: { zoomIn:'Zoom in', zoomOut:'Zoom out', backSite:'Back to site', skip:'Skip →' },
-    pl: { zoomIn:'Powiększ', zoomOut:'Pomniejsz', backSite:'Powrót do strony', skip:'Pomiń →' },
-    de: { zoomIn:'Vergrößern', zoomOut:'Verkleinern', backSite:'Zurück zur Website', skip:'Überspringen →' },
-    es: { zoomIn:'Ampliar', zoomOut:'Reducir', backSite:'Volver al sitio', skip:'Omitir →' }
+    uk: { zoomIn:'Збільшити', zoomOut:'Зменшити', backSite:'Повернутись на сайт' },
+    en: { zoomIn:'Zoom in', zoomOut:'Zoom out', backSite:'Back to site' },
+    pl: { zoomIn:'Powiększ', zoomOut:'Pomniejsz', backSite:'Powrót do strony' },
+    de: { zoomIn:'Vergrößern', zoomOut:'Verkleinern', backSite:'Zurück zur Website' },
+    es: { zoomIn:'Ampliar', zoomOut:'Reducir', backSite:'Volver al sitio' }
   };
   function applyReaderTitles(){
     var l = (typeof lang !== 'undefined' ? lang : null)
-          || localStorage.getItem('readerLang')
           || localStorage.getItem('sl') || 'uk';
     var t = readerT[l] || readerT.uk;
     var zi = document.getElementById('btnZoomIn');
     var zo = document.getElementById('btnZoomOut');
     var bk = document.getElementById('btnBackSite');
-    var sk = document.getElementById('skipBtn');
     if (zi) zi.title = t.zoomIn;
     if (zo) zo.title = t.zoomOut;
     if (bk) bk.title = t.backSite;
-    if (sk) sk.textContent = t.skip;
   }
   document.addEventListener('DOMContentLoaded', applyReaderTitles);
   setTimeout(applyReaderTitles, 800);

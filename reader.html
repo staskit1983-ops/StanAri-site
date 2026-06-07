@@ -735,6 +735,7 @@ function startReader(l) {
   localStorage.setItem('readerLang', l);
   updateReaderBookTitle();
   document.getElementById('langModal').style.display = 'none';
+  if (typeof window.applyReaderTitles === 'function') window.applyReaderTitles();
 
   // Update buy button language in parent if exists
   try {
@@ -1270,7 +1271,7 @@ try {
   };
   function applyReaderTitles(){
     var l = (typeof lang !== 'undefined' ? lang : null)
-          || localStorage.getItem('sl') || 'uk';
+          || localStorage.getItem('readerLang') || 'uk';
     var t = readerT[l] || readerT.uk;
     var zi = document.getElementById('btnZoomIn');
     var zo = document.getElementById('btnZoomOut');
@@ -1279,8 +1280,10 @@ try {
     if (zo) zo.title = t.zoomOut;
     if (bk) bk.title = t.backSite;
   }
+  window.applyReaderTitles = applyReaderTitles;
   document.addEventListener('DOMContentLoaded', applyReaderTitles);
   setTimeout(applyReaderTitles, 800);
+  setTimeout(applyReaderTitles, 2500);
 })();
 /* === /READER UI TRANSLATIONS === */
 (function(){

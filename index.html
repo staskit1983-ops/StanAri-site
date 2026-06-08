@@ -3257,15 +3257,15 @@ function updateMenu(){
   const logoutBtns = document.querySelectorAll(".stanari-logout-btn");
   if (menuEmail) {
     menuEmail.removeAttribute("data-t");
-    var d = T[lang] || T.uk;
-    menuEmail.textContent = stanariCurrentEmail || (stanariAuthReady ? (d.menu_not_signed || 'Ви не увійшли') : (d.menu_checking || 'Перевіряємо вхід…'));
+    var d = T[window.lang] || T.en || T.uk;
+    menuEmail.textContent = stanariCurrentEmail || (stanariAuthReady ? (d.menu_not_signed || 'Not signed in') : (d.menu_checking || 'Checking…'));
   }
   if (googleBtn) {
     googleBtn.style.display = "inline-flex";
     googleBtn.disabled = false;
     googleBtn.onclick = function(){ window.stanariGoogleLogin(); return false; };
     const label = googleBtn.querySelector(".stanari-auth-label");
-    const d2 = T[lang] || T.uk;
+    const d2 = T[window.lang] || T.en || T.uk;
     if (label) label.textContent = stanariCurrentEmail
       ? (d2.auth_switch_account || 'Змінити акаунт Google')
       : (stanariAuthReady ? (d2.auth_google_login || 'Увійти через Google') : (d2.menu_checking || 'Перевіряємо…'));
@@ -3568,7 +3568,7 @@ function renderRatingSummary(reviews){
   if (!rated.length) {
     if (avgEl) avgEl.textContent = "—";
     if (starsEl) starsEl.textContent = "☆☆☆☆☆";
-    if (totalEl) { var d=T[lang]||T.uk; totalEl.textContent = "0" + (d.rating_many||" оцінок"); }
+    if (totalEl) { var d=T[window.lang]||T.uk; totalEl.textContent = "0" + (d.rating_many||" оцінок"); }
     if (barsEl) barsEl.innerHTML = "";
     return;
   }
@@ -3576,7 +3576,7 @@ function renderRatingSummary(reviews){
   const avg = sum / rated.length;
   if (avgEl) avgEl.textContent = avg.toFixed(1);
   if (starsEl) starsEl.textContent = reviewStars(Math.round(avg));
-  if (totalEl) { var d=T[lang]||T.uk; totalEl.textContent = rated.length + (rated.length === 1 ? (d.rating_one||" оцінка") : (d.rating_many||" оцінок")); }
+  if (totalEl) { var d=T[window.lang]||T.uk; totalEl.textContent = rated.length + (rated.length === 1 ? (d.rating_one||" оцінка") : (d.rating_many||" оцінок")); }
   if (barsEl) {
     let html = "";
     for (let s = 5; s >= 1; s--) {
@@ -3610,7 +3610,7 @@ window.loadReviews = async function(){
       const ta = document.getElementById("reviewText");
       if (ta && mine.text) ta.value = mine.text;
       const btn = document.getElementById("reviewSubmitBtn");
-      if (btn) { var d3 = T[lang] || T.uk; btn.textContent = d3.reviews_update_btn || "Оновити відгук"; }
+      if (btn) { var d3 = T[window.lang] || T.uk; btn.textContent = d3.reviews_update_btn || "Оновити відгук"; }
       // Lock stars if already rated
       if (mine.rating) {
         stanariMyRating = mine.rating;
@@ -3621,7 +3621,7 @@ window.loadReviews = async function(){
           btn.onclick = null;
         });
         const msg = document.getElementById("ratingMsg");
-        if (msg && !msg.textContent) { var d=T[lang]||T.uk; msg.textContent = d.rating_saved||"Ваша оцінка збережена."; }
+        if (msg && !msg.textContent) { var d=T[window.lang]||T.uk; msg.textContent = d.rating_saved||"Ваша оцінка збережена."; }
       }
     }
   }
@@ -3739,11 +3739,11 @@ window.rateBook = async function(n){
       lang: (window.lang || "uk"),
       createdAt: serverTimestamp()
     }, { merge: true });
-    if (msg) { var d=T[lang]||T.uk; msg.textContent = d.rating_thanks||"Дякуємо за оцінку!"; }
+    if (msg) { var d=T[window.lang]||T.uk; msg.textContent = d.rating_thanks||"Дякуємо за оцінку!"; }
     window.loadReviews();
   } catch(e) {
     console.warn("Rating save failed:", e);
-    if (msg) { var d=T[lang]||T.uk; msg.textContent = d.rating_error||"Не вдалося зберегти оцінку."; }
+    if (msg) { var d=T[window.lang]||T.uk; msg.textContent = d.rating_error||"Не вдалося зберегти оцінку."; }
   }
 };
 

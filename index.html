@@ -3873,13 +3873,12 @@ document.addEventListener('DOMContentLoaded', function(){
 (function(){
   try {
     var q = new URLSearchParams(location.search);
-    var OWNER_EMAILS = ["staskit1983@gmail.com", "stanari.art@gmail.com"];
+    var OWNER_EMAILS = ["staskit1983@gmail.com", "stanari.art@gmail.com", "arianamelnyk@gmail.com", "kosmosss.aria@gmail.com"];
     function isOwner(){
       try {
-        var e = "";
         var st = window.__stanariState || {};
-        e = (st.email || localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || "").trim().toLowerCase();
-        return OWNER_EMAILS.indexOf(e) !== -1;
+        var e = (st.email || "").trim().toLowerCase();
+        return e !== "" && OWNER_EMAILS.indexOf(e) !== -1;
       } catch(_) { return false; }
     }
     var forceDebug = (q.get('debug') === '1');

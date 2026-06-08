@@ -1664,6 +1664,7 @@ Object.keys(EXTRA_T).forEach(function(k){T[k]=Object.assign(T[k]||{},EXTRA_T[k])
 
 function setLang(l){
   lang=l;
+  window.lang=l;
   try{localStorage.setItem('sl',l);}catch(e){}
   // Update placeholders
   document.querySelectorAll('[data-ph]').forEach(function(el){

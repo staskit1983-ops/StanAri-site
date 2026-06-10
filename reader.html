@@ -892,7 +892,7 @@ document.addEventListener('mouseup', () => {
             <div class="lock-icon">🔒</div>
             <div class="lock-title">${lt.title}</div>
             ${(authUser && authUser.email)
-              ? `<a class="lock-btn lemonsqueezy-button" href="${checkoutUrl}" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">${lt.btn}</a>`
+              ? `<button class="lock-btn" onclick="readerBuyBook('${checkoutUrl}')" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border:none;">${lt.btn}</button>`
               : `<button class="lock-btn" onclick="readerShowLoginModal()">${lt.btn}</button>`}
           </div>
         </div>
@@ -1202,34 +1202,27 @@ function waitForLemonAndSetupReader(callback, maxWaitMs){
       if (callback) callback();
     } else if (Date.now() - start > maxWaitMs) {
       clearInterval(interval);
+      // Lemon didn't load — open URL directly
+      if (callback) callback();
     }
   }, 100);
 }
 
-// Document-level delegation — catches dynamically created lemonsqueezy buttons
-document.addEventListener('click', function(e){
-  var a = e.target.closest('a.lemonsqueezy-button, a[href*="lemonsqueezy.com/checkout/buy"]');
-  if (!a) return;
-  if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== 'function') {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    var orig = a.innerHTML;
-    a.innerHTML = '⏳';
-    a.style.pointerEvents = 'none';
-    waitForLemonAndSetupReader(function(){
-      a.innerHTML = orig;
-      a.style.pointerEvents = '';
-      setTimeout(function(){ a.click(); }, 100);
-    }, 6000);
+window.readerBuyBook = function(url){
+  if (window.LemonSqueezy && typeof window.LemonSqueezy.Url !== 'undefined' && window.LemonSqueezy.Url.Open) {
+    try { window.LemonSqueezy.Url.Open(url); return; } catch(e){}
   }
-}, true); // capture phase — runs before Lemon's handler
+  // Lemon not ready — wait and open
+  waitForLemonAndSetupReader(function(){
+    if (window.LemonSqueezy && window.LemonSqueezy.Url && window.LemonSqueezy.Url.Open) {
+      try { window.LemonSqueezy.Url.Open(url); return; } catch(e){}
+    }
+    window.open(url, '_blank');
+  });
+};
 
 function stanariReaderRefreshLemonOverlay(){
   try {
-    document.querySelectorAll('a.lock-btn[href*="lemonsqueezy.com/checkout/buy"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
-      a.classList.add('lemonsqueezy-button');
-      a.setAttribute('target','_self');
-    });
     waitForLemonAndSetupReader();
   } catch(e) {}
 }

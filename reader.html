@@ -1206,26 +1206,29 @@ function waitForLemonAndSetupReader(callback, maxWaitMs){
   }, 100);
 }
 
+// Document-level delegation — catches dynamically created lemonsqueezy buttons
+document.addEventListener('click', function(e){
+  var a = e.target.closest('a.lemonsqueezy-button, a[href*="lemonsqueezy.com/checkout/buy"]');
+  if (!a) return;
+  if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== 'function') {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var orig = a.innerHTML;
+    a.innerHTML = '⏳';
+    a.style.pointerEvents = 'none';
+    waitForLemonAndSetupReader(function(){
+      a.innerHTML = orig;
+      a.style.pointerEvents = '';
+      setTimeout(function(){ a.click(); }, 100);
+    }, 6000);
+  }
+}, true); // capture phase — runs before Lemon's handler
+
 function stanariReaderRefreshLemonOverlay(){
   try {
     document.querySelectorAll('a.lock-btn[href*="lemonsqueezy.com/checkout/buy"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
       a.classList.add('lemonsqueezy-button');
       a.setAttribute('target','_self');
-      // Intercept click — wait for Lemon if not ready
-      a.addEventListener('click', function(e){
-        if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== 'function') {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          var orig = a.textContent;
-          a.textContent = '⏳';
-          a.style.pointerEvents = 'none';
-          waitForLemonAndSetupReader(function(){
-            a.textContent = orig;
-            a.style.pointerEvents = '';
-            a.click();
-          }, 6000);
-        }
-      }, true);
     });
     waitForLemonAndSetupReader();
   } catch(e) {}

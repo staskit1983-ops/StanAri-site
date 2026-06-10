@@ -300,7 +300,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 </style>
 
 <!-- STAN ARI FIX v5: robust Firebase app init + auth refresh -->
-<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" async></script>
 </head>
 <body>
 
@@ -1192,18 +1192,42 @@ if (new URLSearchParams(location.search).get('debugAccess') === '1') {
    Event-based refresh only: no endless interval that can fight mobile taps.
 */
 let stanariReaderLemonSetupTimer = null;
+function waitForLemonAndSetupReader(callback, maxWaitMs){
+  maxWaitMs = maxWaitMs || 8000;
+  var start = Date.now();
+  var interval = setInterval(function(){
+    if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'){
+      clearInterval(interval);
+      try { window.LemonSqueezy.Setup(); } catch(e){}
+      if (callback) callback();
+    } else if (Date.now() - start > maxWaitMs) {
+      clearInterval(interval);
+    }
+  }, 100);
+}
+
 function stanariReaderRefreshLemonOverlay(){
   try {
     document.querySelectorAll('a.lock-btn[href*="lemonsqueezy.com/checkout/buy"], a[href*="lemonsqueezy.com/checkout/buy"]').forEach(a => {
       a.classList.add('lemonsqueezy-button');
       a.setAttribute('target','_self');
+      // Intercept click — wait for Lemon if not ready
+      a.addEventListener('click', function(e){
+        if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== 'function') {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          var orig = a.textContent;
+          a.textContent = '⏳';
+          a.style.pointerEvents = 'none';
+          waitForLemonAndSetupReader(function(){
+            a.textContent = orig;
+            a.style.pointerEvents = '';
+            a.click();
+          }, 6000);
+        }
+      }, true);
     });
-    clearTimeout(stanariReaderLemonSetupTimer);
-    stanariReaderLemonSetupTimer = setTimeout(() => {
-      try {
-        if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function') window.LemonSqueezy.Setup();
-      } catch(e) {}
-    }, 80);
+    waitForLemonAndSetupReader();
   } catch(e) {}
 }
 document.addEventListener('DOMContentLoaded', stanariReaderRefreshLemonOverlay);

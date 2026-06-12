@@ -1166,7 +1166,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </svg>
 <span style="font-size:10px">Amazon</span>
 </a>
-<div class="btn btn-ghost btn-sm" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;opacity:.35;pointer-events:none">
+<div class="btn btn-ghost btn-sm" onclick="openGooglePlayModal()" style="flex:1;flex-direction:column;gap:6px;padding:10px 4px;min-height:58px;justify-content:center;align-items:center;cursor:pointer">
 <img alt="Google Play" height="26" src="https://cdn.simpleicons.org/googleplay/ffffff" width="26"/>
 <span style="font-size:10px">Google Play</span>
 </div>
@@ -3957,5 +3957,24 @@ document.addEventListener('DOMContentLoaded', function(){
     <button onclick="document.getElementById('stanariLoginModal').style.display='none'" style="background:var(--gold);color:#1a1410;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">OK</button>
   </div>
 </div>
+<!-- Google Play Language Modal -->
+<div id="googlePlayModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,1,1,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:#1a1410;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 24px;max-width:360px;width:90%;text-align:center">
+    <img alt="Google Play" height="36" src="https://cdn.simpleicons.org/googleplay/ffffff" width="36" style="margin-bottom:16px"/>
+    <h3 style="color:#f5e4a0;font-size:18px;margin:0 0 8px">Google Play Books</h3>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 24px" data-t="lang_label">Вибери мову</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <a href="https://play.google.com/store/books/details?id=7xbiEQAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid #d8af63;background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇬🇧 English</a>
+      <a href="https://play.google.com/store/books/details?id=rAjkEQAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇺🇦 Українська</a>
+      <a href="https://play.google.com/store/books/details?id=twbkEQAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇵🇱 Polski</a>
+    </div>
+    <button onclick="closeGooglePlayModal()" style="margin-top:20px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">✕ Закрити</button>
+  </div>
+</div>
+<script>
+function openGooglePlayModal(){ document.getElementById('googlePlayModal').style.display='flex'; }
+function closeGooglePlayModal(){ document.getElementById('googlePlayModal').style.display='none'; }
+document.getElementById('googlePlayModal').addEventListener('click', function(e){ if(e.target===this) closeGooglePlayModal(); });
+</script>
 </body>
 </html>

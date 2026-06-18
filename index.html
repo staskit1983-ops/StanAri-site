@@ -3210,6 +3210,7 @@ const STANARI_LEMON_URL = "https://stanari.lemonsqueezy.com/checkout/buy/7fc5ae9
 const app = getApps().length ? getApp() : initializeApp(STANARI_FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
+window.db = db;
 try { await setPersistence(auth, browserLocalPersistence); } catch(e) { console.warn("Auth persistence setup failed:", e); }
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
@@ -3892,8 +3893,8 @@ document.addEventListener('DOMContentLoaded', function(){
       var waitTimer = setInterval(function(){
         if (isOwner()) { clearInterval(waitTimer); startDebug(); }
       }, 1500);
-      // Stop waiting after 30s if owner never logs in.
-      setTimeout(function(){ clearInterval(waitTimer); }, 30000);
+      // Stop waiting after 60s if owner never logs in.
+      setTimeout(function(){ clearInterval(waitTimer); }, 60000);
       return;
     }
     startDebug();
@@ -3912,35 +3913,34 @@ document.addEventListener('DOMContentLoaded', function(){
     var presenceUnsub = null;
     var heartbeatInterval = null;
 
-    async function initPresence(){
+    function initPresence(){
       try {
-        const { doc, setDoc, deleteDoc, collection, onSnapshot, serverTimestamp, query, where } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        const presRef = doc(db, 'presence', presenceSessionId);
+        if (!window.db) { onlineCount = 'n/a'; return; }
+        var firestoreModule = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import(firestoreModule).then(function(fs){
+          var presRef = fs.doc(window.db, 'presence', presenceSessionId);
 
-        // Записуємо свою сесію
-        await setDoc(presRef, { t: Date.now(), page: location.pathname });
+          fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
 
-        // Heartbeat кожні 25 секунд
-        heartbeatInterval = setInterval(async () => {
-          try { await setDoc(presRef, { t: Date.now(), page: location.pathname }); } catch(e){}
-        }, 25000);
+          heartbeatInterval = setInterval(function(){
+            fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
+          }, 25000);
 
-        // Видаляємо при закритті
-        window.addEventListener('beforeunload', async () => {
-          try { await deleteDoc(presRef); } catch(e){}
-        });
-
-        // Слухаємо всі активні сесії (оновлені за останні 90 сек)
-        const presQuery = query(collection(db, 'presence'));
-        presenceUnsub = onSnapshot(presQuery, (snap) => {
-          var now = Date.now();
-          var active = 0;
-          snap.forEach(d => {
-            var data = d.data();
-            if (data.t && (now - data.t) < 90000) active++;
+          window.addEventListener('beforeunload', function(){
+            fs.deleteDoc(presRef).catch(function(){});
           });
-          onlineCount = active;
-        });
+
+          var presCol = fs.collection(window.db, 'presence');
+          presenceUnsub = fs.onSnapshot(presCol, function(snap){
+            var now = Date.now();
+            var active = 0;
+            snap.forEach(function(d){
+              var data = d.data();
+              if (data.t && (now - data.t) < 90000) active++;
+            });
+            onlineCount = active;
+          }, function(){ onlineCount = 'err'; });
+        }).catch(function(){ onlineCount = 'n/a'; });
       } catch(e) { onlineCount = 'n/a'; }
     }
     initPresence();

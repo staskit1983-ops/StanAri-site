@@ -1089,7 +1089,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <!-- Aria -->
 <div class="two-col" style="align-items:flex-start;gap:40px;margin-bottom:56px">
 <div style="position:relative;overflow:hidden;border-radius:20px;min-height:480px;background:#060402">
-<img alt="Aria" src="images/img_3.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block"/>
+<img alt="Aria" id="ariaSecretBtn" src="images/img_3.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block"/>
 <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 24px;background:linear-gradient(0,rgba(5,4,2,.98) 0%,rgba(5,4,2,.7) 60%,transparent 100%)">
 <div style="font-size:28px;font-weight:800;color:#fff8ed;letter-spacing:.04em;font-family:inherit">Aria</div>
 <div data-t="aria_role" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Співавтор · Муза · Серце проєкту</div>
@@ -3449,6 +3449,7 @@ onAuthStateChanged(auth, async (user) => {
   }
   updateMenu();
   try { window.__stanariState = { email: stanariCurrentEmail, access: stanariHasBookAccess, ready: stanariAuthReady }; } catch(e) {}
+  try { window.dispatchEvent(new Event('stanariAuthReady')); } catch(e) {}
   // Update already-bought modal text in current language
   try {
     var l = window.lang || 'uk';
@@ -3873,7 +3874,64 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   } catch(e) {}
 });
-/* === /LANGUAGE DROPDOWN === */
+/* === SECRET ARIA DEBUG TRIGGER (3s long press on Aria photo) === */
+(function(){
+  document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('ariaSecretBtn');
+    if (!btn) return;
+    var pressTimer = null;
+    btn.addEventListener('touchstart', function(e){
+      pressTimer = setTimeout(function(){
+        window.dispatchEvent(new Event('stanariAuthReady'));
+        if (window.__stanariDebugOpen) return;
+        // Force show debug even without waitTimer
+        if (typeof startDebug === 'function') {
+          startDebug();
+        } else {
+          // Fallback: reload with debug param
+          location.href = location.pathname + '?debug=1';
+        }
+      }, 3000);
+    }, { passive: true });
+    btn.addEventListener('touchend', function(){ clearTimeout(pressTimer); });
+    btn.addEventListener('touchmove', function(){ clearTimeout(pressTimer); });
+  });
+})();
+/* === /SECRET ARIA DEBUG TRIGGER === */
+(function(){
+  var presenceSessionId = 'sess_' + Math.random().toString(36).substr(2,9) + '_' + Date.now();
+  var heartbeatInterval = null;
+
+  function startPresence(){
+    if (!window.db) { setTimeout(startPresence, 1000); return; }
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(function(fs){
+      var presRef = fs.doc(window.db, 'presence', presenceSessionId);
+      fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
+      heartbeatInterval = setInterval(function(){
+        fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
+      }, 25000);
+      window.addEventListener('beforeunload', function(){
+        fs.deleteDoc(presRef).catch(function(){});
+      });
+      // Слухаємо лічильник і зберігаємо глобально
+      var presCol = fs.collection(window.db, 'presence');
+      fs.onSnapshot(presCol, function(snap){
+        var now = Date.now();
+        var active = 0;
+        snap.forEach(function(d){
+          var data = d.data();
+          if (data.t && (now - data.t) < 90000) active++;
+        });
+        window.__stanariOnline = active;
+      }, function(){ window.__stanariOnline = 'err'; });
+    }).catch(function(){ window.__stanariOnline = 'n/a'; });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(startPresence, 2000);
+  });
+})();
+/* === /PRESENCE SYSTEM === */
 
 /* === STAN ARI DEBUG OVERLAY (only with ?debug=1) === */
 (function(){
@@ -3895,6 +3953,10 @@ document.addEventListener('DOMContentLoaded', function(){
       }, 1500);
       // Stop waiting after 60s if owner never logs in.
       setTimeout(function(){ clearInterval(waitTimer); }, 60000);
+      // Also trigger on stanariAuthReady custom event (iOS fix)
+      window.addEventListener('stanariAuthReady', function(){
+        if (isOwner()) { clearInterval(waitTimer); startDebug(); }
+      });
       return;
     }
     startDebug();
@@ -3906,44 +3968,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function val(v){ return (v === undefined || v === null || v === '') ? '—' : v; }
     function yn(b){ return b ? 'yes' : 'no'; }
-
-    // === PRESENCE SYSTEM ===
-    var onlineCount = '...';
-    var presenceSessionId = 'sess_' + Math.random().toString(36).substr(2,9) + '_' + Date.now();
-    var presenceUnsub = null;
-    var heartbeatInterval = null;
-
-    function initPresence(){
-      try {
-        if (!window.db) { onlineCount = 'n/a'; return; }
-        var firestoreModule = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-        import(firestoreModule).then(function(fs){
-          var presRef = fs.doc(window.db, 'presence', presenceSessionId);
-
-          fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
-
-          heartbeatInterval = setInterval(function(){
-            fs.setDoc(presRef, { t: Date.now(), page: location.pathname }).catch(function(){});
-          }, 25000);
-
-          window.addEventListener('beforeunload', function(){
-            fs.deleteDoc(presRef).catch(function(){});
-          });
-
-          var presCol = fs.collection(window.db, 'presence');
-          presenceUnsub = fs.onSnapshot(presCol, function(snap){
-            var now = Date.now();
-            var active = 0;
-            snap.forEach(function(d){
-              var data = d.data();
-              if (data.t && (now - data.t) < 90000) active++;
-            });
-            onlineCount = active;
-          }, function(){ onlineCount = 'err'; });
-        }).catch(function(){ onlineCount = 'n/a'; });
-      } catch(e) { onlineCount = 'n/a'; }
-    }
-    initPresence();
 
     function render(){
       var st = window.__stanariState || {};
@@ -3961,7 +3985,7 @@ document.addEventListener('DOMContentLoaded', function(){
       box.textContent =
         'STAN ARI DEBUG (home)\n' +
         '──────────────\n' +
-        '🟢 Online now: ' + onlineCount + '\n' +
+        '🟢 Online now: ' + (window.__stanariOnline !== undefined ? window.__stanariOnline : '...') + '\n' +
         '──────────────\n' +
         'Firebase user: ' + val(st.email) + '\n' +
         'known email:   ' + val(known) + '\n' +
@@ -3975,11 +3999,9 @@ document.addEventListener('DOMContentLoaded', function(){
         '(tap to close)';
     }
 
-    box.addEventListener('click', function(){ 
-      box.remove(); 
+    box.addEventListener('click', function(){
+      box.remove();
       clearInterval(timer);
-      clearInterval(heartbeatInterval);
-      if (presenceUnsub) presenceUnsub();
     });
     render();
     var timer = setInterval(render, 1000);

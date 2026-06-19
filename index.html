@@ -3966,6 +3966,57 @@ document.addEventListener('DOMContentLoaded', function(){
     function val(v){ return (v === undefined || v === null || v === '') ? '—' : v; }
     function yn(b){ return b ? 'yes' : 'no'; }
 
+    // === EXTRA STATS (тільки для debug панелі) ===
+    var totalBuyers = '...';
+    var lastPurchase = '...';
+    var reviewsCount = '...';
+    var currentPages = {};
+
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(function(fs){
+      if (!window.db) return;
+
+      // Total buyers
+      fs.getDocs(fs.collection(window.db, 'book_access')).then(function(snap){
+        totalBuyers = snap.size;
+        // Last purchase — шукаємо найновіший
+        var latest = null;
+        var latestEmail = '';
+        snap.forEach(function(d){
+          var data = d.data();
+          if (data.updatedAt && (!latest || data.updatedAt > latest)){
+            latest = data.updatedAt;
+            latestEmail = d.id;
+          }
+        });
+        if (latestEmail) {
+          var t = latest && latest.toDate ? latest.toDate() : new Date(latest);
+          lastPurchase = latestEmail.split('@')[0] + ' · ' + t.toLocaleDateString('uk-UA');
+        } else {
+          lastPurchase = '—';
+        }
+      }).catch(function(){ totalBuyers = 'err'; });
+
+      // Reviews count
+      fs.getDocs(fs.collection(window.db, 'reviews')).then(function(snap){
+        reviewsCount = snap.size;
+      }).catch(function(){ reviewsCount = 'err'; });
+
+      // Current pages from presence
+      fs.onSnapshot(fs.collection(window.db, 'presence'), function(snap){
+        var pages = {};
+        var now = Date.now();
+        snap.forEach(function(d){
+          var data = d.data();
+          if (data.t && (now - data.t) < 90000){
+            var p = data.page || '/';
+            pages[p] = (pages[p] || 0) + 1;
+          }
+        });
+        currentPages = pages;
+      });
+    }).catch(function(){});
+    /* === /EXTRA STATS === */
+
     function render(){
       var st = window.__stanariState || {};
       var known = '';
@@ -3983,13 +4034,14 @@ document.addEventListener('DOMContentLoaded', function(){
         'STAN ARI DEBUG (home)\n' +
         '──────────────\n' +
         '🟢 Online now: ' + (window.__stanariOnline !== undefined ? window.__stanariOnline : '...') + '\n' +
+        '📚 Total buyers: ' + totalBuyers + '\n' +
+        '🛒 Last purchase: ' + lastPurchase + '\n' +
+        '💬 Reviews: ' + reviewsCount + '\n' +
+        '📄 Pages: ' + Object.entries(currentPages).map(function(e){ return e[0]+'('+e[1]+')'; }).join(' ') + '\n' +
         '──────────────\n' +
         'Firebase user: ' + val(st.email) + '\n' +
-        'known email:   ' + val(known) + '\n' +
         'auth ready: ' + yn(st.ready) + '\n' +
         'access: ' + yn(st.access) + '\n' +
-        'login completed: ' + yn(loginDone) + '\n' +
-        'Firestore path: book_access/' + val(st.email || known) + '\n' +
         'Lemon ready: ' + yn(lemonReady) + '\n' +
         'service worker: ' + yn(swActive) + '\n' +
         'iOS device: ' + yn(isIOS) + '\n' +

@@ -3876,21 +3876,18 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 /* === SECRET ARIA DEBUG TRIGGER (3s long press on Aria photo) === */
 (function(){
+  var OWNER_EMAILS_SECRET = ["staskit1983@gmail.com","stanari.art@gmail.com","arianamelnyk@gmail.com","kosmosss.aria@gmail.com"];
   document.addEventListener('DOMContentLoaded', function(){
     var btn = document.getElementById('ariaSecretBtn');
     if (!btn) return;
     var pressTimer = null;
     btn.addEventListener('touchstart', function(e){
       pressTimer = setTimeout(function(){
+        var st = window.__stanariState || {};
+        var email = (st.email || '').trim().toLowerCase();
+        if (!email || OWNER_EMAILS_SECRET.indexOf(email) === -1) return;
         window.dispatchEvent(new Event('stanariAuthReady'));
-        if (window.__stanariDebugOpen) return;
-        // Force show debug even without waitTimer
-        if (typeof startDebug === 'function') {
-          startDebug();
-        } else {
-          // Fallback: reload with debug param
-          location.href = location.pathname + '?debug=1';
-        }
+        location.href = location.pathname + '?debug=1';
       }, 3000);
     }, { passive: true });
     btn.addEventListener('touchend', function(){ clearTimeout(pressTimer); });
@@ -3945,7 +3942,7 @@ document.addEventListener('DOMContentLoaded', function(){
         return e !== "" && OWNER_EMAILS.indexOf(e) !== -1;
       } catch(_) { return false; }
     }
-    var forceDebug = (q.get('debug') === '1');
+    var forceDebug = (q.get('debug') === '1') && isOwner();
     if (!forceDebug && !isOwner()) {
       // Not the owner yet — keep checking, owner may log in after page load.
       var waitTimer = setInterval(function(){

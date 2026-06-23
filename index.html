@@ -1862,6 +1862,7 @@ function openReadModalUnlocked(){
   if(m){m.classList.add('open');document.body.style.overflow='hidden';showTOC();}
 }
 function openReadModal(){
+  try{gtag('event','book_preview_started',{event_category:'book',language:window.lang||'uk'});}catch(e){}
   window.location.href = "reader.html?chooseLang=1";
 }
 function closeReadModal(){
@@ -1898,6 +1899,7 @@ function toggleExcerpt(){
   }else{
     body.classList.add('open');
     btn.innerHTML=(d.read_less_btn||'Згорнути &#8593;');
+    try{gtag('event','reached_paywall',{event_category:'book',language:window.lang||'uk'});}catch(e){}
   }
 }
 
@@ -3416,6 +3418,7 @@ document.addEventListener("click", function(ev){
   a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
   a.classList.add("lemonsqueezy-button");
   a.setAttribute("target", "_self");
+  try{gtag('event','buy_button_click',{event_category:'purchase',language:window.lang||'uk',user_email:stanariCurrentEmail});}catch(e){}
   // If Lemon.js not ready yet — wait then trigger click
   if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== "function") {
     var origText = a.innerHTML;

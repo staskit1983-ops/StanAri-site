@@ -1176,7 +1176,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   <button onclick="document.getElementById('book1-long').style.display='none';document.getElementById('book1-short').style.display='block'" style="background:none;border:none;color:var(--gold2);font-size:13px;cursor:pointer;padding:4px 0;font-family:inherit" data-t="read_less_btn2">Згорнути ↑</button>
 </div>
 <div class="chips" style="margin-top:12px">
-<div class="chip"><div class="chip-t" data-t="lang_label">Мови</div><div class="chip-v">UA • EN • PL</div></div>
+<div class="chip"><div class="chip-t" data-t="lang_label">Мови</div><div class="chip-v">UA • EN • PL • ES</div></div>
 <div class="chip"><div class="chip-t" data-t="genre_label">Жанр</div><div class="chip-v" data-t="genre_value">Саморозвиток · Особиста трансформація · Філософія · Свідомість</div></div>
 </div>
 <!-- Кнопки читати / купити -->
@@ -3323,7 +3323,7 @@ function updateMenu(){
     googleBtn.disabled = false;
     googleBtn.onclick = function(){ window.stanariGoogleLogin(); return false; };
     const label = googleBtn.querySelector(".stanari-auth-label");
-    const d2 = T[window.lang] || T.en || T.uk;
+    const d2 = T[window.lang] || T['uk'] || T['en'];
     if (label) label.textContent = stanariCurrentEmail
       ? (d2.auth_switch_account || 'Змінити акаунт Google')
       : (stanariAuthReady ? (d2.auth_google_login || 'Увійти через Google') : (d2.menu_checking || 'Перевіряємо…'));

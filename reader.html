@@ -910,7 +910,7 @@ document.addEventListener('mouseup', () => {
     } else {
       const img = document.createElement('img');
       img.className = 'page-img';
-      img.src = `${cfg.folder}/p-${String(i).padStart(3,'0')}.png`;
+      img.src = `${cfg.folder}/${String(i).padStart(3,'0')}.jpg`;
       img.loading = i <= 3 ? 'eager' : 'lazy';
       img.draggable = false;
       wrap.appendChild(img);
@@ -952,7 +952,7 @@ function syncRenderedPagesForMemory() {
     if (near && !hasImg) {
       const img = document.createElement('img');
       img.className = 'page-img';
-      img.src = `${cfg.folder}/p-${String(pageNo).padStart(3,'0')}.png`;
+      img.src = `${cfg.folder}/${String(pageNo).padStart(3,'0')}.jpg`;
       img.loading = Math.abs(idx - cur) <= 1 ? 'eager' : 'lazy';
       img.draggable = false;
       wrap.appendChild(img);
@@ -1274,7 +1274,6 @@ try {
 })();
 /* === /WAKE LOCK === */
 
-<script>
 /* === READER UI TRANSLATIONS === */
 (function(){
   var readerT = {

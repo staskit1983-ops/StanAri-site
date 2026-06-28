@@ -381,7 +381,7 @@ const LANG_CONFIG = {
   uk: { total: 133, free: 42,  folder: 'pages/ua', label: 'Українська' },
   en: { total: 209, free: 63,  folder: 'pages/en', label: 'English' },
   pl: { total: 181, free: 63,  folder: 'pages/pl', label: 'Polski' },
-  es: { total: 132, free: 42,  folder: 'pages/es', label: 'Español' },
+  es: { total: 132, free: 42,  folder: 'pages/es', label: 'Español', fmt: 'jpg' },
 };
 
 const BOOK_TITLES = {
@@ -910,7 +910,7 @@ document.addEventListener('mouseup', () => {
     } else {
       const img = document.createElement('img');
       img.className = 'page-img';
-      img.src = `${cfg.folder}/${String(i).padStart(3,'0')}.jpg`;
+      img.src = cfg.fmt === 'jpg' ? `${cfg.folder}/${String(i).padStart(3,'0')}.jpg` : `${cfg.folder}/p-${String(i).padStart(3,'0')}.png`;
       img.loading = i <= 3 ? 'eager' : 'lazy';
       img.draggable = false;
       wrap.appendChild(img);
@@ -952,7 +952,7 @@ function syncRenderedPagesForMemory() {
     if (near && !hasImg) {
       const img = document.createElement('img');
       img.className = 'page-img';
-      img.src = `${cfg.folder}/${String(pageNo).padStart(3,'0')}.jpg`;
+      img.src = cfg.fmt === 'jpg' ? `${cfg.folder}/${String(pageNo).padStart(3,'0')}.jpg` : `${cfg.folder}/p-${String(pageNo).padStart(3,'0')}.png`;
       img.loading = Math.abs(idx - cur) <= 1 ? 'eager' : 'lazy';
       img.draggable = false;
       wrap.appendChild(img);

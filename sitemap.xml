@@ -1,15 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Головна -->
   <url>
     <loc>https://stanari.art/</loc>
-    <lastmod>2026-05-16</lastmod>
-    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://stanari.art/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://stanari.art/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://stanari.art/es/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://stanari.art/pl/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://stanari.art/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://stanari.art/"/>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Мовні клони -->
   <url>
-    <loc>https://stanari.art/reader.html</loc>
-    <lastmod>2026-05-16</lastmod>
+    <loc>https://stanari.art/en/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/es/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/pl/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/de/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- SEO лендінги EN -->
+  <url>
+    <loc>https://stanari.art/en/consciousness-book/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://stanari.art/en/self-discovery-book/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/en/philosophical-fiction/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/en/ukrainians-abroad/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- SEO лендінги PL -->
+  <url>
+    <loc>https://stanari.art/pl/ksiazka-swiadomosc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/pl/ukraincy-za-granica/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- SEO лендінги ES -->
+  <url>
+    <loc>https://stanari.art/es/libro-consciencia/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/es/emigracion-transformacion/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- SEO лендінги UA -->
+  <url>
+    <loc>https://stanari.art/ua/svidomist-knyha/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/ua/samorozvytok-knyha/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/ua/filosofs-ka-knyha/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/ua/emigratsiya/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- SEO лендінги DE -->
+  <url>
+    <loc>https://stanari.art/de/bewusstsein-buch/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/de/selbstentwicklung-buch/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stanari.art/de/ukrainer-im-ausland/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Reader -->
+  <url>
+    <loc>https://stanari.art/reader.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

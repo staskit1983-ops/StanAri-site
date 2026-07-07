@@ -1,32 +1,22 @@
-const CACHE_NAME = 'stanari-v4';
+// This service worker previously intercepted every fetch without providing
+// any real caching benefit (cache was never populated), which caused
+// duplicate network requests for images and other assets.
+// It now self-unregisters to stop intercepting requests.
 
-self.addEventListener('install', event => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(key => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
+    self.registration.unregister().then(() => {
+      return self.clients.matchAll();
+    }).then((clients) => {
+      clients.forEach((client) => {
+        if (client.url && client.navigate) {
+          client.navigate(client.url);
         }
-      })
-    )).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html'))
-    );
-    return;
-  }
-
-  event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+      });
+    })
   );
 });

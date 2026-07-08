@@ -1,1 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Illustrations — The Life Operator by Stan Ari</title>
+<meta name="description" content="Every illustration from The Life Operator by Stan Ari — the family tree, the inner code, the dream and the universe. New illustrations added weekly."/>
+<link rel="canonical" href="https://stanari.art/illustrations/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Illustrations — The Life Operator by Stan Ari"/>
+<meta property="og:description" content="Every illustration from The Life Operator, explained — updated weekly."/>
+<meta property="og:image" content="https://stanari.art/images/img_5.jpg"/>
+<meta property="og:url" content="https://stanari.art/illustrations/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ImageGallery",
+  "name": "The Life Operator — Illustrations",
+  "url": "https://stanari.art/illustrations/",
+  "author": {"@type":"Person","name":"Stan Ari"},
+  "description": "Every illustration from The Life Operator, with the chapter it belongs to."
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;
+  --border:rgba(255,224,155,.11);
+  --card:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));
+  --max:1240px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.6}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 20px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:30px;margin:0 0 10px;font-weight:400}
+.lead{color:var(--muted);max-width:640px;margin-bottom:36px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;padding-bottom:72px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.gcard-scene{width:100%;height:400px;perspective:1600px;cursor:pointer}
+.gcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:gspin 20s linear infinite;animation-play-state:paused}
+.gcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:18px;overflow:hidden;border:1px solid rgba(216,175,99,.35);
+  box-shadow:0 20px 50px -12px rgba(0,0,0,.7),0 0 0 1px rgba(216,175,99,.14) inset}
+.gcard-face--front{background:linear-gradient(160deg,#1c150d,#0a0806);padding:8px}
+.gcard-face--front img{width:100%;height:100%;object-fit:contain;display:block;border-radius:10px}
+.gcard-face--back{transform:rotateY(180deg);background:var(--card);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;text-align:center;overflow-y:auto;gap:8px}
+.gcard-face--back .chapter-tag{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.gcard-face--back p{margin:0;font-size:14px;line-height:1.6;color:var(--muted)}
+@media(max-width:640px){.gcard-scene{height:440px}}
+@keyframes gspin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@media(prefers-reduced-motion:reduce){.gcard{animation:none}}
+noscript figure{margin:0 0 32px}
+noscript img{width:100%;border-radius:12px;display:block}
+noscript figcaption{margin-top:10px;color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--border);padding:24px 0;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <a class="back" href="/#gallery">← Back to site</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span>Illustrations</div>
+  <h1>Every illustration from The Life Operator</h1>
+  <p class="lead">Each image here comes from a real chapter of the book. New illustrations are added every week — this page grows along with the book.</p>
+
+  <!--
+    ============================================================
+    HOW TO ADD A NEW CARD (weekly):
+    1. Copy one <div class="gcard-scene">...</div> block below.
+    2. Change the image src, alt text, chapter tag and caption text.
+    3. Paste it as a new item inside <div class="grid">...</div>.
+    That's it — no JavaScript editing needed. Google indexes this
+    page as plain HTML, so every new card is indexed automatically
+    next time it's crawled.
+    ============================================================
+  -->
+  <div class="grid">
+
+    <div class="gcard-scene"><div class="gcard">
+      <div class="gcard-face gcard-face--front"><img src="../images/arbol-del-linaje.webp" alt="Lineage Tree infographic — The Life Operator, Spanish edition" loading="lazy" decoding="async"/></div>
+      <div class="gcard-face gcard-face--back">
+        <span class="chapter-tag">Spanish edition · Infographic</span>
+        <p>A lineage infographic created for the Spanish edition of the book — the same idea as the family tree illustration, redrawn as a family altar: remember, honor, pass the strength forward.</p>
+      </div>
+    </div></div>
+
+    <div class="gcard-scene"><div class="gcard">
+      <div class="gcard-face gcard-face--front"><img src="../images/consciencia.webp" alt="Consciousness infographic — The Life Operator, Spanish edition" loading="lazy" decoding="async"/></div>
+      <div class="gcard-face gcard-face--back">
+        <span class="chapter-tag">Spanish edition · Infographic</span>
+        <p>A consciousness infographic from the Spanish edition — belief, choice, reaction, action, result: you see the result, but not what creates it.</p>
+      </div>
+    </div></div>
+
+    <!-- New cards go here, one at a time, roughly once a week. -->
+
+  </div>
+  <p class="lead" style="margin-top:-8px">More illustrations are added here every week — check back soon.</p>
+
+  <!-- Plain-HTML fallback: identical content, always visible to crawlers/readers without JS or CSS 3D support -->
+  <noscript>
+    <figure><img src="../images/arbol-del-linaje.webp" alt="Lineage Tree infographic"/><figcaption><strong>Lineage Tree — Spanish edition infographic.</strong> A lineage infographic created for the Spanish edition — remember, honor, pass the strength forward.</figcaption></figure>
+    <figure><img src="../images/consciencia.webp" alt="Consciousness infographic"/><figcaption><strong>Consciousness — Spanish edition infographic.</strong> Belief, choice, reaction, action, result: you see the result, but not what creates it.</figcaption></figure>
+  </noscript>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var scenes = document.querySelectorAll('.gcard-scene');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.querySelector('.gcard').style.animationPlayState = 'running';
+          io.unobserve(entry.target);
+        }
+      });
+    }, {rootMargin:'100px'});
+    scenes.forEach(function(scene){ io.observe(scene); });
+  } else {
+    scenes.forEach(function(scene){
+      scene.querySelector('.gcard').style.animationPlayState = 'running';
+    });
+  }
+  scenes.forEach(function(scene){
+    var card = scene.querySelector('.gcard');
+    var paused = false;
+    scene.addEventListener('click', function(){
+      if(!paused){
+        var cs = getComputedStyle(card).transform;
+        var angle = 0;
+        if(cs && cs !== 'none'){
+          var m = cs.match(/matrix3d\(([^)]+)\)/);
+          if(m){
+            var v = m[1].split(',').map(Number);
+            angle = Math.atan2(-v[8], v[0]) * 180/Math.PI;
+          }
+        }
+        var mod = ((angle % 360) + 360) % 360;
+        var nearest = (mod > 90 && mod < 270) ? 180 : 0;
+        card.style.animation = 'none';
+        card.style.transition = 'transform .3s ease';
+        card.style.transform = 'rotateY('+nearest+'deg)';
+        card.dataset.face = nearest;
+        paused = true;
+      } else {
+        card.style.transition = '';
+        var face = card.dataset.face === '180' ? 180 : 0;
+        card.style.animation = 'gspin 20s linear infinite';
+        card.style.animationDelay = (face === 180 ? '-10s' : '0s');
+        paused = false;
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
 

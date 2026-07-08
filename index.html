@@ -6,6 +6,7 @@
 <link href="https://apis.google.com" rel="preconnect"/>
 <link href="https://firestore.googleapis.com" rel="preconnect"/>
 <link href="https://assets.lemonsqueezy.com" rel="preconnect"/>
+<link href="images/author-stas.webp" rel="preload" as="image" fetchpriority="high"/>
 <!-- SEO Meta Tags -->
 <title>Stan Ari — Creator of Inner Worlds | Книги, Музика, Місія</title>
 <meta content="Stan Ari — письменник і мислитель. Автор книги The Life Operator. Філософська книга про свідомість, внутрішній код і трансформацію. Що почитати з саморозвитку? Читай українською, англійською, польською, іспанською." name="description"/>
@@ -4095,17 +4096,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }).catch(function(){ window.__stanariOnline = 'n/a'; });
   }
 
-  function deferStartPresence(){
-    if ('requestIdleCallback' in window){
-      requestIdleCallback(startPresence, {timeout: 8000});
-    } else {
-      setTimeout(startPresence, 6000);
-    }
-  }
   if (document.readyState === 'complete') {
-    deferStartPresence();
+    setTimeout(startPresence, 3000);
   } else {
-    window.addEventListener('load', deferStartPresence);
+    window.addEventListener('load', function(){
+      setTimeout(startPresence, 3000);
+    });
   }
 })();
 /* === /PRESENCE SYSTEM === */

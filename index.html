@@ -3852,8 +3852,7 @@ async function loadLikeCounts(){
 }
 document.addEventListener("DOMContentLoaded", () => {
   try { updateReviewFormVisibility(); } catch(e) {}
-  if (window.loadReviews) window.loadReviews();
-  loadLikeCounts();
+  initReviewsAndLikesLazyLoad();
 });
 function paintStars(n){
   document.querySelectorAll("#starPicker .star-btn").forEach(btn => {
@@ -3963,10 +3962,36 @@ updateMenu = function(){
 
 document.addEventListener("DOMContentLoaded", () => {
   try { updateReviewFormVisibility(); } catch(e) {}
-  if (window.loadReviews) window.loadReviews();
+  initReviewsAndLikesLazyLoad();
 });
-setTimeout(() => { if (window.loadReviews) window.loadReviews(); }, 1500);
 /* === /STAN ARI REVIEWS + RATINGS v1 === */
+// Reviews and music-like counters used to fetch from Firestore immediately on
+// page load, even though both sections sit below the fold. That added early
+// network requests during the LCP window for no visible benefit. Now they
+// only fetch once the user actually scrolls to that part of the page.
+function initReviewsAndLikesLazyLoad(){
+  if (window.__stanariLazyRLInit) return;
+  window.__stanariLazyRLInit = true;
+  var done = false;
+  function fire(){
+    if (done) return;
+    done = true;
+    if (window.loadReviews) window.loadReviews();
+    try { loadLikeCounts(); } catch(e) {}
+  }
+  var targets = [document.getElementById('reviews'), document.getElementById('music')].filter(Boolean);
+  if ('IntersectionObserver' in window && targets.length){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){ if (entry.isIntersecting) fire(); });
+    }, {rootMargin:'200px'});
+    targets.forEach(function(t){ io.observe(t); });
+  } else {
+    fire();
+  }
+  // Safety net: load anyway after 8s even if the user never scrolls,
+  // so the data isn't permanently missing on a very short visit.
+  setTimeout(fire, 8000);
+}
 /* === /STAN ARI AUTH + LEMON FINAL v20 === */
 </script>
 

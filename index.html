@@ -3614,7 +3614,7 @@ onAuthStateChanged(auth, async (user) => {
     if (b) b.textContent = bm.btn;
   } catch(e) {}
   // Reload like counts now that we know the user's email
-  try { loadLikeCounts(); } catch(e) {}
+  try { if (window.__stanariReviewsLikesLoaded) loadLikeCounts(); } catch(e) {}
 });
 
 document.addEventListener("DOMContentLoaded", updateMenu);
@@ -3976,6 +3976,7 @@ function initReviewsAndLikesLazyLoad(){
   function fire(){
     if (done) return;
     done = true;
+    window.__stanariReviewsLikesLoaded = true;
     if (window.loadReviews) window.loadReviews();
     try { loadLikeCounts(); } catch(e) {}
   }
@@ -4094,12 +4095,17 @@ document.addEventListener('DOMContentLoaded', function(){
     }).catch(function(){ window.__stanariOnline = 'n/a'; });
   }
 
+  function deferStartPresence(){
+    if ('requestIdleCallback' in window){
+      requestIdleCallback(startPresence, {timeout: 8000});
+    } else {
+      setTimeout(startPresence, 6000);
+    }
+  }
   if (document.readyState === 'complete') {
-    setTimeout(startPresence, 3000);
+    deferStartPresence();
   } else {
-    window.addEventListener('load', function(){
-      setTimeout(startPresence, 3000);
-    });
+    window.addEventListener('load', deferStartPresence);
   }
 })();
 /* === /PRESENCE SYSTEM === */

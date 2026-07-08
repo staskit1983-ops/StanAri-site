@@ -1392,7 +1392,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <style>
 .gcard-scene{width:100%;height:400px;perspective:1600px;cursor:pointer}
 .gcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;
-  animation:gspin 20s linear infinite}
+  animation:gspin 20s linear infinite;animation-play-state:paused}
 .gcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
   border-radius:18px;overflow:hidden;border:1px solid rgba(216,175,99,.35);
   box-shadow:0 20px 50px -12px rgba(0,0,0,.7),0 0 0 1px rgba(216,175,99,.14) inset}
@@ -1411,7 +1411,25 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </style>
 <script>
 (function(){
-  document.querySelectorAll('.gcard-scene').forEach(function(scene){
+  var scenes = document.querySelectorAll('.gcard-scene');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          var card = entry.target.querySelector('.gcard');
+          card.style.animationPlayState = 'running';
+          io.unobserve(entry.target);
+        }
+      });
+    }, {rootMargin:'100px'});
+    scenes.forEach(function(scene){ io.observe(scene); });
+  } else {
+    // No IntersectionObserver support — just start spinning immediately.
+    scenes.forEach(function(scene){
+      scene.querySelector('.gcard').style.animationPlayState = 'running';
+    });
+  }
+  scenes.forEach(function(scene){
     var card = scene.querySelector('.gcard');
     var paused = false;
     scene.addEventListener('click', function(){

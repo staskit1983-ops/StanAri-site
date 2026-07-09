@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
   <!-- Головна -->
   <url>
     <loc>https://stanari.art/</loc>
@@ -14,7 +13,6 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
   <!-- Мовні клони -->
   <url>
     <loc>https://stanari.art/en/</loc>
@@ -36,7 +34,12 @@
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-
+  <!-- Ілюстрації -->
+  <url>
+    <loc>https://stanari.art/illustrations/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <!-- SEO лендінги EN -->
   <url>
     <loc>https://stanari.art/en/consciousness-book/</loc>
@@ -58,7 +61,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <!-- SEO лендінги PL -->
   <url>
     <loc>https://stanari.art/pl/ksiazka-swiadomosc/</loc>
@@ -70,7 +72,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <!-- SEO лендінги ES -->
   <url>
     <loc>https://stanari.art/es/libro-consciencia/</loc>
@@ -82,7 +83,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <!-- SEO лендінги UA -->
   <url>
     <loc>https://stanari.art/ua/svidomist-knyha/</loc>
@@ -104,7 +104,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <!-- SEO лендінги DE -->
   <url>
     <loc>https://stanari.art/de/bewusstsein-buch/</loc>
@@ -121,12 +120,10 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <!-- Reader -->
   <url>
     <loc>https://stanari.art/reader.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-
 </urlset>

@@ -3534,6 +3534,10 @@ window.stanariPrepareLemonButtons18 = prepareBuyLinks;
 document.addEventListener("click", function(ev){
   const a = ev.target.closest('[data-t="buy_main_btn"], a[href*="lemonsqueezy.com/checkout/buy"]');
   if (!a) return;
+  if (a.dataset.stanariProgrammaticClick === "1") {
+    delete a.dataset.stanariProgrammaticClick;
+    return; // let this specific click fall through to Lemon.js's own listener
+  }
   if (!stanariCurrentEmail) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
@@ -3558,22 +3562,37 @@ document.addEventListener("click", function(ev){
     if (modal) modal.style.display = 'flex';
     return false;
   }
+  ev.preventDefault();
+  ev.stopImmediatePropagation();
   a.setAttribute("href", checkoutUrl(stanariCurrentEmail));
   a.classList.add("lemonsqueezy-button");
   a.setAttribute("target", "_self");
   try{gtag('event','buy_button_click',{event_category:'purchase',language:window.lang||'uk',user_email:stanariCurrentEmail});}catch(e){}
-  // If Lemon.js not ready yet — wait then trigger click
-  if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== "function") {
-    var origText = a.innerHTML;
-    a.innerHTML = "⏳ Завантаження...";
-    a.style.pointerEvents = "none";
-    waitForLemonAndSetup(function(){
-      a.innerHTML = origText;
-      a.style.pointerEvents = "";
-      a.click();
-    }, 6000);
-    return false;
+  function openOverlayNow(){
+    try { window.LemonSqueezy.Setup(); } catch(e){}
+    a.dataset.stanariProgrammaticClick = "1";
+    a.click();
   }
+  function proceedToCheckout(){
+    if (!window.LemonSqueezy || typeof window.LemonSqueezy.Setup !== "function") {
+      var origText = a.innerHTML;
+      a.innerHTML = "⏳ Завантаження...";
+      a.style.pointerEvents = "none";
+      waitForLemonAndSetup(function(){
+        a.innerHTML = origText;
+        a.style.pointerEvents = "";
+        openOverlayNow();
+      }, 6000);
+    } else {
+      openOverlayNow();
+    }
+  }
+  if (typeof window.stanariShowLangInfoModal === "function") {
+    window.stanariShowLangInfoModal(proceedToCheckout);
+  } else {
+    proceedToCheckout();
+  }
+  return false;
 }, true);
 
 try { await getRedirectResult(auth); } catch(e) { console.warn("Redirect result ignored:", e); }
@@ -4201,8 +4220,17 @@ document.addEventListener('DOMContentLoaded', function(){
       try { loginDone = (localStorage.getItem('stanari_login_completed') === '1'); } catch(e){}
       var lemonReady = false;
       try { lemonReady = !!(window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'); } catch(e){}
-      var swActive = false;
-      try { swActive = !!(navigator.serviceWorker && navigator.serviceWorker.controller); } catch(e){}
+      var swActive = window.__stanariSwActive;
+      if (swActive === undefined) {
+        swActive = false;
+        try {
+          if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistration().then(function(reg){
+              window.__stanariSwActive = !!(reg && reg.active);
+            }).catch(function(){ window.__stanariSwActive = false; });
+          }
+        } catch(e) { window.__stanariSwActive = false; }
+      }
       var ua = navigator.userAgent || '';
       var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -4254,7 +4282,52 @@ document.addEventListener('DOMContentLoaded', function(){
     <button onclick="document.getElementById('stanariLoginModal').style.display='none'" style="background:var(--gold);color:#1a1410;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">OK</button>
   </div>
 </div>
-<!-- Google Play Language Modal -->
+<!-- Language info modal — shown before checkout -->
+<div id="stanariLangInfoModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
+  <div style="background:#13110e;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.6);position:relative">
+    <button onclick="document.getElementById('stanariLangInfoModal').style.display='none'" aria-label="Close" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+    <div style="font-size:34px;margin-bottom:14px">🌍</div>
+    <h3 id="stanariLangInfoTitle" style="color:#f5e4a0;font-size:18px;margin:0 0 10px"></h3>
+    <p id="stanariLangInfoText" style="color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 16px"></p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px">
+      <span style="border:1px solid rgba(216,175,99,.4);border-radius:100px;padding:6px 12px;font-size:13px;color:#d8af63">🇺🇦 Українська</span>
+      <span style="border:1px solid rgba(216,175,99,.4);border-radius:100px;padding:6px 12px;font-size:13px;color:#d8af63">🇬🇧 English</span>
+      <span style="border:1px solid rgba(216,175,99,.4);border-radius:100px;padding:6px 12px;font-size:13px;color:#d8af63">🇵🇱 Polski</span>
+      <span style="border:1px solid rgba(216,175,99,.4);border-radius:100px;padding:6px 12px;font-size:13px;color:#d8af63">🇪🇸 Español</span>
+    </div>
+    <p id="stanariLangInfoNote" style="color:var(--muted2);font-size:12px;margin:0 0 22px"></p>
+    <button id="stanariLangInfoContinueBtn" style="background:var(--gold);color:#1a1410;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%"></button>
+  </div>
+</div>
+<script>
+(function(){
+  var LANG_INFO_T = {
+    uk:{title:'Одна покупка — всі мови',text:'Після покупки книга одразу доступна на всіх мовах:',note:'Німецька — у підготовці',btn:'Далі →'},
+    en:{title:'One purchase — every language',text:'After buying, the book is instantly available in every language:',note:'German — coming soon',btn:'Continue →'},
+    pl:{title:'Jeden zakup — wszystkie języki',text:'Po zakupie książka jest od razu dostępna we wszystkich językach:',note:'Niemiecki — w przygotowaniu',btn:'Dalej →'},
+    de:{title:'Ein Kauf — alle Sprachen',text:'Nach dem Kauf ist das Buch sofort in allen Sprachen verfügbar:',note:'Deutsch — in Vorbereitung',btn:'Weiter →'},
+    es:{title:'Una compra — todos los idiomas',text:'Después de comprar, el libro está disponible al instante en todos los idiomas:',note:'Alemán — en preparación',btn:'Continuar →'}
+  };
+  window.stanariShowLangInfoModal = function(onContinue){
+    var l = (window.lang || 'uk');
+    var t = LANG_INFO_T[l] || LANG_INFO_T.en;
+    document.getElementById('stanariLangInfoTitle').textContent = t.title;
+    document.getElementById('stanariLangInfoText').textContent = t.text;
+    document.getElementById('stanariLangInfoNote').textContent = t.note;
+    var btn = document.getElementById('stanariLangInfoContinueBtn');
+    btn.textContent = t.btn;
+    btn.onclick = function(){
+      document.getElementById('stanariLangInfoModal').style.display = 'none';
+      onContinue();
+    };
+    document.getElementById('stanariLangInfoModal').style.display = 'flex';
+  };
+  document.getElementById('stanariLangInfoModal').addEventListener('click', function(e){
+    if (e.target === this) this.style.display = 'none';
+  });
+})();
+</script>
+
 <div id="googlePlayModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,1,1,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center">
   <div style="background:#1a1410;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 24px;max-width:360px;width:90%;text-align:center">
     <img alt="Google Play" height="36" src="https://cdn.simpleicons.org/googleplay/ffffff" width="36" style="margin-bottom:16px"/>

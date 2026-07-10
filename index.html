@@ -1216,14 +1216,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <span style="font-size:10px">Apple Books</span>
 </div>
 </div>
-<a id="stanariB2RLink" href="https://books2read.com/u/mgX5gR" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:12px;border-radius:12px;border:1px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:700;font-size:13px;text-decoration:none">
+<div class="btn btn-ghost btn-sm" onclick="openB2RModal()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:12px;border-radius:12px;border:1px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:700;font-size:13px;cursor:pointer">
 📚 <span data-t="b2r_everywhere">Читати всюди (всі магазини)</span>
-</a>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  if (typeof window.stanariUpdateB2RLink === 'function') window.stanariUpdateB2RLink();
-});
-</script>
+</div>
 <div style="background:#12100a;border:1px solid rgba(216,175,99,.2);border-radius:16px;padding:18px 16px;margin-top:16px">
   <p style="font-size:10px;color:rgba(216,175,99,.75);text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px" data-t="more_stores">і ще на платформах</p>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
@@ -4363,6 +4358,26 @@ Aria. Арія. Пісні Арії. Музика Арія. Echoes of Aria. Born
 книга свідомість українська. ukrainian book consciousness. libro sobre consciencia. książka o świadomości. Buch über Bewusstsein. self-help book Ukrainian author. philosophical book transformation. inner code book.
 Стан Ари. Стен Ари. Стан Арі по-русски. Оператор сознания. Книга о сознании. Осознанность. Трансформация. Саморазвитие. Внутренний код. Что почитать. Украинский автор. Ария песни.
 </div>
+<!-- Books2Read Language Modal -->
+<div id="b2rModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,1,1,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:#1a1410;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 24px;max-width:360px;width:90%;text-align:center">
+    <div style="font-size:36px;margin-bottom:16px">📚</div>
+    <h3 style="color:#f5e4a0;font-size:18px;margin:0 0 8px" data-t="b2r_everywhere">Читати всюди</h3>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 24px" data-t="lang_label">Вибери мову</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <a href="https://books2read.com/u/mgX5gR" target="_blank" rel="noopener" onclick="closeB2RModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid #d8af63;background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇬🇧 English</a>
+      <a href="https://books2read.com/u/4E67g0" target="_blank" rel="noopener" onclick="closeB2RModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇵🇱 Polski</a>
+      <a href="https://books2read.com/u/mdp9jW" target="_blank" rel="noopener" onclick="closeB2RModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇪🇸 Español</a>
+    </div>
+    <button onclick="closeB2RModal()" style="margin-top:20px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">✕ Закрити</button>
+  </div>
+</div>
+<script>
+function openB2RModal(){ document.getElementById('b2rModal').style.display='flex'; }
+function closeB2RModal(){ document.getElementById('b2rModal').style.display='none'; }
+document.getElementById('b2rModal').addEventListener('click', function(e){ if(e.target===this) closeB2RModal(); });
+</script>
+<!-- Apple Books Language Modal -->
 <div id="appleBooksModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,1,1,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center">
   <div style="background:#1a1410;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 24px;max-width:360px;width:90%;text-align:center">
     <img alt="Apple Books" height="36" src="https://cdn.simpleicons.org/apple/ffffff" width="36" style="margin-bottom:16px"/>
@@ -4380,21 +4395,6 @@ Aria. Арія. Пісні Арії. Музика Арія. Echoes of Aria. Born
 function openAppleBooksModal(){ document.getElementById('appleBooksModal').style.display='flex'; }
 function closeAppleBooksModal(){ document.getElementById('appleBooksModal').style.display='none'; }
 document.getElementById('appleBooksModal').addEventListener('click', function(e){ if(e.target===this) closeAppleBooksModal(); });
-// Books2Read universal link — updates on every language switch. Placed last
-// on purpose: this file redefines window.setLang multiple times above, and
-// each redefinition replaces whatever hook came before it.
-var B2R_LINKS = { es:'https://books2read.com/u/mdp9jW', en:'https://books2read.com/u/mgX5gR', pl:'https://books2read.com/u/4E67g0' };
-window.stanariUpdateB2RLink = function(){
-  var l = window.lang || 'en';
-  var el = document.getElementById('stanariB2RLink');
-  if (!el) return;
-  el.href = B2R_LINKS[l] || B2R_LINKS.en;
-};
-var _oldSetLangB2R = window.setLang;
-window.setLang = function(l){
-  if (typeof _oldSetLangB2R === 'function') _oldSetLangB2R(l);
-  window.stanariUpdateB2RLink();
-};
 </script>
 </body>
 </html>

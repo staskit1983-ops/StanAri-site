@@ -87,7 +87,7 @@
     "knowsAbout": ["Philosophy", "Consciousness", "Personal Transformation", "Self-Help"]
   }
   </script>
-<script type="application/ld+json">
+<script type="application/ld+json" id="bookSchemaJson">
   {
     "@context": "https://schema.org",
     "@type": "Book",
@@ -1230,6 +1230,35 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     <div style="background:#fff;border-radius:10px;padding:12px 10px;display:flex;align-items:center;justify-content:center;min-height:52px"><img src="data:image/jpeg;base64,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" alt="Fable" style="max-width:100%;max-height:36px;object-fit:contain"/></div>
   </div>
 </div>
+<div style="background:linear-gradient(160deg,rgba(255,237,188,.09),rgba(255,255,255,.02));border:1px solid rgba(255,224,155,.25);border-radius:14px;padding:18px;margin-top:16px;text-align:center">
+<p id="tom1ReviewCtaText" style="font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px"></p>
+<a class="btn btn-ghost btn-sm" href="https://www.goodreads.com/book/show/253794243-the-life-operator" target="_blank" rel="noopener" style="display:inline-flex;padding:10px 22px;font-size:13px;text-decoration:none;margin-bottom:10px">Goodreads</a>
+<a href="https://t.me/STAN_ARI" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:12px;border-radius:12px;border:1px solid rgba(216,175,99,.3);background:rgba(216,175,99,.06);color:var(--gold2);font-weight:700;font-size:13px;text-decoration:none">
+<svg width="18" height="18" viewBox="0 0 240 240" fill="none"><circle cx="120" cy="120" r="120" fill="#d8af63"/><path d="M177 72l-20 96c-1.5 6.8-5.5 8.5-11 5.3l-30-22-14.5 14c-1.6 1.6-3 3-6 3l2-30 55-50c2.4-2.1-.5-3.3-3.7-1.2l-68 43-29-9c-6.3-2-6.4-6.3 1.3-9.3l114-44c5.3-2 9.9 1.2 8.2 8.2z" fill="#090807"/></svg>
+<span id="tom1ReviewTgText"></span>
+</a>
+</div>
+<script>
+(function(){
+  var TOM1_REVIEW_CTA = {
+    uk: { text: 'Купив(-ла) книгу? Залиш, будь ласка, оцінку і кілька слів там, де купував(-ла), або на Goodreads — це найбільше допомагає книзі знайти нових читачів. Купував(-ла) в іншому магазині (Kobo, Barnes & Noble, Smashwords тощо)? Там теж можна.', tg: 'Питання про книгу? Приєднуйся до Telegram-каналу' },
+    en: { text: 'Bought the book? Please leave a rating and a few words wherever you bought it, or on Goodreads — it\'s the single biggest thing that helps the book reach new readers. Bought elsewhere (Kobo, Barnes & Noble, Smashwords, etc.)? A review there helps just as much.', tg: 'Questions about the book? Join the Telegram channel' },
+    pl: { text: 'Kupiłeś(-aś) książkę? Zostaw, proszę, ocenę i kilka słów tam, gdzie kupiłeś(-aś), albo na Goodreads — to najbardziej pomaga książce dotrzeć do nowych czytelników. Kupiłeś(-aś) gdzie indziej (Kobo, Barnes & Noble, Smashwords itd.)? Tam też można.', tg: 'Pytania o książkę? Dołącz do kanału Telegram' },
+    es: { text: '¿Compraste el libro? Deja, por favor, tu valoración y unas palabras allí donde lo compraste, o en Goodreads — es lo que más ayuda al libro a llegar a nuevos lectores. ¿Lo compraste en otra tienda (Kobo, Barnes & Noble, Smashwords, etc.)? Allí también ayuda.', tg: '¿Preguntas sobre el libro? Únete al canal de Telegram' },
+    de: { text: 'Hast du das Buch gekauft? Hinterlasse bitte eine Bewertung und ein paar Worte dort, wo du gekauft hast, oder bei Goodreads — das hilft dem Buch am meisten, neue Leser zu erreichen. Anderswo gekauft (Kobo, Barnes & Noble, Smashwords usw.)? Auch dort hilft es genauso.', tg: 'Fragen zum Buch? Tritt dem Telegram-Kanal bei' }
+  };
+  function renderTom1ReviewCta(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var d = TOM1_REVIEW_CTA[l] || TOM1_REVIEW_CTA.uk;
+    var tEl = document.getElementById('tom1ReviewCtaText');
+    var tgEl = document.getElementById('tom1ReviewTgText');
+    if (tEl) tEl.textContent = d.text;
+    if (tgEl) tgEl.textContent = d.tg;
+  }
+  document.addEventListener('DOMContentLoaded', renderTom1ReviewCta);
+  window.renderTom1ReviewCta = renderTom1ReviewCta;
+})();
+</script>
 </div>
 </div>
 <!-- Том 2 -->
@@ -1274,9 +1303,51 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <span style="font-size:10px">Apple Books</span>
 </div>
 </div>
-<!-- Повідомити про вихід -->
-<a class="btn btn-ghost" data-t="btn_notify" href="https://t.me/STAN_ARI" style="width:100%;justify-content:center;border-color:rgba(255,224,155,.25);color:var(--gold2)" target="_blank">🔔 Повідомити про вихід</a>
+<div style="background:linear-gradient(160deg,rgba(255,237,188,.05),rgba(255,255,255,.01));border:1px solid rgba(255,224,155,.15);border-radius:14px;padding:16px;margin-top:16px;text-align:center;opacity:.5;pointer-events:none">
+<p id="tom2ReviewCtaText" style="font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 12px"></p>
+<span class="btn btn-ghost btn-sm" style="display:inline-flex;padding:10px 22px;font-size:13px">Goodreads</span>
 </div>
+<script>
+(function(){
+  var TOM2_REVIEW_CTA = {
+    uk: 'Після виходу тут можна буде залишити оцінку на Goodreads.',
+    en: 'Once released, you\'ll be able to leave a rating on Goodreads here.',
+    pl: 'Po premierze będzie tu można zostawić ocenę na Goodreads.',
+    es: 'Cuando se publique, aquí podrás dejar una valoración en Goodreads.',
+    de: 'Nach der Veröffentlichung kannst du hier bei Goodreads bewerten.'
+  };
+  function renderTom2ReviewCta(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var el = document.getElementById('tom2ReviewCtaText');
+    if (el) el.textContent = TOM2_REVIEW_CTA[l] || TOM2_REVIEW_CTA.uk;
+  }
+  document.addEventListener('DOMContentLoaded', renderTom2ReviewCta);
+  window.renderTom2ReviewCta = renderTom2ReviewCta;
+})();
+</script>
+<script>
+(function(){
+  var AUDIO_REVIEW_CTA = {
+    uk: 'Після виходу тут можна буде залишити оцінку на Goodreads.',
+    en: 'Once released, you\'ll be able to leave a rating on Goodreads here.',
+    pl: 'Po premierze będzie tu można zostawić ocenę na Goodreads.',
+    es: 'Cuando se publique, aquí podrás dejar una valoración en Goodreads.',
+    de: 'Nach der Veröffentlichung kannst du hier bei Goodreads bewerten.'
+  };
+  function renderAudioReviewCta(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var text = AUDIO_REVIEW_CTA[l] || AUDIO_REVIEW_CTA.uk;
+    var e1 = document.getElementById('audio1ReviewCtaText');
+    var e2 = document.getElementById('audio2ReviewCtaText');
+    if (e1) e1.textContent = text;
+    if (e2) e2.textContent = text;
+  }
+  document.addEventListener('DOMContentLoaded', renderAudioReviewCta);
+  window.renderAudioReviewCta = renderAudioReviewCta;
+})();
+</script>
+<!-- Повідомити про вихід -->
+<a class="btn btn-ghost" data-t="btn_notify" href="https://t.me/STAN_ARI" style="width:100%;justify-content:center;border-color:rgba(255,224,155,.25);color:var(--gold2);margin-top:10px" target="_blank">🔔 Повідомити про вихід</a>
 </div>
 </div>
 </div>
@@ -1290,7 +1361,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <img id="dnaTeaserImg" src="dna-illustration-uk.webp" alt="DNA — the hard drive that raised you" loading="lazy" decoding="async" style="width:100%;max-width:420px;border-radius:16px;box-shadow:0 8px 40px rgba(216,175,99,.2);margin:0 auto 28px;display:block"/>
 <h3 id="dnaTeaserTitle" style="font-size:22px;font-weight:800;color:var(--gold2);margin-bottom:20px"></h3>
 <p id="dnaTeaserText" style="font-size:15px;line-height:1.85;color:var(--muted);text-align:left"></p>
-<a id="dnaTeaserLink" href="https://stanari.art/#books" style="display:inline-block;margin-top:16px;color:var(--gold);font-weight:700;font-size:14px">The Life Operator — Стен Арі →</a>
+<a id="dnaTeaserLink" href="https://stanari.art/#books" style="display:inline-block;margin-top:16px;color:var(--gold);font-weight:700;font-size:14px">The Life Operator — Stan Ari →</a>
 </div>
 </div>
 <script>
@@ -1377,6 +1448,11 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
         <img alt="Apple Books" height="22" src="https://cdn.simpleicons.org/apple/ffffff" width="22"/><span style="font-size:10px">Apple Books</span>
       </div>
     </div>
+    <div style="background:linear-gradient(160deg,rgba(255,237,188,.05),rgba(255,255,255,.01));border:1px solid rgba(255,224,155,.15);border-radius:14px;padding:14px;margin-top:16px;text-align:center;opacity:.5;pointer-events:none">
+      <p id="audio1ReviewCtaText" style="font-size:11px;color:var(--muted);line-height:1.6;margin:0 0 10px"></p>
+      <span class="btn btn-ghost btn-sm" style="display:inline-flex;padding:9px 20px;font-size:12px">Goodreads</span>
+    </div>
+    <a class="btn btn-ghost" data-t="btn_notify" href="https://t.me/STAN_ARI" style="width:100%;justify-content:center;border-color:rgba(255,224,155,.25);color:var(--gold2);margin-top:10px" target="_blank">🔔 Повідомити про вихід</a>
   </div>
 </div>
 
@@ -1410,6 +1486,11 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
         <img alt="Apple Books" height="22" src="https://cdn.simpleicons.org/apple/ffffff" width="22"/><span style="font-size:10px">Apple Books</span>
       </div>
     </div>
+    <div style="background:linear-gradient(160deg,rgba(255,237,188,.05),rgba(255,255,255,.01));border:1px solid rgba(255,224,155,.15);border-radius:14px;padding:14px;margin-top:16px;text-align:center;opacity:.5;pointer-events:none">
+      <p id="audio2ReviewCtaText" style="font-size:11px;color:var(--muted);line-height:1.6;margin:0 0 10px"></p>
+      <span class="btn btn-ghost btn-sm" style="display:inline-flex;padding:9px 20px;font-size:12px">Goodreads</span>
+    </div>
+    <a class="btn btn-ghost" data-t="btn_notify" href="https://t.me/STAN_ARI" style="width:100%;justify-content:center;border-color:rgba(255,224,155,.25);color:var(--gold2);margin-top:10px" target="_blank">🔔 Повідомити про вихід</a>
   </div>
 </div>
 
@@ -1547,6 +1628,46 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <div class="container">
 <div class="kicker"><span class="kicker-dot"></span><span data-t="reviews_kicker">Відгуки</span></div>
 <h2 data-t="support_title" style="margin-top:8px">Що думають читачі <span id="reviewsCount" style="font-size:0.6em;color:var(--gold2);font-weight:400;opacity:.7"></span></h2>
+<div style="background:linear-gradient(160deg,rgba(255,237,188,.09),rgba(255,255,255,.02));border:1px solid rgba(255,224,155,.25);border-radius:18px;padding:22px;margin:24px 0">
+<p id="gpReviewCtaText" style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 16px"></p>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<a class="btn btn-ghost btn-sm" href="https://www.amazon.com/dp/B0H4X5JBF5" target="_blank" rel="noopener" style="flex:1;min-width:120px;padding:11px 8px;font-size:13px;justify-content:center;text-decoration:none">Amazon</a>
+<div class="btn btn-ghost btn-sm" onclick="openGooglePlayModal()" style="flex:1;min-width:120px;padding:11px 8px;font-size:13px;justify-content:center;cursor:pointer">Google Play</div>
+<div class="btn btn-ghost btn-sm" onclick="openAppleBooksModal()" style="flex:1;min-width:120px;padding:11px 8px;font-size:13px;justify-content:center;cursor:pointer">Apple Books</div>
+<a class="btn btn-ghost btn-sm" href="https://www.goodreads.com/book/show/253794243-the-life-operator" target="_blank" rel="noopener" style="flex:1;min-width:120px;padding:11px 8px;font-size:13px;justify-content:center;text-decoration:none">Goodreads</a>
+<div class="btn btn-ghost btn-sm" onclick="openB2RModal()" id="gpReviewOtherBtn" style="flex:1;min-width:120px;padding:11px 8px;font-size:13px;justify-content:center;cursor:pointer"></div>
+</div>
+<a href="https://t.me/STAN_ARI" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:12px;border-radius:12px;border:1px solid rgba(216,175,99,.3);background:rgba(216,175,99,.06);color:var(--gold2);font-weight:700;font-size:13px;text-decoration:none">
+<svg width="18" height="18" viewBox="0 0 240 240" fill="none"><circle cx="120" cy="120" r="120" fill="#d8af63"/><path d="M177 72l-20 96c-1.5 6.8-5.5 8.5-11 5.3l-30-22-14.5 14c-1.6 1.6-3 3-6 3l2-30 55-50c2.4-2.1-.5-3.3-3.7-1.2l-68 43-29-9c-6.3-2-6.4-6.3 1.3-9.3l114-44c5.3-2 9.9 1.2 8.2 8.2z" fill="#090807"/></svg>
+<span id="gpReviewTgText"></span>
+</a>
+<p id="gpReviewHereText" style="font-size:12px;color:var(--muted);opacity:.75;margin:14px 0 0;text-align:center"></p>
+</div>
+<script>
+(function(){
+  var GP_REVIEW_CTA = {
+    uk: { text: 'Купив(-ла) книгу? Залиш, будь ласка, оцінку і кілька слів там, де купував(-ла), або на Goodreads — це найбільше допомагає книзі знайти нових читачів. Купував(-ла) в іншому магазині (Kobo, Barnes & Noble, Smashwords тощо)? Там теж можна.', other: 'Інший магазин', here: 'Можна залишити відгук і прямо тут, на сайті ↓', tg: 'Питання про книгу? Приєднуйся до Telegram-каналу' },
+    en: { text: 'Bought the book? Please leave a rating and a few words wherever you bought it, or on Goodreads — it\'s the single biggest thing that helps the book reach new readers. Bought elsewhere (Kobo, Barnes & Noble, Smashwords, etc.)? A review there helps just as much.', other: 'Other store', here: 'You can also leave a review right here on the site ↓', tg: 'Questions about the book? Join the Telegram channel' },
+    pl: { text: 'Kupiłeś(-aś) książkę? Zostaw, proszę, ocenę i kilka słów tam, gdzie kupiłeś(-aś), albo na Goodreads — to najbardziej pomaga książce dotrzeć do nowych czytelników. Kupiłeś(-aś) gdzie indziej (Kobo, Barnes & Noble, Smashwords itd.)? Tam też można.', other: 'Inny sklep', here: 'Możesz też zostawić opinię tutaj, na stronie ↓', tg: 'Pytania o książkę? Dołącz do kanału Telegram' },
+    es: { text: '¿Compraste el libro? Deja, por favor, tu valoración y unas palabras allí donde lo compraste, o en Goodreads — es lo que más ayuda al libro a llegar a nuevos lectores. ¿Lo compraste en otra tienda (Kobo, Barnes & Noble, Smashwords, etc.)? Allí también ayuda.', other: 'Otra tienda', here: 'También puedes dejar tu reseña aquí mismo, en el sitio ↓', tg: '¿Preguntas sobre el libro? Únete al canal de Telegram' },
+    de: { text: 'Hast du das Buch gekauft? Hinterlasse bitte eine Bewertung und ein paar Worte dort, wo du gekauft hast, oder bei Goodreads — das hilft dem Buch am meisten, neue Leser zu erreichen. Anderswo gekauft (Kobo, Barnes & Noble, Smashwords usw.)? Auch dort hilft es genauso.', other: 'Anderer Shop', here: 'Du kannst auch direkt hier auf der Seite eine Rezension hinterlassen ↓', tg: 'Fragen zum Buch? Tritt dem Telegram-Kanal bei' }
+  };
+  function renderGpReviewCta(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var d = GP_REVIEW_CTA[l] || GP_REVIEW_CTA.uk;
+    var tEl = document.getElementById('gpReviewCtaText');
+    var oEl = document.getElementById('gpReviewOtherBtn');
+    var hEl = document.getElementById('gpReviewHereText');
+    var tgEl = document.getElementById('gpReviewTgText');
+    if (tEl) tEl.textContent = d.text;
+    if (oEl) oEl.textContent = d.other;
+    if (hEl) hEl.textContent = d.here;
+    if (tgEl) tgEl.textContent = d.tg;
+  }
+  document.addEventListener('DOMContentLoaded', renderGpReviewCta);
+  window.renderGpReviewCta = renderGpReviewCta;
+})();
+</script>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;align-items:start">
 <!-- ЛІВО: Рейтинг + відгуки -->
 <div>
@@ -3258,6 +3379,14 @@ if('serviceWorker' in navigator){
     if(typeof window.updateReadLangModalText === 'function') setTimeout(window.updateReadLangModalText, 80);
     if(typeof window.updateAlreadyBoughtModalText === 'function') setTimeout(window.updateAlreadyBoughtModalText, 80);
     if(typeof window.renderDnaTeaser === 'function') setTimeout(window.renderDnaTeaser, 80);
+    if(typeof window.renderGpReviewCta === 'function') setTimeout(window.renderGpReviewCta, 80);
+    if(typeof window.updateGpModalCloseText === 'function') setTimeout(window.updateGpModalCloseText, 80);
+    if(typeof window.renderTom1ReviewCta === 'function') setTimeout(window.renderTom1ReviewCta, 80);
+    if(typeof window.renderTom2ReviewCta === 'function') setTimeout(window.renderTom2ReviewCta, 80);
+    if(typeof window.renderAudioReviewCta === 'function') setTimeout(window.renderAudioReviewCta, 80);
+    if(typeof window.updateReadLangModalText === 'function') setTimeout(window.updateReadLangModalText, 80);
+    if(typeof window.updateAlreadyBoughtModalText === 'function') setTimeout(window.updateAlreadyBoughtModalText, 80);
+    if(typeof window.renderDnaTeaser === 'function') setTimeout(window.renderDnaTeaser, 80);
   }
   var prev = window.setLang;
   window.setLang = function(l){
@@ -3867,6 +3996,38 @@ async function stanariTranslateVisibleReviewCards(root){
 let stanariMyRating = 0;
 let stanariReviewsCache = [];
 
+function updateBookSchemaRating(avg, count, reviews){
+  try {
+    const script = document.getElementById('bookSchemaJson');
+    if (!script) return;
+    const data = JSON.parse(script.textContent);
+    if (count > 0) {
+      data.aggregateRating = {
+        "@type": "AggregateRating",
+        "ratingValue": Number(avg.toFixed(1)),
+        "reviewCount": count,
+        "bestRating": 5,
+        "worstRating": 1
+      };
+      const withText = (reviews || []).filter(r => r.text && r.text.trim() && r.rating).slice(0, 5);
+      if (withText.length) {
+        data.review = withText.map(r => ({
+          "@type": "Review",
+          "author": { "@type": "Person", "name": (r.name || "Reader").toString().slice(0, 60) },
+          "reviewRating": { "@type": "Rating", "ratingValue": r.rating, "bestRating": 5, "worstRating": 1 },
+          "reviewBody": r.text.toString().slice(0, 400)
+        }));
+      } else {
+        delete data.review;
+      }
+    } else {
+      delete data.aggregateRating;
+      delete data.review;
+    }
+    script.textContent = JSON.stringify(data);
+  } catch(e) { console.warn("Schema rating update failed:", e); }
+}
+
 async function fetchAllReviews(){
   try {
     const snap = await getDocs(collection(db, "reviews"));
@@ -3893,6 +4054,7 @@ function renderRatingSummary(reviews){
     if (starsEl) starsEl.textContent = "☆☆☆☆☆";
     if (totalEl) { var d=T[window.lang]||T.uk; totalEl.textContent = "0" + (d.rating_many||" оцінок"); }
     if (barsEl) barsEl.innerHTML = "";
+    updateBookSchemaRating(0, 0, reviews);
     return;
   }
   const sum = rated.reduce((s,r) => s + r.rating, 0);
@@ -3900,6 +4062,7 @@ function renderRatingSummary(reviews){
   if (avgEl) avgEl.textContent = avg.toFixed(1);
   if (starsEl) starsEl.textContent = reviewStars(Math.round(avg));
   if (totalEl) { var d=T[window.lang]||T.uk; totalEl.textContent = rated.length + (rated.length === 1 ? (d.rating_one||" оцінка") : (d.rating_many||" оцінок")); }
+  updateBookSchemaRating(avg, rated.length, reviews);
   if (barsEl) {
     let html = "";
     for (let s = 5; s >= 1; s--) {
@@ -4492,9 +4655,21 @@ document.addEventListener('DOMContentLoaded', function(){
       <a href="https://play.google.com/store/books/details?id=twbkEQAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇵🇱 Polski</a>
       <a href="https://play.google.com/store/books/details?id=EOPwEQAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇪🇸 Español</a>
     </div>
-    <button onclick="closeGooglePlayModal()" style="margin-top:20px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">✕ Закрити</button>
+    <button id="gpModalCloseBtn" onclick="closeGooglePlayModal()" style="margin-top:20px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">✕ Закрити</button>
   </div>
 </div>
+<script>
+(function(){
+  var GP_MODAL_CLOSE = { uk: 'Закрити', en: 'Close', pl: 'Zamknij', de: 'Schließen', es: 'Cerrar' };
+  function updateGpModalCloseText(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var btn = document.getElementById('gpModalCloseBtn');
+    if (btn) btn.textContent = '✕ ' + (GP_MODAL_CLOSE[l] || GP_MODAL_CLOSE.uk);
+  }
+  document.addEventListener('DOMContentLoaded', updateGpModalCloseText);
+  window.updateGpModalCloseText = updateGpModalCloseText;
+})();
+</script>
 <script>
 function openGooglePlayModal(){ document.getElementById('googlePlayModal').style.display='flex'; }
 function closeGooglePlayModal(){ document.getElementById('googlePlayModal').style.display='none'; }

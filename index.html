@@ -1282,6 +1282,64 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </div>
 </div>
 </section>
+<!-- ДНК-ТИЗЕР -->
+<section class="section-sm" id="dna-teaser" style="border-top:1px solid var(--border)">
+<div class="container">
+<div class="kicker" style="justify-content:center;margin-bottom:24px"><span class="kicker-dot"></span><span id="dnaTeaserKicker">Уривок з книги</span></div>
+<div style="max-width:640px;margin:0 auto;text-align:center">
+<img id="dnaTeaserImg" src="dna-illustration-uk.webp" alt="DNA — the hard drive that raised you" loading="lazy" decoding="async" style="width:100%;max-width:420px;border-radius:16px;box-shadow:0 8px 40px rgba(216,175,99,.2);margin:0 auto 28px;display:block"/>
+<h3 id="dnaTeaserTitle" style="font-size:22px;font-weight:800;color:var(--gold2);margin-bottom:20px"></h3>
+<p id="dnaTeaserText" style="font-size:15px;line-height:1.85;color:var(--muted);text-align:left"></p>
+<a id="dnaTeaserLink" href="https://stanari.art/#books" style="display:inline-block;margin-top:16px;color:var(--gold);font-weight:700;font-size:14px">The Life Operator — Стен Арі →</a>
+</div>
+</div>
+<script>
+(function(){
+  var DNA_TEASER = {
+    uk: {
+      kicker: 'Уривок з книги',
+      title: 'Жорсткий диск, який виростив тебе',
+      text: 'Уяви краплю меншу за сльозу.\n\nУ ній — більше інформації, ніж у всіх дата-центрах Google, Amazon і Facebook разом.\n\nЦе твоя ДНК.\n\nТвоє тіло, характер, страхи і схильності — усе це зібрано в файл, менший за одну серію серіалу.\n\nАле головне не те, що записано.\n\nГоловне — те, що керує цим записом.\n\n98% твоєї ДНК наука довгий час називала «сміттям».\n\nЗараз ми розуміємо: це і є справжня система керування.\n\nКод, який без тебе вмикає страх діда, тривогу матері, мовчазну біль поколінь.\n\nЛанцюги, які ти носиш, навіть не підозрюючи.\n\nТи не обирав цей код.\n\nАле ти став першим у своєму роду, хто його побачив.\n\nІ все, що видно — можна переписати.\n\nТи не жертва свого коду.\n\nТи — Оператор.'
+    },
+    en: {
+      kicker: 'Excerpt from the book',
+      title: 'The Hard Drive That Raised You',
+      text: 'Imagine a drop smaller than a tear.\n\nInside it — more information than in all the data centers of Google, Amazon, and Facebook combined.\n\nThis is your DNA.\n\nYour body, character, fears and tendencies — all gathered into a file smaller than one episode of a TV show.\n\nBut what matters isn\'t what\'s recorded.\n\nWhat matters is what controls that recording.\n\nScience long called 98% of your DNA "junk."\n\nNow we understand: this is the real control system.\n\nCode that, without you, switches on your grandfather\'s fear, your mother\'s anxiety, the silent pain of generations.\n\nChains you carry without even suspecting it.\n\nYou didn\'t choose this code.\n\nBut you became the first in your bloodline to see it.\n\nAnd everything that\'s visible — can be rewritten.\n\nYou are not a victim of your code.\n\nYou are the Operator.'
+    },
+    pl: {
+      kicker: 'Fragment książki',
+      title: 'Dysk twardy, który cię wychował',
+      text: 'Wyobraź sobie kroplę mniejszą niż łza.\n\nW niej — więcej informacji niż we wszystkich centrach danych Google, Amazon i Facebooka razem wziętych.\n\nTo twoje DNA.\n\nTwoje ciało, charakter, lęki i skłonności — wszystko to zebrane w pliku mniejszym niż jeden odcinek serialu.\n\nAle najważniejsze nie jest to, co zapisane.\n\nNajważniejsze — to, co steruje tym zapisem.\n\n98% twojego DNA nauka długo nazywała "śmieciami".\n\nTeraz rozumiemy: to właśnie prawdziwy system sterowania.\n\nKod, który bez twojej zgody uruchamia strach dziadka, lęk matki, milczący ból pokoleń.\n\nŁańcuchy, które nosisz, nawet o tym nie wiedząc.\n\nNie wybrałeś tego kodu.\n\nAle stałeś się pierwszym w swoim rodzie, który go zobaczył.\n\nA wszystko, co widoczne — można przepisać.\n\nNie jesteś ofiarą swojego kodu.\n\nJesteś Operatorem.'
+    },
+    es: {
+      kicker: 'Fragmento del libro',
+      title: 'El disco duro que te crió',
+      text: 'Imagina una gota más pequeña que una lágrima.\n\nDentro de ella — más información que en todos los centros de datos de Google, Amazon y Facebook juntos.\n\nEso es tu ADN.\n\nTu cuerpo, carácter, miedos y tendencias — todo reunido en un archivo más pequeño que un episodio de serie.\n\nPero lo importante no es lo que está grabado.\n\nLo importante es lo que controla ese registro.\n\nLa ciencia llamó durante mucho tiempo "basura" al 98% de tu ADN.\n\nAhora entendemos: eso es el verdadero sistema de control.\n\nUn código que, sin tu permiso, activa el miedo de tu abuelo, la ansiedad de tu madre, el dolor silencioso de generaciones.\n\nCadenas que llevas sin siquiera sospecharlo.\n\nTú no elegiste este código.\n\nPero fuiste el primero de tu linaje en verlo.\n\nY todo lo que es visible — se puede reescribir.\n\nNo eres víctima de tu código.\n\nEres el Operador.'
+    },
+    de: {
+      kicker: 'Auszug aus dem Buch',
+      title: 'Die Festplatte, die dich großgezogen hat',
+      text: 'Stell dir einen Tropfen vor, kleiner als eine Träne.\n\nDarin — mehr Information als in allen Rechenzentren von Google, Amazon und Facebook zusammen.\n\nDas ist deine DNA.\n\nDein Körper, Charakter, deine Ängste und Neigungen — alles gesammelt in einer Datei, kleiner als eine einzige Serienfolge.\n\nAber wichtig ist nicht, was gespeichert ist.\n\nWichtig ist, was diese Aufzeichnung steuert.\n\n98% deiner DNA nannte die Wissenschaft lange "Müll".\n\nHeute verstehen wir: Das ist das eigentliche Steuerungssystem.\n\nEin Code, der ohne dich die Angst deines Großvaters, die Angst deiner Mutter, den stillen Schmerz der Generationen aktiviert.\n\nKetten, die du trägst, ohne es zu ahnen.\n\nDu hast diesen Code nicht gewählt.\n\nAber du bist der Erste in deiner Blutlinie, der ihn gesehen hat.\n\nUnd alles, was sichtbar ist — kann umgeschrieben werden.\n\nDu bist kein Opfer deines Codes.\n\nDu bist der Operator.'
+    }
+  };
+  var DNA_TEASER_IMG = { uk: 'dna-illustration-uk.webp', en: 'dna-illustration-en.webp', pl: 'dna-illustration-pl.webp', es: 'dna-illustration-es.webp', de: 'dna-illustration-en.webp' };
+  function renderDnaTeaser(){
+    var l = window.lang || localStorage.getItem('sl') || 'uk';
+    var d = DNA_TEASER[l] || DNA_TEASER.uk;
+    var kEl = document.getElementById('dnaTeaserKicker');
+    var titleEl = document.getElementById('dnaTeaserTitle');
+    var tEl = document.getElementById('dnaTeaserText');
+    var iEl = document.getElementById('dnaTeaserImg');
+    if (kEl) kEl.textContent = d.kicker;
+    if (titleEl) titleEl.textContent = d.title;
+    if (tEl) tEl.innerHTML = d.text.split('\n\n').map(function(p){ return '<p style="margin-bottom:12px">'+p+'</p>'; }).join('');
+    if (iEl) { var img = DNA_TEASER_IMG[l] || DNA_TEASER_IMG.uk; if (iEl.getAttribute('src') !== img) iEl.setAttribute('src', img); }
+  }
+  document.addEventListener('DOMContentLoaded', renderDnaTeaser);
+  window.renderDnaTeaser = renderDnaTeaser;
+})();
+</script>
+</section>
 <!-- АУДІОКНИГА -->
 <section class="section-sm" id="audiobook" style="border-top:1px solid var(--border)">
 <div class="container">
@@ -1817,6 +1875,7 @@ Object.keys(EXTRA_T).forEach(function(k){T[k]=Object.assign(T[k]||{},EXTRA_T[k])
 function setLang(l){
   lang=l;
   window.lang=l;
+  try{document.documentElement.setAttribute('lang', l);}catch(e){}
   try{localStorage.setItem('sl',l);}catch(e){}
   // Update placeholders
   document.querySelectorAll('[data-ph]').forEach(function(el){
@@ -2901,8 +2960,19 @@ function switchGalleryLang(l) {
 <script>
 function openReadLangModal(){ document.getElementById('readLangModal').style.display='flex'; }
 function closeReadLangModal(){ document.getElementById('readLangModal').style.display='none'; }
+function chooseReadLang(l){
+  try { localStorage.setItem('readerLang', l); } catch(e) {}
+  window.location.href = 'reader.html?lang=' + encodeURIComponent(l);
+}
+const READ_LANG_MODAL_CLOSE = { uk: 'Закрити', en: 'Close', pl: 'Zamknij', de: 'Schließen', es: 'Cerrar' };
+function updateReadLangModalText(){
+  var label = READ_LANG_MODAL_CLOSE[window.lang] || READ_LANG_MODAL_CLOSE.uk;
+  document.querySelectorAll('.read-lang-close-text').forEach(function(el){ el.textContent = '✕ ' + label; });
+}
+document.addEventListener('DOMContentLoaded', updateReadLangModalText);
 </script>
-<div style="background:#1a1408;border:1px solid #d8af63;border-radius:16px;padding:32px 24px;max-width:340px;width:100%;text-align:center">
+<div style="position:relative;background:#1a1408;border:1px solid #d8af63;border-radius:16px;padding:32px 24px;max-width:340px;width:100%;text-align:center">
+<button onclick="closeReadLangModal()" aria-label="Close" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(216,175,99,.3);background:rgba(255,255,255,.04);color:#d8af63;font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
 <p style="color:#d8af63;font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">THE LIFE OPERATOR</p>
 <h3 style="color:#fff;font-size:20px;font-weight:800;margin-bottom:6px">Оберіть мову читання</h3>
 <p style="color:rgba(255,255,255,.5);font-size:13px;margin-bottom:24px">Choose language / Wybierz język</p>
@@ -2916,8 +2986,11 @@ function closeReadLangModal(){ document.getElementById('readLangModal').style.di
 <button onclick="chooseReadLang('pl')" style="width:100%;padding:14px;border-radius:10px;border:2px solid rgba(216,175,99,.3);background:transparent;color:#d8af63;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
         🇵🇱 <span>Polski</span>
 </button>
+<button onclick="chooseReadLang('es')" style="width:100%;padding:14px;border-radius:10px;border:2px solid rgba(216,175,99,.3);background:transparent;color:#d8af63;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+        🇪🇸 <span>Español</span>
+</button>
 </div>
-<button onclick="closeReadLangModal()" style="margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer">✕ Закрити</button>
+<button onclick="closeReadLangModal()" class="read-lang-close-text" style="margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer">✕ Закрити</button>
 </div>
 </div>
 <script>
@@ -3182,6 +3255,9 @@ if('serviceWorker' in navigator){
     if(typeof window.loadRatings === 'function') window.loadRatings();
     // Re-render reviews shortly after language switch so empty text/date/buttons match active language.
     if(typeof window.loadReviews === 'function') setTimeout(function(){ window.loadReviews(); }, 80);
+    if(typeof window.updateReadLangModalText === 'function') setTimeout(window.updateReadLangModalText, 80);
+    if(typeof window.updateAlreadyBoughtModalText === 'function') setTimeout(window.updateAlreadyBoughtModalText, 80);
+    if(typeof window.renderDnaTeaser === 'function') setTimeout(window.renderDnaTeaser, 80);
   }
   var prev = window.setLang;
   window.setLang = function(l){
@@ -3619,6 +3695,12 @@ onAuthStateChanged(auth, async (user) => {
   try { window.__stanariState = { email: stanariCurrentEmail, access: stanariHasBookAccess, ready: stanariAuthReady }; } catch(e) {}
   try { window.dispatchEvent(new Event('stanariAuthReady')); } catch(e) {}
   // Update already-bought modal text in current language
+  updateAlreadyBoughtModalText();
+  // Reload like counts now that we know the user's email
+  try { if (window.__stanariReviewsLikesLoaded) loadLikeCounts(); } catch(e) {}
+});
+
+function updateAlreadyBoughtModalText(){
   try {
     var l = window.lang || localStorage.getItem('sl') || 'uk';
     var boughtMsg = {
@@ -3636,9 +3718,7 @@ onAuthStateChanged(auth, async (user) => {
     if (s) s.textContent = bm.sub;
     if (b) b.textContent = bm.btn;
   } catch(e) {}
-  // Reload like counts now that we know the user's email
-  try { if (window.__stanariReviewsLikesLoaded) loadLikeCounts(); } catch(e) {}
-});
+}
 
 document.addEventListener("DOMContentLoaded", updateMenu);
 setTimeout(updateMenu, 800);
@@ -3702,18 +3782,86 @@ function reviewStars(n){
   n = Math.max(0, Math.min(5, parseInt(n||0,10)));
   return "★★★★★".slice(0,n) + "☆☆☆☆☆".slice(0,5-n);
 }
+/* --- Auto-translation for reviews written in a different language than the current site language ---
+   Uses the free keyless Google Translate endpoint (translate.googleapis.com), results are cached in
+   localStorage so each review is only translated once per language, ever. Falls back silently to the
+   original text if the request fails (e.g. offline, rate-limited). */
+const STANARI_REVIEW_TR_LABELS = {
+  uk: { showOriginal: "Показати оригінал", showTranslated: "Показати переклад", translated: "Перекладено" },
+  en: { showOriginal: "Show original", showTranslated: "Show translation", translated: "Translated" },
+  pl: { showOriginal: "Pokaż oryginał", showTranslated: "Pokaż tłumaczenie", translated: "Przetłumaczone" },
+  de: { showOriginal: "Original anzeigen", showTranslated: "Übersetzung anzeigen", translated: "Übersetzt" },
+  es: { showOriginal: "Mostrar original", showTranslated: "Mostrar traducción", translated: "Traducido" }
+};
+function stanariReviewTrCacheKey(text, targetLang){
+  let h = 0;
+  for (let i = 0; i < text.length; i++) { h = ((h << 5) - h + text.charCodeAt(i)) | 0; }
+  return "stanari_rtr_" + targetLang + "_" + h;
+}
+async function translateReviewText(text, targetLang){
+  const cacheKey = stanariReviewTrCacheKey(text, targetLang);
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) return cached;
+  } catch(e) {}
+  try {
+    const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" + encodeURIComponent(targetLang) + "&dt=t&q=" + encodeURIComponent(text);
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const translated = (data && data[0]) ? data[0].map(seg => seg[0]).join("") : null;
+    if (translated) { try { localStorage.setItem(cacheKey, translated); } catch(e) {} }
+    return translated;
+  } catch(e) { console.warn("Review translation failed:", e); return null; }
+}
 function reviewCardHtml(r){
   const name = escapeHtml(r.name || "Читач");
-  const text = escapeHtml(r.text || "");
+  const originalText = r.text || "";
+  const text = escapeHtml(originalText);
   const stars = r.rating ? `<div style="color:#d8af63;font-size:14px;margin-bottom:6px">${reviewStars(r.rating)}</div>` : "";
   const photo = r.photo
     ? `<img src="${escapeHtml(r.photo)}" alt="" referrerpolicy="no-referrer" style="width:32px;height:32px;border-radius:50%;object-fit:cover"/>`
     : `<div style="width:32px;height:32px;border-radius:50%;background:rgba(216,175,99,.25);display:flex;align-items:center;justify-content:center;color:#d8af63;font-size:14px;font-weight:700">${name.charAt(0).toUpperCase()}</div>`;
-  return `<div class="review-card">
+  const cardId = "rv_" + (r.email || Math.random().toString(36).slice(2)).replace(/[^a-z0-9]/gi, "_");
+  const reviewLang = (r.lang || "uk").toLowerCase();
+  const needsTranslation = originalText && reviewLang !== (window.lang || "uk");
+  return `<div class="review-card" id="${cardId}" data-orig-text="${escapeHtml(originalText)}" data-orig-lang="${reviewLang}">
     ${stars}
-    <div class="review-card-text">${text}</div>
+    <div class="review-card-text" data-role="review-text">${text}</div>
+    ${needsTranslation ? `<div data-role="review-tr-toggle" style="margin-top:6px;font-size:11px;color:var(--gold2);opacity:.75"></div>` : ""}
     <div class="review-card-footer" style="display:flex;align-items:center;gap:10px;margin-top:12px">${photo}<strong style="color:#fff8ed;font-size:13px">${name}</strong></div>
   </div>`;
+}
+function stanariToggleReviewOriginal(cardId, showOriginal){
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const textEl = card.querySelector('[data-role="review-text"]');
+  const toggleEl = card.querySelector('[data-role="review-tr-toggle"]');
+  const lbl = STANARI_REVIEW_TR_LABELS[window.lang] || STANARI_REVIEW_TR_LABELS.uk;
+  if (showOriginal) {
+    textEl.textContent = card.getAttribute("data-orig-text");
+    if (toggleEl) toggleEl.innerHTML = `<a href="javascript:void(0)" onclick="stanariToggleReviewOriginal('${cardId}',false)" style="color:var(--gold2);text-decoration:underline">${lbl.showTranslated}</a>`;
+  } else {
+    const translated = card.getAttribute("data-tr-text");
+    if (translated) textEl.textContent = translated;
+    if (toggleEl) toggleEl.innerHTML = `<span>${lbl.translated}</span> · <a href="javascript:void(0)" onclick="stanariToggleReviewOriginal('${cardId}',true)" style="color:var(--gold2);text-decoration:underline">${lbl.showOriginal}</a>`;
+  }
+}
+async function stanariTranslateVisibleReviewCards(root){
+  const scope = root || document;
+  const cards = scope.querySelectorAll(".review-card[data-orig-lang]");
+  for (const card of cards) {
+    const origLang = card.getAttribute("data-orig-lang");
+    const origText = card.getAttribute("data-orig-text");
+    const targetLang = window.lang || "uk";
+    if (!origText || origLang === targetLang) continue;
+    const translated = await translateReviewText(origText, targetLang);
+    if (!translated) continue;
+    card.setAttribute("data-tr-text", translated);
+    const textEl = card.querySelector('[data-role="review-text"]');
+    if (textEl) textEl.textContent = translated;
+    stanariToggleReviewOriginal(card.id, false);
+  }
 }
 
 let stanariMyRating = 0;
@@ -3775,6 +3923,7 @@ window.loadReviews = async function(){
   const showAll = document.getElementById("showAllBtn");
   if (preview) {
     preview.innerHTML = withText.slice(0,3).map(reviewCardHtml).join("");
+    stanariTranslateVisibleReviewCards(preview);
   }
   if (showAll) showAll.style.display = withText.length > 3 ? "block" : "none";
   // Pre-fill existing review and lock stars if user already rated
@@ -3959,6 +4108,7 @@ window.openReviewsModal = function(){
   if (list) {
     const withText = stanariReviewsCache.filter(r => r.text && r.text.trim());
     list.innerHTML = withText.length ? withText.map(reviewCardHtml).join("") : "<p style='color:var(--muted)'>Відгуків ще немає.</p>";
+    stanariTranslateVisibleReviewCards(list);
   }
   if (modal) modal.style.display = "block";
 };

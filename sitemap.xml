@@ -4,6 +4,7 @@
   <!-- Головна -->
   <url>
     <loc>https://stanari.art/</loc>
+    <lastmod>2026-07-24</lastmod>
     <xhtml:link rel="alternate" hreflang="uk" href="https://stanari.art/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://stanari.art/en/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://stanari.art/es/"/>
@@ -16,113 +17,134 @@
   <!-- Мовні клони -->
   <url>
     <loc>https://stanari.art/en/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://stanari.art/es/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://stanari.art/pl/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://stanari.art/de/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <!-- Ілюстрації -->
   <url>
     <loc>https://stanari.art/illustrations/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- SEO лендінги EN -->
   <url>
     <loc>https://stanari.art/en/consciousness-book/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/en/self-discovery-book/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/en/philosophical-fiction/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/en/ukrainians-abroad/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- SEO лендінги PL -->
   <url>
     <loc>https://stanari.art/pl/ksiazka-swiadomosc/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/pl/ukraincy-za-granica/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- SEO лендінги ES -->
   <url>
     <loc>https://stanari.art/es/libro-consciencia/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/es/emigracion-transformacion/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- SEO лендінги UA -->
   <url>
     <loc>https://stanari.art/ua/svidomist-knyha/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/ua/samorozvytok-knyha/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/ua/filosofs-ka-knyha/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/ua/emigratsiya/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- SEO лендінги DE -->
   <url>
     <loc>https://stanari.art/de/bewusstsein-buch/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/de/selbstentwicklung-buch/</loc>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stanari.art/de/ukrainer-im-ausland/</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Reader -->
   <url>
     <loc>https://stanari.art/reader.html</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -3382,6 +3382,7 @@ if('serviceWorker' in navigator){
     if(typeof window.renderGpReviewCta === 'function') setTimeout(window.renderGpReviewCta, 80);
     if(typeof window.updateGpModalCloseText === 'function') setTimeout(window.updateGpModalCloseText, 80);
     if(typeof window.renderTom1ReviewCta === 'function') setTimeout(window.renderTom1ReviewCta, 80);
+    if(typeof window.updateReviewFormVisibility === 'function') setTimeout(window.updateReviewFormVisibility, 80);
     if(typeof window.renderTom2ReviewCta === 'function') setTimeout(window.renderTom2ReviewCta, 80);
     if(typeof window.renderAudioReviewCta === 'function') setTimeout(window.renderAudioReviewCta, 80);
     if(typeof window.updateReadLangModalText === 'function') setTimeout(window.updateReadLangModalText, 80);
@@ -4281,6 +4282,20 @@ window.closeReviewsModal = function(){
 };
 
 // Show the review form once the user is signed in; show login buttons otherwise.
+var REVIEW_FORM_SUB_LOGGED_IN = {
+  uk: 'Ви авторизовані — можете залишити відгук',
+  en: "You're signed in — you can leave a review",
+  pl: 'Jesteś zalogowany(-a) — możesz zostawić opinię',
+  es: 'Has iniciado sesión — puedes dejar tu reseña',
+  de: 'Du bist angemeldet — du kannst eine Rezension hinterlassen'
+};
+var REVIEW_FORM_SUB_LOGGED_OUT = {
+  uk: 'Авторизуйся через Google — займе 5 секунд',
+  en: 'Sign in with Google — takes 5 seconds',
+  pl: 'Zaloguj się przez Google — zajmie 5 sekund',
+  es: 'Inicia sesión con Google — tarda 5 segundos',
+  de: 'Mit Google anmelden — dauert 5 Sekunden'
+};
 function updateReviewFormVisibility(){
   const loginBox = document.getElementById("reviewGoogleBtn");
   const form = document.getElementById("reviewFormInner");
@@ -4288,6 +4303,12 @@ function updateReviewFormVisibility(){
   if (form) form.style.display = stanariCurrentEmail ? "flex" : "none";
   const menuEmailLogin = document.getElementById("stanariMenuEmailLogin");
   if (menuEmailLogin) menuEmailLogin.style.display = stanariCurrentEmail ? "none" : "flex";
+  const subEl = document.querySelector('[data-t="reviews_form_sub"]');
+  if (subEl) {
+    var l = window.lang || (function(){ try { return localStorage.getItem('sl'); } catch(e) { return null; } })() || 'uk';
+    var map = stanariCurrentEmail ? REVIEW_FORM_SUB_LOGGED_IN : REVIEW_FORM_SUB_LOGGED_OUT;
+    subEl.textContent = map[l] || map.uk;
+  }
 }
 // Hook into the existing menu refresh so login state changes also update the reviews UI.
 const stanariBaseUpdateMenu = updateMenu;

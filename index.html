@@ -3548,7 +3548,7 @@ if('serviceWorker' in navigator){
 </script>
 
 
-<script type="module">
+<script type="deferred-module" id="stanariDeferredAuthModule">
 /* === STAN ARI AUTH + LEMON FINAL v20 ===
    One Firebase app, one auth instance, one auth observer.
    Login and purchase are separated: Google login never auto-opens Lemon.
@@ -4378,6 +4378,25 @@ function initReviewsAndLikesLazyLoad(){
   setTimeout(fire, 8000);
 }
 /* === /STAN ARI AUTH + LEMON FINAL v20 === */
+</script>
+<script>
+(function(){
+  function loadStanariAuthModule(){
+    var placeholder = document.getElementById('stanariDeferredAuthModule');
+    if (!placeholder) return;
+    var real = document.createElement('script');
+    real.type = 'module';
+    real.textContent = placeholder.textContent;
+    placeholder.parentNode.insertBefore(real, placeholder);
+    placeholder.remove();
+  }
+  function schedule(){ setTimeout(loadStanariAuthModule, 50); }
+  if (document.readyState === 'complete') {
+    schedule();
+  } else {
+    window.addEventListener('load', schedule);
+  }
+})();
 </script>
 
 <script>

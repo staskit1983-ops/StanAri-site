@@ -3208,6 +3208,7 @@ if('serviceWorker' in navigator){
     var banner = document.getElementById('desktop-install-banner');
     if(banner) banner.style.display = 'none';
     localStorage.setItem('pwa_banner_closed','1');
+    try { if (typeof gtag === 'function') gtag('event', 'app_installed', { event_category: 'PWA' }); } catch(e) {}
   });
 })();
 </script>

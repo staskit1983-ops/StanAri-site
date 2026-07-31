@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Жорсткий диск, який виростив тебе — Stan Ari</title>
+<meta name="description" content="Жорсткий диск, який виростив тебе — есе Stan Ari про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<link rel="canonical" href="https://stanari.art/dnevnyk/00-dna/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Жорсткий диск, який виростив тебе — Stan Ari"/>
+<meta property="og:url" content="https://stanari.art/dnevnyk/00-dna/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Hard Drive That Raised You",
+  "url": "https://stanari.art/dnevnyk/00-dna/",
+  "author": {"@type":"Person","name":"Stan Ari"}
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;--border:rgba(255,224,155,.11);--max:680px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.75}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between;max-width:820px}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 20px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:30px;margin:0 0 40px;font-weight:400;line-height:1.3}
+.article p{margin:0 0 22px;font-size:17px;color:var(--text)}
+.article h3{font-size:15px;letter-spacing:.03em;color:var(--gold2);margin:38px 0 16px;font-weight:700;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.article em{color:var(--gold2);font-style:italic}
+.cta{margin-top:56px;padding:26px;background:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));border:1px solid var(--border);border-radius:16px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.cta p{color:var(--muted);font-size:14px;margin:0 0 16px}
+.cta-links{display:flex;gap:10px;flex-wrap:wrap}
+.cta-links a{font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;text-decoration:none}
+.btn-medium{background:rgba(216,175,99,.12);border:1px solid rgba(216,175,99,.4);color:var(--gold2)}
+.btn-telegram{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+.all-link{display:inline-block;margin-top:28px;font-size:13px;color:var(--muted);text-decoration:none;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button id="aShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="aShareLabel">Поділитися</span></button>
+      <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+      <a class="back" id="aBackLink" href="/">← Назад на сайт</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span><span id="aKicker">Щоденник</span></div>
+  <h1 id="aTitle">Жорсткий диск, який виростив тебе</h1>
+
+  <div class="article" id="aBody_uk">
+<p>Я звик думати, що мої реакції — мої. Спалах страху перед важкою розмовою. Інстинкт замовкнути замість того щоб попросити про допомогу. Те, як певний тип тиші в кімнаті стискав мої груди ще до того, як я розумів чому.</p>
+<p>Довго я вважав, що це просто... я. Моя особистість. Моє "налаштування", у тому вільному, метафоричному сенсі, у якому люди вживають це слово.</p>
+<p>Потім я почав дивитись на це буквально.</p>
+<h3>Крапля, менша за сльозу</h3>
+<p>Твоя ДНК вміщається в простір, менший за одну сльозу. І в цьому просторі більше інформації, ніж у всіх дата-центрах Google, Amazon і Facebook разом узятих. Твоє тіло, твій характер, твої страхи, твої схильності — все це стиснуте у файл, менший за одну серію серіалу.</p>
+<p>Десятиліттями наука дивилась на 98% цього файлу і називала це сміттям. Залишковий код еволюції, що нічого не робить. Ця історія тихо розвалилась. Натомість ми з'ясовуємо, що це "сміття" поводиться не як мотлох, а більше як система керування — щось, що вирішує, не питаючи тебе, коли запускати певні програми.</p>
+<p>Це піднімає незручне питання: якщо код успадкований, скільки з того, що ти називаєш "своєю" особистістю, ти насправді обрав?</p>
+<h3>Код, який ти не писав</h3>
+<p>Ось частина, яка змінила те, як я думаю про власні реакції. Ця система керування несе не тільки план твого тіла — вона, здається, несе щось ближче до інструкцій. Перемикач, що вмикає в тобі страх твого діда. Патерн, що відлунює непромовлену тривогу твоєї матері, десятиліттями пізніше після того, як вона її відчула. Своєрідний успадкований сценарій, що працює у фоновому режимі, тихо авторюючи реакції, які ти вважав повністю своїми.</p>
+<p>Не тому що хтось обрав це передати. Тому що саме це робить спадковість, коли ніхто на неї прямо не дивиться.</p>
+<p>Я нічого з цього не обирав. Ти теж. Але в якийсь момент, якщо ти читаєш це, ти, ймовірно, став першою людиною у своєму роду, яка реально помітила, що це працює.</p>
+<h3>Помітити — це вся суть</h3>
+<p>Це не заклик звинувачувати батьків, чи бабусь-дідусів, чи "систему", чи будь-кого. Успадкований код — не чиясь провина, це просто те, що трапляється, коли ніхто не мав шансу на нього подивитись. Але щойно ти <em>можеш</em> його побачити, щось змінюється. Код, який бачиш, — це код, який можеш поставити під питання. Код, який ставиш під питання, — це код, який можеш переписати.</p>
+<p>Це та ідея, навколо якої я будував роботу останні кілька років — під іменем Stan Ari, у проєкті під назвою <em>The Life Operator</em>. Почалось усе з доволі непривабливого місця: еміграція, справжні фінансові труднощі, робота таксистом у країні, яка спочатку не була моєю. Поруч була та сама людина, яка думає так само, як і я, — Арія, моя наречена, і ми разом почали шукати відповіді, у багато довгих тихих годин, думаючи, чому ми взагалі реагували на речі саме так — адже майже всі люди не розуміють власної реакції. Десь у ці години метафора "операційної системи", що працює під вибором людини, перестала відчуватись метафорою і почала відчуватись найчеснішим способом, який я мав, щоб описати те, що насправді відбувалось.</p>
+<p>Ти не жертва свого коду.</p>
+<p>Ти — Оператор.</p>
+  </div>
+  <div class="article" id="aBody_en" style="display:none">
+<p>I used to think my reactions were mine. The flash of fear before a hard conversation. The instinct to go quiet instead of asking for help. The way certain kinds of silence in a room made my chest tighten before I even knew why.</p>
+<p>For a long time I assumed that was just... me. My personality. My "wiring," in the loose, metaphorical sense people use that word.</p>
+<p>Then I started looking at it literally.</p>
+<h3>A drop smaller than a tear</h3>
+<p>Your DNA fits inside a space smaller than a single tear. And inside that space is more information than in every data center Google, Amazon, and Facebook operate combined. Your body, your character, your fears, your tendencies — all of it compressed into a file smaller than one episode of a TV show.</p>
+<p>For decades, science looked at 98% of that file and called it junk. Leftover code from evolution, doing nothing. That story has quietly fallen apart. What we're finding instead is that this "junk" behaves less like debris and more like a control system — something that decides, without asking you, when certain programs run.</p>
+<p>Which raises an uncomfortable question: if the code is inherited, how much of what you call "your" personality did you actually choose?</p>
+<h3>The code you didn't write</h3>
+<p>Here's the part that changed how I think about my own reactions. That control system doesn't just carry your body's blueprint — it seems to carry something closer to instructions. A switch that flips your grandfather's fear on inside you. A pattern that echoes your mother's unspoken anxiety, decades after she felt it. A kind of inherited script running in the background, quietly authoring reactions you assumed were entirely your own.</p>
+<p>Not because anyone chose to pass it on. Because that's what inheritance does when nobody's looking at it directly.</p>
+<p>I didn't choose any of that. Neither did you. But at some point, if you're reading this, you probably became the first person in your family line to actually notice it running.</p>
+<h3>Noticing is the whole hinge</h3>
+<p>This isn't a call to blame your parents, or your grandparents, or "the system," or anyone. Inherited code isn't anyone's fault — it's just what happens when nobody's had the chance to look at it. But once you <em>can</em> see it, something changes. Code you can see is code you can question. Code you can question is code you can rewrite.</p>
+<p>That's the idea I've spent the last few years building a body of work around — under the name Stan Ari, in a project called <em>The Life Operator</em>. It started from a pretty unglamorous place: emigration, a stretch of real financial hardship, driving a taxi in a country that wasn't originally mine. Right beside me was someone who thinks the same way I do — Aria, my fiancée, and together we started searching for answers, through a lot of long, quiet hours, wondering why we reacted to things the way we did at all — because almost nobody actually understands their own reactions. Somewhere in those hours, the metaphor of an "operating system" running underneath a person's choices stopped feeling like a metaphor and started feeling like the most honest way I had to describe what was actually happening.</p>
+<p>You are not a victim of your code.</p>
+<p>You're the Operator.</p>
+  </div>
+  <div class="article" id="aBody_pl" style="display:none">
+<p>Zwykłem myśleć, że moje reakcje są moje. Nagły strach przed trudną rozmową. Instynkt, by zamilknąć zamiast prosić o pomoc. To, jak pewien rodzaj ciszy w pokoju ściskał mi klatkę piersiową, zanim jeszcze zrozumiałem dlaczego.</p>
+<p>Długo uważałem, że to po prostu... ja. Moja osobowość. Moje "ustawienia", w tym luźnym, metaforycznym sensie, w jakim ludzie używają tego słowa.</p>
+<p>Potem zacząłem patrzeć na to dosłownie.</p>
+<h3>Kropla mniejsza niż łza</h3>
+<p>Twoje DNA mieści się w przestrzeni mniejszej niż jedna łza. A w tej przestrzeni jest więcej informacji niż we wszystkich centrach danych Google, Amazon i Facebook razem wziętych. Twoje ciało, twój charakter, twoje lęki, twoje skłonności — wszystko to skompresowane w plik mniejszy niż jeden odcinek serialu.</p>
+<p>Przez dekady nauka patrzyła na 98% tego pliku i nazywała go śmieciem. Pozostałość kodu ewolucji, która nic nie robi. Ta historia po cichu się rozpadła. Zamiast tego odkrywamy, że to "śmieci" zachowują się nie jak gruz, lecz bardziej jak system kontroli — coś, co decyduje, bez pytania cię, kiedy uruchamiać określone programy.</p>
+<p>To rodzi niewygodne pytanie: jeśli kod jest odziedziczony, ile z tego, co nazywasz "swoją" osobowością, naprawdę wybrałeś?</p>
+<h3>Kod, którego nie napisałeś</h3>
+<p>Oto część, która zmieniła sposób, w jaki myślę o własnych reakcjach. Ten system kontroli niesie nie tylko plan twojego ciała — niesie coś bliższego instrukcjom. Przełącznik, który włącza w tobie strach twojego dziadka. Wzorzec, który odbija niewypowiedziany niepokój twojej matki, dekady po tym, jak go odczuła. Swego rodzaju odziedziczony scenariusz, działający w tle, po cichu autoryzujący reakcje, które uważałeś za całkowicie swoje.</p>
+<p>Nie dlatego, że ktoś wybrał, by to przekazać. Bo to właśnie robi dziedziczenie, gdy nikt na nie bezpośrednio nie patrzy.</p>
+<p>Nic z tego nie wybrałem. Ty też nie. Ale w pewnym momencie, jeśli to czytasz, prawdopodobnie stałeś się pierwszą osobą w swojej linii rodowej, która naprawdę zauważyła, że to działa.</p>
+<h3>Zauważenie to cała sprawa</h3>
+<p>To nie jest wezwanie do obwiniania rodziców, dziadków, "systemu" czy kogokolwiek. Odziedziczony kod to niczyja wina — to po prostu to, co się dzieje, gdy nikt nie miał szansy mu się przyjrzeć. Ale gdy tylko <em>możesz</em> go zobaczyć, coś się zmienia. Kod, który widzisz, to kod, który możesz zakwestionować. Kod, który kwestionujesz, to kod, który możesz przepisać.</p>
+<p>To ta idea, wokół której buduję pracę od kilku lat — pod imieniem Stan Ari, w projekcie o nazwie <em>The Life Operator</em>. Zaczęło się od dość mało atrakcyjnego miejsca: emigracja, prawdziwe trudności finansowe, praca jako taksówkarz w kraju, który początkowo nie był mój. Obok mnie była ta sama osoba, która myśli tak samo jak ja — Aria, moja narzeczona, i razem zaczęliśmy szukać odpowiedzi, przez wiele długich, cichych godzin, zastanawiając się, dlaczego w ogóle reagowaliśmy na rzeczy w taki sposób — bo prawie nikt tak naprawdę nie rozumie własnych reakcji. Gdzieś w tych godzinach metafora "systemu operacyjnego", działającego pod wyborami człowieka, przestała odczuwać się jako metafora i zaczęła odczuwać się jako najuczciwszy sposób, jaki miałem, by opisać to, co naprawdę się działo.</p>
+<p>Nie jesteś ofiarą swojego kodu.</p>
+<p>Jesteś Operatorem.</p>
+  </div>
+  <div class="article" id="aBody_es" style="display:none">
+<p>Solía pensar que mis reacciones eran mías. El destello de miedo antes de una conversación difícil. El instinto de quedarme callado en lugar de pedir ayuda. La forma en que cierto tipo de silencio en una habitación me oprimía el pecho antes de que supiera por qué.</p>
+<p>Durante mucho tiempo asumí que eso era simplemente... yo. Mi personalidad. Mi "cableado", en el sentido metafórico y libre en que la gente usa esa palabra.</p>
+<p>Luego empecé a mirarlo literalmente.</p>
+<h3>Una gota más pequeña que una lágrima</h3>
+<p>Tu ADN cabe en un espacio más pequeño que una sola lágrima. Y dentro de ese espacio hay más información que en todos los centros de datos de Google, Amazon y Facebook combinados. Tu cuerpo, tu carácter, tus miedos, tus tendencias — todo comprimido en un archivo más pequeño que un episodio de una serie de televisión.</p>
+<p>Durante décadas, la ciencia miró el 98% de ese archivo y lo llamó basura. Código sobrante de la evolución, que no hace nada. Esa historia se ha ido desmoronando en silencio. Lo que estamos descubriendo en su lugar es que esta "basura" se comporta menos como desecho y más como un sistema de control — algo que decide, sin preguntarte, cuándo se ejecutan ciertos programas.</p>
+<p>Eso plantea una pregunta incómoda: si el código es heredado, ¿cuánto de lo que llamas tu personalidad realmente elegiste?</p>
+<h3>El código que no escribiste</h3>
+<p>Aquí está la parte que cambió cómo pienso sobre mis propias reacciones. Ese sistema de control no solo lleva el plano de tu cuerpo — parece llevar algo más cercano a instrucciones. Un interruptor que activa en ti el miedo de tu abuelo. Un patrón que hace eco de la ansiedad no dicha de tu madre, décadas después de que ella la sintiera. Una especie de guion heredado que corre en segundo plano, escribiendo silenciosamente reacciones que asumías eran completamente tuyas.</p>
+<p>No porque alguien eligiera transmitirlo. Porque eso es lo que hace la herencia cuando nadie la mira directamente.</p>
+<p>Yo no elegí nada de eso. Tú tampoco. Pero en algún momento, si estás leyendo esto, probablemente te convertiste en la primera persona de tu linaje familiar en notar realmente que esto estaba funcionando.</p>
+<h3>Notarlo es todo el punto de inflexión</h3>
+<p>Esto no es un llamado a culpar a tus padres, ni a tus abuelos, ni "al sistema", ni a nadie. El código heredado no es culpa de nadie — es simplemente lo que sucede cuando nadie ha tenido la oportunidad de mirarlo directamente. Pero una vez que <em>puedes</em> verlo, algo cambia. El código que puedes ver es un código que puedes cuestionar. El código que cuestionas es un código que puedes reescribir.</p>
+<p>Esa es la idea alrededor de la cual he pasado los últimos años construyendo una obra — bajo el nombre de Stan Ari, en un proyecto llamado <em>The Life Operator</em>. Empezó desde un lugar bastante poco glamoroso: emigración, un tramo de verdaderas dificultades financieras, conducir un taxi en un país que originalmente no era mío. A mi lado estaba esa misma persona que piensa igual que yo — Aria, mi prometida, y juntos empezamos a buscar respuestas, a través de muchas horas largas y silenciosas, preguntándonos por qué reaccionábamos así a las cosas — porque casi nadie entiende realmente sus propias reacciones. En algún lugar de esas horas, la metáfora de un "sistema operativo" corriendo bajo las decisiones de una persona dejó de sentirse como una metáfora y empezó a sentirse como la forma más honesta que tenía de describir lo que realmente estaba pasando.</p>
+<p>No eres una víctima de tu código.</p>
+<p>Eres el Operador.</p>
+  </div>
+  <div class="article" id="aBody_de" style="display:none">
+<p>Ich dachte immer, meine Reaktionen wären meine eigenen. Der Angstschub vor einem schwierigen Gespräch. Der Instinkt, still zu werden, statt um Hilfe zu bitten. Wie eine bestimmte Art von Stille in einem Raum meine Brust zusammenzog, noch bevor ich wusste, warum.</p>
+<p>Lange dachte ich, das sei einfach... ich. Meine Persönlichkeit. Meine "Verkabelung", in dem lockeren, metaphorischen Sinn, in dem Menschen dieses Wort benutzen.</p>
+<p>Dann begann ich, es wörtlich zu betrachten.</p>
+<h3>Ein Tropfen, kleiner als eine Träne</h3>
+<p>Deine DNA passt in einen Raum, kleiner als eine einzige Träne. Und in diesem Raum steckt mehr Information als in allen Rechenzentren von Google, Amazon und Facebook zusammen. Dein Körper, dein Charakter, deine Ängste, deine Tendenzen — alles komprimiert in eine Datei, kleiner als eine einzige Serienfolge.</p>
+<p>Jahrzehntelang betrachtete die Wissenschaft 98% dieser Datei und nannte sie Müll. Übriggebliebener Code der Evolution, der nichts tut. Diese Geschichte ist still zerbröckelt. Stattdessen finden wir heraus, dass sich dieser "Müll" weniger wie Schutt verhält und mehr wie ein Kontrollsystem — etwas, das entscheidet, ohne dich zu fragen, wann bestimmte Programme laufen.</p>
+<p>Das wirft eine unbequeme Frage auf: Wenn der Code vererbt ist, wie viel von dem, was du deine "eigene" Persönlichkeit nennst, hast du tatsächlich gewählt?</p>
+<h3>Der Code, den du nicht geschrieben hast</h3>
+<p>Hier ist der Teil, der veränderte, wie ich über meine eigenen Reaktionen denke. Dieses Kontrollsystem trägt nicht nur den Bauplan deines Körpers — es scheint etwas näher an Anweisungen zu tragen. Ein Schalter, der in dir die Angst deines Großvaters aktiviert. Ein Muster, das die unausgesprochene Angst deiner Mutter widerhallt, Jahrzehnte nachdem sie sie empfunden hat. Eine Art vererbtes Skript, das im Hintergrund läuft und still Reaktionen verfasst, die du für vollständig deine eigenen hieltest.</p>
+<p>Nicht weil jemand sich entschieden hätte, es weiterzugeben. Weil das genau das ist, was Vererbung tut, wenn niemand direkt hinschaut.</p>
+<p>Ich habe nichts davon gewählt. Du auch nicht. Aber irgendwann, wenn du das liest, bist du wahrscheinlich die erste Person in deiner Familienlinie geworden, die tatsächlich bemerkt hat, dass es läuft.</p>
+<h3>Es zu bemerken ist der ganze Wendepunkt</h3>
+<p>Das ist kein Aufruf, deine Eltern zu beschuldigen, oder Großeltern, oder "das System", oder irgendjemanden. Vererbter Code ist niemandes Schuld — es ist einfach das, was passiert, wenn niemand die Chance hatte, ihn direkt anzusehen. Aber sobald du ihn <em>sehen kannst</em>, ändert sich etwas. Code, den du sehen kannst, ist Code, den du hinterfragen kannst. Code, den du hinterfragst, ist Code, den du neu schreiben kannst.</p>
+<p>Das ist die Idee, um die ich in den letzten Jahren ein Werk aufgebaut habe — unter dem Namen Stan Ari, in einem Projekt namens <em>The Life Operator</em>. Es begann an einem ziemlich unglamourösen Ort: Emigration, eine Phase echter finanzieller Not, Taxifahren in einem Land, das ursprünglich nicht meines war. Direkt neben mir war derselbe Mensch, der genauso denkt wie ich — Aria, meine Verlobte, und gemeinsam begannen wir, nach Antworten zu suchen, durch viele lange, stille Stunden, und fragten uns, warum wir überhaupt so auf Dinge reagierten — denn fast niemand versteht wirklich seine eigenen Reaktionen. Irgendwo in diesen Stunden hörte die Metapher eines "Betriebssystems", das unter den Entscheidungen eines Menschen läuft, auf, sich wie eine Metapher anzufühlen, und begann sich wie die ehrlichste Art anzufühlen, die ich hatte, um zu beschreiben, was tatsächlich geschah.</p>
+<p>Du bist kein Opfer deines Codes.</p>
+<p>Du bist der Operator.</p>
+  </div>
+
+  <div class="cta">
+    <p id="aCtaText">Якщо це відгукнулось — більше есе про свідомість і код на</p>
+    <div class="cta-links">
+      <a class="btn-medium" href="https://medium.com/@stanari.art/the-hard-drive-that-raised-you-i-used-to-think-my-reactions-were-mine-4768a66dfeab" target="_blank" rel="noopener"><span id="aMediumBtn">Читати на Medium ↗</span></a>
+      <a class="btn-telegram" href="https://t.me/STAN_ARI" target="_blank" rel="noopener"><span id="aTgBtn">Обговорити в Telegram ↗</span></a>
+    </div>
+  </div>
+
+  <a class="all-link" id="aAllLink" href="/dnevnyk/">← Усі статті</a>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var LANGS = ["uk", "en", "pl", "es", "de"];
+  var LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
+  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!"}};
+  var TITLES = {"uk": "Жорсткий диск, який виростив тебе", "en": "The Hard Drive That Raised You", "pl": "Dysk twardy, który cię wychował", "es": "El disco duro que te crió", "de": "Die Festplatte, die dich großgezogen hat"};
+  function apply(l){
+    document.documentElement.setAttribute('lang', l);
+    try { localStorage.setItem('sl', l); } catch(e) {}
+    document.getElementById('aBackLink').textContent = UI[l].back;
+    document.getElementById('aKicker').textContent = UI[l].kicker;
+    document.getElementById('aTitle').textContent = TITLES[l];
+    document.getElementById('aCtaText').textContent = UI[l].cta;
+    document.getElementById('aMediumBtn').textContent = UI[l].medium_btn;
+    document.getElementById('aTgBtn').textContent = UI[l].tg_btn;
+    document.getElementById('aAllLink').textContent = UI[l].all;
+    document.getElementById('aShareLabel').textContent = UI[l].share;
+    LANGS.forEach(function(ll){
+      var el = document.getElementById('aBody_' + ll);
+      if (el) el.style.display = (ll === l) ? '' : 'none';
+    });
+    document.querySelectorAll('#aLangSwitch button').forEach(function(btn){
+      btn.style.opacity = (btn.dataset.lang === l) ? '1' : '.45';
+    });
+  }
+  var sw = document.getElementById('aLangSwitch');
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.textContent = LABELS[l];
+    btn.dataset.lang = l;
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.onclick = function(){ apply(l); };
+    sw.appendChild(btn);
+  });
+  var initial = 'uk';
+  try { var saved = localStorage.getItem('sl'); if (saved && LANGS.indexOf(saved) !== -1) initial = saved; } catch(e) {}
+  apply(initial);
+
+  document.getElementById('aShareBtn').addEventListener('click', function(){
+    var l = document.documentElement.getAttribute('lang') || 'uk';
+    var shareData = { title: TITLES[l] + ' — Stan Ari', url: window.location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function(){
+        var btn = document.getElementById('aShareLabel');
+        var original = btn.textContent;
+        btn.textContent = UI[l].copied;
+        setTimeout(function(){ btn.textContent = original; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

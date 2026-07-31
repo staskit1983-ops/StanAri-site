@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Якщо код уже працює, як його знайти? — Stan Ari</title>
+<meta name="description" content="Якщо код уже працює, як його знайти? — есе Stan Ari про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<link rel="canonical" href="https://stanari.art/dnevnyk/01-transition/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Якщо код уже працює, як його знайти? — Stan Ari"/>
+<meta property="og:url" content="https://stanari.art/dnevnyk/01-transition/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "If the Code Is Already Running, How Do You Find It?",
+  "url": "https://stanari.art/dnevnyk/01-transition/",
+  "author": {"@type":"Person","name":"Stan Ari"}
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;--border:rgba(255,224,155,.11);--max:680px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.75}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between;max-width:820px}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 20px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:30px;margin:0 0 40px;font-weight:400;line-height:1.3}
+.article p{margin:0 0 22px;font-size:17px;color:var(--text)}
+.article h3{font-size:15px;letter-spacing:.03em;color:var(--gold2);margin:38px 0 16px;font-weight:700;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.article em{color:var(--gold2);font-style:italic}
+.cta{margin-top:56px;padding:26px;background:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));border:1px solid var(--border);border-radius:16px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.cta p{color:var(--muted);font-size:14px;margin:0 0 16px}
+.cta-links{display:flex;gap:10px;flex-wrap:wrap}
+.cta-links a{font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;text-decoration:none}
+.btn-medium{background:rgba(216,175,99,.12);border:1px solid rgba(216,175,99,.4);color:var(--gold2)}
+.btn-telegram{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+.all-link{display:inline-block;margin-top:28px;font-size:13px;color:var(--muted);text-decoration:none;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button id="aShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="aShareLabel">Поділитися</span></button>
+      <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+      <a class="back" id="aBackLink" href="/">← Назад на сайт</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span><span id="aKicker">Щоденник</span></div>
+  <h1 id="aTitle">Якщо код уже працює, як його знайти?</h1>
+
+  <div class="article" id="aBody_uk">
+<p>У попередній статті я писав про код, який ти успадкував — страх, реакції, інструкції, вписані в тебе ще до того, як ти мав право голосу. Кілька людей написали мені щось на кшталт того самого питання: добре, а як мені реально його знайти?</p>
+<p>Справедливе питання. Минулого разу я на нього не відповів, тож хочу спробувати зараз.</p>
+<h3>Ти не можеш знайти його, поки зайнятий</h3>
+<p>Ось у чому проблема. Код працює тихо, під твоїм звичайним мисленням. А звичайне мислення — гучне. Це наради, сповіщення, наступне завдання, суперечка, яку ти прокручуєш ще з позавчора. Весь цей шум — саме той тип статики, що ховає тихий сигнал. Ти не почуєш шепіт у кімнаті, повній крику, а більшість днів більшість із нас кричить сама на себе, навіть не помічаючи цього.</p>
+<p>Тож код ховається не тому що він хитрий. Він ховається, бо ми ніколи не буваємо достатньо тихими, достатньо довго, щоб реально зловити його за роботою.</p>
+<h3>Два місця, де я його знаходив</h3>
+<p>Є два стани, у яких я реально ловив код на гарячому — де я помічав, як відбувається реакція, і, вперше, бачив, звідки вона взялась, замість того щоб просто її мати.</p>
+<p>Перший — тиша. Не медитація в точному сенсі — просто справжня тиша, той тип, де твій власний шум нарешті падає достатньо низько, щоб щось під ним стало чутним. Про це напишу наступного разу.</p>
+<p>Другий — сон. Уночі відбувається щось, чого денне мислення не може — ніби розум нарешті отримує момент розібратись у тому, що він ніс і не міг обробити, поки ти не спав і був зайнятий. Про це теж напишу, одразу після.</p>
+<p>Жодне з цього не техніка, яку виконуєш. Це просто двоє дверей, крізь які я особисто знаходив, як код пробивається на поверхню. Не думаю, що вони єдині. Думаю, це просто ті, які я навчився впізнавати у власному житті.</p>
+<p>Якщо ти дочитав досі — у тебе вже є перша частина: код існує, і він не повністю твій. Наступні дві статті — про те, як реально зловити його за роботою.</p>
+  </div>
+  <div class="article" id="aBody_en" style="display:none">
+<p>In the last piece, I wrote about the code you inherited — the fear, the reactions, the instructions written into you before you had any say in it. A few people wrote back with some version of the same question: okay, so how do I actually find it?</p>
+<p>Fair question. I didn't answer it last time, so I want to try now.</p>
+<h3>You can't find it while you're busy</h3>
+<p>Here's the problem. The code runs quietly, underneath your normal thinking. And normal thinking is loud. It's meetings, notifications, the next task, the argument you're replaying from three days ago. All of that noise is exactly the kind of static that hides a quiet signal. You can't hear a whisper in a room full of shouting, and most days, most of us are shouting at ourselves without noticing.</p>
+<p>So the code doesn't hide because it's clever. It hides because we're never quiet enough, long enough, to actually catch it running.</p>
+<h3>Two places I've found it</h3>
+<p>There are two states where I've actually caught the code in the act — where I noticed a reaction happening and, for once, saw where it came from instead of just having it.</p>
+<p>One is silence. Not meditation exactly — just genuine quiet, the kind where your own noise finally drops low enough that something underneath it becomes audible. I'll write about that next.</p>
+<p>The other is sleep. Something happens overnight that daytime thinking can't do — like the mind finally gets a moment to sort through what it's been carrying and couldn't process while you were awake and busy. I'll write about that too, right after.</p>
+<p>Neither one is a technique you perform. They're just the two doors I've personally found the code slip through, on its way to the surface. I don't think they're the only two. I think they're just the ones I've learned to recognize in my own life.</p>
+<p>If you've read this far, you already have the first piece — the code exists, and it isn't fully yours. The next two pieces are about actually catching it at work.</p>
+  </div>
+  <div class="article" id="aBody_pl" style="display:none">
+<p>W poprzednim tekście pisałem o kodzie, który odziedziczyłeś — strachu, reakcjach, instrukcjach wpisanych w ciebie, zanim miałeś prawo głosu. Kilka osób napisało do mnie w wersji tego samego pytania: dobrze, więc jak go właściwie znaleźć?</p>
+<p>Uczciwe pytanie. Nie odpowiedziałem na nie ostatnio, więc chcę spróbować teraz.</p>
+<h3>Nie możesz go znaleźć, gdy jesteś zajęty</h3>
+<p>Oto problem. Kod działa po cichu, pod twoim zwykłym myśleniem. A zwykłe myślenie jest głośne. To spotkania, powiadomienia, następne zadanie, kłótnia, którą odtwarzasz sprzed trzech dni. Cały ten szum to dokładnie ten rodzaj statyki, który ukrywa cichy sygnał. Nie usłyszysz szeptu w pokoju pełnym krzyku, a przez większość dni większość z nas krzyczy sama na siebie, nawet tego nie zauważając.</p>
+<p>Więc kod nie ukrywa się dlatego, że jest sprytny. Ukrywa się, bo nigdy nie jesteśmy wystarczająco cicho, wystarczająco długo, by naprawdę złapać go na gorącym uczynku.</p>
+<h3>Dwa miejsca, w których go znalazłem</h3>
+<p>Są dwa stany, w których naprawdę złapałem kod na gorącym uczynku — gdzie zauważyłem, że dzieje się reakcja, i po raz pierwszy zobaczyłem, skąd się wzięła, zamiast po prostu ją mieć.</p>
+<p>Pierwszy to cisza. Nie medytacja w ścisłym sensie — po prostu prawdziwa cisza, taka, w której twój własny szum wreszcie opada wystarczająco nisko, by coś pod nim stało się słyszalne. Napiszę o tym następnym razem.</p>
+<p>Drugi to sen. W nocy dzieje się coś, czego dzienne myślenie nie potrafi — jakby umysł wreszcie dostawał chwilę, by uporządkować to, co niósł i czego nie mógł przetworzyć, gdy nie spałeś i byłeś zajęty. O tym też napiszę, zaraz potem.</p>
+<p>Żadne z tych nie jest techniką do wykonania. To po prostu dwoje drzwi, przez które osobiście znajdowałem, jak kod przebija się na powierzchnię. Nie sądzę, że są jedyne. Myślę, że to po prostu te, które nauczyłem się rozpoznawać w swoim własnym życiu.</p>
+<p>Jeśli doczytałeś do tego miejsca, masz już pierwszą część: kod istnieje i nie jest w pełni twój. Następne dwa teksty są o tym, jak naprawdę złapać go na gorącym uczynku.</p>
+  </div>
+  <div class="article" id="aBody_es" style="display:none">
+<p>En el texto anterior escribí sobre el código que heredaste — el miedo, las reacciones, las instrucciones escritas en ti antes de que tuvieras voz. Algunas personas me escribieron con alguna versión de la misma pregunta: bien, ¿cómo lo encuentro realmente?</p>
+<p>Pregunta justa. No la respondí la última vez, así que quiero intentarlo ahora.</p>
+<h3>No puedes encontrarlo mientras estás ocupado</h3>
+<p>Aquí está el problema. El código funciona en silencio, debajo de tu pensamiento normal. Y el pensamiento normal es ruidoso. Son reuniones, notificaciones, la siguiente tarea, la discusión que sigues repitiendo desde hace tres días. Todo ese ruido es exactamente el tipo de estática que oculta una señal silenciosa. No puedes oír un susurro en una habitación llena de gritos, y la mayoría de los días, la mayoría de nosotros nos gritamos a nosotros mismos sin darnos cuenta.</p>
+<p>Así que el código no se esconde porque sea astuto. Se esconde porque nunca estamos lo suficientemente en silencio, el tiempo suficiente, para realmente atraparlo en el acto.</p>
+<h3>Dos lugares donde lo he encontrado</h3>
+<p>Hay dos estados en los que realmente he atrapado el código en el acto — donde noté que ocurría una reacción y, por una vez, vi de dónde venía en lugar de simplemente tenerla.</p>
+<p>Uno es el silencio. No la meditación exactamente — solo el silencio genuino, ese tipo donde tu propio ruido finalmente baja lo suficiente como para que algo debajo se vuelva audible. Escribiré sobre eso la próxima vez.</p>
+<p>El otro es el sueño. Algo sucede durante la noche que el pensamiento diurno no puede hacer — como si la mente finalmente tuviera un momento para clasificar lo que ha estado cargando y no pudo procesar mientras estabas despierto y ocupado. Escribiré sobre eso también, justo después.</p>
+<p>Ninguno de los dos es una técnica que se realiza. Son solo las dos puertas por las que personalmente he encontrado que el código se filtra hacia la superficie. No creo que sean las únicas. Creo que son simplemente las que he aprendido a reconocer en mi propia vida.</p>
+<p>Si has leído hasta aquí, ya tienes la primera parte: el código existe, y no es completamente tuyo. Los próximos dos textos tratan sobre cómo realmente atraparlo en el acto.</p>
+  </div>
+  <div class="article" id="aBody_de" style="display:none">
+<p>Im letzten Beitrag schrieb ich über den Code, den du geerbt hast — die Angst, die Reaktionen, die Anweisungen, die in dich geschrieben wurden, bevor du ein Mitspracherecht hattest. Ein paar Leute schrieben mir eine Version derselben Frage zurück: gut, wie finde ich ihn eigentlich?</p>
+<p>Faire Frage. Ich habe sie letztes Mal nicht beantwortet, also möchte ich es jetzt versuchen.</p>
+<h3>Du kannst ihn nicht finden, während du beschäftigt bist</h3>
+<p>Hier ist das Problem. Der Code läuft leise, unter deinem normalen Denken. Und normales Denken ist laut. Es sind Meetings, Benachrichtigungen, die nächste Aufgabe, der Streit, den du seit drei Tagen wiederholst. Der ganze Lärm ist genau die Art von Statik, die ein leises Signal verbirgt. Du kannst kein Flüstern in einem Raum voller Geschrei hören, und die meisten Tage schreien die meisten von uns uns selbst an, ohne es zu merken.</p>
+<p>Der Code versteckt sich also nicht, weil er clever ist. Er versteckt sich, weil wir nie lange genug ruhig genug sind, um ihn tatsächlich bei der Arbeit zu erwischen.</p>
+<h3>Zwei Orte, an denen ich ihn gefunden habe</h3>
+<p>Es gibt zwei Zustände, in denen ich den Code tatsächlich auf frischer Tat ertappt habe — wo ich bemerkte, dass eine Reaktion geschah, und zum ersten Mal sah, woher sie kam, anstatt sie einfach zu haben.</p>
+<p>Der eine ist Stille. Nicht Meditation im genauen Sinne — nur echte Stille, die Art, bei der dein eigener Lärm endlich niedrig genug fällt, dass etwas darunter hörbar wird. Darüber schreibe ich beim nächsten Mal.</p>
+<p>Der andere ist Schlaf. Nachts passiert etwas, was das Tagesdenken nicht kann — als ob der Geist endlich einen Moment bekommt, um das zu sortieren, was er getragen hat und nicht verarbeiten konnte, während du wach und beschäftigt warst. Darüber schreibe ich auch, gleich danach.</p>
+<p>Keines von beidem ist eine Technik, die man ausführt. Es sind einfach die beiden Türen, durch die ich persönlich gefunden habe, wie der Code an die Oberfläche dringt. Ich glaube nicht, dass es die einzigen sind. Ich glaube, es sind einfach die, die ich in meinem eigenen Leben erkennen gelernt habe.</p>
+<p>Wenn du bis hierher gelesen hast, hast du bereits den ersten Teil: Der Code existiert, und er ist nicht vollständig deiner. Die nächsten zwei Beiträge handeln davon, ihn tatsächlich bei der Arbeit zu erwischen.</p>
+  </div>
+
+  <div class="cta">
+    <p id="aCtaText">Якщо це відгукнулось — більше есе про свідомість і код на</p>
+    <div class="cta-links">
+      <a class="btn-medium" href="https://medium.com/@stanari.art" target="_blank" rel="noopener"><span id="aMediumBtn">Читати на Medium ↗</span></a>
+      <a class="btn-telegram" href="https://t.me/STAN_ARI" target="_blank" rel="noopener"><span id="aTgBtn">Обговорити в Telegram ↗</span></a>
+    </div>
+  </div>
+
+  <a class="all-link" id="aAllLink" href="/dnevnyk/">← Усі статті</a>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var LANGS = ["uk", "en", "pl", "es", "de"];
+  var LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
+  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!"}};
+  var TITLES = {"uk": "Якщо код уже працює, як його знайти?", "en": "If the Code Is Already Running, How Do You Find It?", "pl": "Jeśli kod już działa, jak go znaleźć?", "es": "Si el código ya se está ejecutando, ¿cómo lo encuentras?", "de": "Wenn der Code schon läuft, wie findest du ihn?"};
+  function apply(l){
+    document.documentElement.setAttribute('lang', l);
+    try { localStorage.setItem('sl', l); } catch(e) {}
+    document.getElementById('aBackLink').textContent = UI[l].back;
+    document.getElementById('aKicker').textContent = UI[l].kicker;
+    document.getElementById('aTitle').textContent = TITLES[l];
+    document.getElementById('aCtaText').textContent = UI[l].cta;
+    document.getElementById('aMediumBtn').textContent = UI[l].medium_btn;
+    document.getElementById('aTgBtn').textContent = UI[l].tg_btn;
+    document.getElementById('aAllLink').textContent = UI[l].all;
+    document.getElementById('aShareLabel').textContent = UI[l].share;
+    LANGS.forEach(function(ll){
+      var el = document.getElementById('aBody_' + ll);
+      if (el) el.style.display = (ll === l) ? '' : 'none';
+    });
+    document.querySelectorAll('#aLangSwitch button').forEach(function(btn){
+      btn.style.opacity = (btn.dataset.lang === l) ? '1' : '.45';
+    });
+  }
+  var sw = document.getElementById('aLangSwitch');
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.textContent = LABELS[l];
+    btn.dataset.lang = l;
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.onclick = function(){ apply(l); };
+    sw.appendChild(btn);
+  });
+  var initial = 'uk';
+  try { var saved = localStorage.getItem('sl'); if (saved && LANGS.indexOf(saved) !== -1) initial = saved; } catch(e) {}
+  apply(initial);
+
+  document.getElementById('aShareBtn').addEventListener('click', function(){
+    var l = document.documentElement.getAttribute('lang') || 'uk';
+    var shareData = { title: TITLES[l] + ' — Stan Ari', url: window.location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function(){
+        var btn = document.getElementById('aShareLabel');
+        var original = btn.textContent;
+        btn.textContent = UI[l].copied;
+        setTimeout(function(){ btn.textContent = original; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

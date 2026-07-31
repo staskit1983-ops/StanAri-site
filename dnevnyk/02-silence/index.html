@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Думки, які приходять тільки в тиші — Stan Ari</title>
+<meta name="description" content="Думки, які приходять тільки в тиші — есе Stan Ari про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<link rel="canonical" href="https://stanari.art/dnevnyk/02-silence/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Думки, які приходять тільки в тиші — Stan Ari"/>
+<meta property="og:url" content="https://stanari.art/dnevnyk/02-silence/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Thoughts That Only Come in Silence",
+  "url": "https://stanari.art/dnevnyk/02-silence/",
+  "author": {"@type":"Person","name":"Stan Ari"}
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;--border:rgba(255,224,155,.11);--max:680px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.75}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between;max-width:820px}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 20px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:30px;margin:0 0 40px;font-weight:400;line-height:1.3}
+.article p{margin:0 0 22px;font-size:17px;color:var(--text)}
+.article h3{font-size:15px;letter-spacing:.03em;color:var(--gold2);margin:38px 0 16px;font-weight:700;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.article em{color:var(--gold2);font-style:italic}
+.cta{margin-top:56px;padding:26px;background:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));border:1px solid var(--border);border-radius:16px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.cta p{color:var(--muted);font-size:14px;margin:0 0 16px}
+.cta-links{display:flex;gap:10px;flex-wrap:wrap}
+.cta-links a{font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;text-decoration:none}
+.btn-medium{background:rgba(216,175,99,.12);border:1px solid rgba(216,175,99,.4);color:var(--gold2)}
+.btn-telegram{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+.all-link{display:inline-block;margin-top:28px;font-size:13px;color:var(--muted);text-decoration:none;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button id="aShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="aShareLabel">Поділитися</span></button>
+      <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+      <a class="back" id="aBackLink" href="/">← Назад на сайт</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span><span id="aKicker">Щоденник</span></div>
+  <h1 id="aTitle">Думки, які приходять тільки в тиші</h1>
+
+  <div class="article" id="aBody_uk">
+<p>У попередній статті я сказав, що тиша — одне з двох місць, де я реально ловив код на гарячому. Ось що я мав на увазі.</p>
+<p>Є особливий тип думки, яка ніколи не з'являється, коли ти намагаєшся думати.</p>
+<p>Ти знаєш цю думку. Вона приходить у душі. У довгій дорозі без музики. У ті три секунди між засинанням і сном. Ніколи — за столом, коли ти дивишся на проблему й змушуєш себе знайти відповідь.</p>
+<p>Довго я вважав це просто невезінням — інсайт з'являється, коли йому заманеться, байдужий до того, коли він реально потрібен. Тепер я думаю, що це не везіння взагалі. Я думаю, це закономірність.</p>
+<h3>"Не думати" — це не те саме, що думати ні про що</h3>
+<p>Більшість того, що ми називаємо "мисленням", насправді шум. Прокручування розмови. Репетиція суперечки, якої, найімовірніше, ніколи не буде. Той самий страх по колу, у надії, що повторення врешті дасть рішення замість чергового повторення.</p>
+<p>Ця розумова активність відчувається продуктивною, бо вона <em>активна</em>. Але вона нею не є. Це переважно розум, що захищає позицію, яку вже займає, замаскувавши це під розв'язання проблеми.</p>
+<p>Інший тип мислення — той, що справді кудись рухає — здається, потребує протилежної умови. Не зусилля. Простору. Голови, достатньо порожньої, щоб щось нове мало місце з'явитись, а не просто ті самі три тривоги, що по черзі говорять.</p>
+<h3>Кожен знаходить це по-своєму</h3>
+<p>Це не аргумент на користь конкретної практики. Я не кажу тобі медитувати, і скептично ставлюсь до будь-кого, хто наполягає, що є лише одні правильні двері в цей стан. Хтось знаходить це через йогу. Хтось через біг, де ритм дихання зрештою витісняє ментальний шум. Хтось через щось таке неромантичне, як миття посуду.</p>
+<p>Я знаю людину, яка каже, що знаходить цей простір тільки у ванні — голова відкинута назад, вода до вух, тільки очі й ніс над поверхнею. Все стихає, не тому що вона намагається медитувати, а тому що вода просто прибирає всі інші вхідні сигнали, що конкурують за її увагу.</p>
+<p>Конкретні двері не мають значення. Важливо помітити, що вони у тебе є, і що вони інакші, ніж у будь-кого іншого.</p>
+<h3>Що ти насправді шукаєш</h3>
+<p>Я не думаю, що мета — розслаблення заради самого розслаблення. Розслаблення — просто побічний ефект. Те, що ти насправді шукаєш, — це відсутність власного шуму достатньо довго, щоб почути щось тихіше — думку, яка вже там була, чекаючи, поки статика розчиститься.</p>
+<p>Ти не жертва свого коду. Ти — Оператор. Але Оператор не може почути машину крізь звук власного мислення.</p>
+  </div>
+  <div class="article" id="aBody_en" style="display:none">
+<p>There's a particular kind of thought that never shows up when you're trying to think.</p>
+<p>You know the one. It arrives in the shower. On a long drive with no music. In the three seconds between falling asleep and actually being asleep. Never at your desk, staring at the problem, willing yourself toward an answer.</p>
+<p>For a long time I assumed that was just bad luck — insight showing up whenever it felt like it, indifferent to when I actually needed it. Now I think it's not luck at all. I think it's a condition.</p>
+<h3>Not thinking is not the same as thinking about nothing</h3>
+<p>Most of what we call "thinking" is actually noise. Replaying a conversation. Rehearsing an argument you'll probably never have. Running the same worry in a loop, hoping repetition will eventually produce a solution instead of just more repetition.</p>
+<p>That kind of mental activity feels productive because it's <em>active</em>. It isn't. It's mostly the mind defending a position it already holds, dressed up as problem-solving.</p>
+<p>The other kind of thinking — the kind that actually moves you somewhere — seems to need the opposite condition. Not effort. Room. A head empty enough that something new has space to arrive instead of just the same three worries taking turns.</p>
+<h3>Everyone finds it differently</h3>
+<p>This isn't a case for a specific practice. I'm not telling you to meditate, and I'm skeptical of anyone who insists there's exactly one correct door into this state. Some people find it through yoga. Some through running, where the rhythm of breathing eventually crowds out the mental chatter. Some through something as unglamorous as doing the dishes.</p>
+<p>I know someone who says she only finds this space in the bath — head tipped back, water up to her ears, only her eyes and nose above the surface. Everything goes quiet, not because she's trying to meditate, but because the water simply removes every other input competing for her attention.</p>
+<p>The specific door doesn't matter. What matters is noticing that you have one, and that it's different from everyone else's.</p>
+<h3>What you're actually looking for</h3>
+<p>I don't think the goal is relaxation for its own sake. Relaxation is just the side effect. What you're actually after is the absence of your own noise long enough for something quieter to be heard — a thought that was already there, waiting for the static to clear.</p>
+<p>You are not a victim of your code. You're the Operator — but the Operator can't hear the machine over the sound of its own thinking.</p>
+  </div>
+  <div class="article" id="aBody_pl" style="display:none">
+<p>W poprzednim tekście powiedziałem, że cisza to jedno z dwóch miejsc, w których naprawdę złapałem kod na gorącym uczynku. Oto co miałem na myśli.</p>
+<p>Jest szczególny rodzaj myśli, która nigdy nie pojawia się, gdy próbujesz myśleć.</p>
+<p>Znasz tę myśl. Przychodzi pod prysznicem. Podczas długiej jazdy bez muzyki. W tych trzech sekundach między zasypianiem a snem. Nigdy przy biurku, gdy patrzysz na problem i zmuszasz się do znalezienia odpowiedzi.</p>
+<p>Długo uważałem to za zwykły pech — wgląd pojawia się, kiedy mu się podoba, obojętny na to, kiedy jest naprawdę potrzebny. Teraz myślę, że to wcale nie jest pech. Myślę, że to prawidłowość.</p>
+<h3>"Nie myśleć" to nie to samo co myśleć o niczym</h3>
+<p>Większość tego, co nazywamy "myśleniem", to w rzeczywistości szum. Odtwarzanie rozmowy. Próba kłótni, której najprawdopodobniej nigdy nie będzie. Ten sam strach w kółko, w nadziei, że powtórzenie w końcu da rozwiązanie zamiast kolejnego powtórzenia.</p>
+<p>Ta aktywność umysłowa wydaje się produktywna, bo jest <em>aktywna</em>. Ale nią nie jest. To głównie umysł broniący pozycji, którą już zajmuje, zamaskowanej jako rozwiązywanie problemu.</p>
+<p>Inny rodzaj myślenia — ten, który naprawdę gdzieś prowadzi — wydaje się wymagać przeciwnego warunku. Nie wysiłku. Przestrzeni. Głowy wystarczająco pustej, by coś nowego miało miejsce, by się pojawić, zamiast tych samych trzech lęków mówiących na zmianę.</p>
+<h3>Każdy znajduje to na swój sposób</h3>
+<p>To nie jest argument za konkretną praktyką. Nie mówię ci, żebyś medytował, i jestem sceptyczny wobec każdego, kto upiera się, że istnieją tylko jedne właściwe drzwi do tego stanu. Ktoś znajduje to przez jogę. Ktoś przez bieganie, gdzie rytm oddychania w końcu wypiera mentalny hałas. Ktoś przez coś tak mało romantycznego jak zmywanie naczyń.</p>
+<p>Znam osobę, która mówi, że znajduje tę przestrzeń tylko w wannie — głowa odchylona do tyłu, woda po uszy, tylko oczy i nos nad powierzchnią. Wszystko cichnie, nie dlatego, że próbuje medytować, ale dlatego, że woda po prostu usuwa wszystkie inne bodźce konkurujące o jej uwagę.</p>
+<p>Konkretne drzwi nie mają znaczenia. Ważne jest, by zauważyć, że je masz, i że są inne niż czyjekolwiek inne.</p>
+<h3>Czego naprawdę szukasz</h3>
+<p>Nie sądzę, żeby celem był relaks dla samego relaksu. Relaks to tylko efekt uboczny. To, czego naprawdę szukasz, to brak własnego szumu wystarczająco długo, by usłyszeć coś cichszego — myśl, która już tam była, czekając, aż statyka się rozjaśni.</p>
+<p>Nie jesteś ofiarą swojego kodu. Jesteś Operatorem. Ale Operator nie może usłyszeć maszyny przez dźwięk własnego myślenia.</p>
+  </div>
+  <div class="article" id="aBody_es" style="display:none">
+<p>En el texto anterior dije que el silencio era uno de los dos lugares donde realmente he atrapado el código en el acto. Esto es lo que quise decir.</p>
+<p>Hay un tipo particular de pensamiento que nunca aparece cuando intentas pensar.</p>
+<p>Conoces ese pensamiento. Llega en la ducha. En un viaje largo sin música. En esos tres segundos entre quedarte dormido y estar realmente dormido. Nunca en tu escritorio, mirando el problema y obligándote a encontrar una respuesta.</p>
+<p>Durante mucho tiempo asumí que eso era simplemente mala suerte — la intuición aparece cuando le da la gana, indiferente a cuándo realmente se necesita. Ahora creo que no es suerte en absoluto. Creo que es una condición.</p>
+<h3>"No pensar" no es lo mismo que pensar en nada</h3>
+<p>La mayor parte de lo que llamamos "pensar" es en realidad ruido. Repetir una conversación. Ensayar una discusión que probablemente nunca ocurrirá. La misma preocupación en bucle, esperando que la repetición eventualmente produzca una solución en lugar de más repetición.</p>
+<p>Ese tipo de actividad mental se siente productiva porque es <em>activa</em>. No lo es. Es principalmente la mente defendiendo una posición que ya sostiene, disfrazada de resolución de problemas.</p>
+<p>El otro tipo de pensamiento — el que realmente te mueve a algún lugar — parece necesitar la condición opuesta. No esfuerzo. Espacio. Una cabeza lo suficientemente vacía como para que algo nuevo tenga lugar para llegar, en lugar de las mismas tres preocupaciones turnándose para hablar.</p>
+<h3>Cada uno lo encuentra de manera diferente</h3>
+<p>Esto no es un caso a favor de una práctica específica. No te estoy diciendo que medites, y soy escéptico de cualquiera que insista en que hay exactamente una puerta correcta hacia este estado. Algunas personas lo encuentran a través del yoga. Algunas a través de correr, donde el ritmo de la respiración eventualmente desplaza el ruido mental. Algunas a través de algo tan poco glamoroso como lavar los platos.</p>
+<p>Conozco a alguien que dice que solo encuentra este espacio en la bañera — cabeza hacia atrás, agua hasta las orejas, solo los ojos y la nariz sobre la superficie. Todo se calma, no porque intente meditar, sino porque el agua simplemente elimina cualquier otra entrada que compita por su atención.</p>
+<p>La puerta específica no importa. Lo que importa es notar que tienes una, y que es diferente a la de cualquier otra persona.</p>
+<h3>Lo que realmente estás buscando</h3>
+<p>No creo que la meta sea la relajación por sí misma. La relajación es solo el efecto secundario. Lo que realmente estás buscando es la ausencia de tu propio ruido el tiempo suficiente como para escuchar algo más silencioso — un pensamiento que ya estaba ahí, esperando a que la estática se despejara.</p>
+<p>No eres una víctima de tu código. Eres el Operador — pero el Operador no puede oír la máquina por encima del sonido de su propio pensamiento.</p>
+  </div>
+  <div class="article" id="aBody_de" style="display:none">
+<p>Im letzten Beitrag sagte ich, Stille sei einer von zwei Orten, an denen ich den Code tatsächlich auf frischer Tat ertappt habe. Hier ist, was ich meinte.</p>
+<p>Es gibt eine bestimmte Art von Gedanken, die nie auftaucht, wenn du versuchst zu denken.</p>
+<p>Du kennst diesen Gedanken. Er kommt unter der Dusche. Auf einer langen Fahrt ohne Musik. In diesen drei Sekunden zwischen Einschlafen und tatsächlich Schlafen. Nie am Schreibtisch, wenn du auf das Problem starrst und dich zwingst, eine Antwort zu finden.</p>
+<p>Lange dachte ich, das sei einfach Pech — Einsicht taucht auf, wann immer sie will, gleichgültig gegenüber dem, wann sie tatsächlich gebraucht wird. Jetzt denke ich, das ist überhaupt kein Glück. Ich denke, es ist eine Gesetzmäßigkeit.</p>
+<h3>"Nicht denken" ist nicht dasselbe wie an nichts denken</h3>
+<p>Das meiste, was wir "Denken" nennen, ist eigentlich Lärm. Ein Gespräch abspulen. Einen Streit proben, der höchstwahrscheinlich nie stattfinden wird. Dieselbe Angst im Kreis, in der Hoffnung, dass Wiederholung schließlich eine Lösung liefert statt weiterer Wiederholung.</p>
+<p>Diese geistige Aktivität fühlt sich produktiv an, weil sie <em>aktiv</em> ist. Ist sie aber nicht. Es ist größtenteils der Geist, der eine Position verteidigt, die er bereits einnimmt, getarnt als Problemlösung.</p>
+<p>Die andere Art von Denken — die dich tatsächlich irgendwohin bewegt — scheint die gegenteilige Bedingung zu brauchen. Keine Anstrengung. Raum. Einen Kopf, leer genug, dass etwas Neues Platz hat anzukommen, statt derselben drei Ängste, die sich abwechseln zu sprechen.</p>
+<h3>Jeder findet es anders</h3>
+<p>Das ist kein Plädoyer für eine bestimmte Praxis. Ich sage dir nicht, dass du meditieren sollst, und ich bin skeptisch gegenüber jedem, der darauf besteht, dass es genau eine richtige Tür zu diesem Zustand gibt. Manche finden es durch Yoga. Manche durch Laufen, wo der Rhythmus des Atmens schließlich den mentalen Lärm verdrängt. Manche durch etwas so wenig Glamouröses wie Geschirrspülen.</p>
+<p>Ich kenne jemanden, der sagt, sie findet diesen Raum nur in der Badewanne — Kopf zurückgelehnt, Wasser bis zu den Ohren, nur Augen und Nase über der Oberfläche. Alles wird still, nicht weil sie versucht zu meditieren, sondern weil das Wasser einfach jeden anderen Input entfernt, der um ihre Aufmerksamkeit konkurriert.</p>
+<p>Die konkrete Tür spielt keine Rolle. Wichtig ist zu bemerken, dass du eine hast, und dass sie anders ist als die von jedem anderen.</p>
+<h3>Was du tatsächlich suchst</h3>
+<p>Ich glaube nicht, dass das Ziel Entspannung um ihrer selbst willen ist. Entspannung ist nur der Nebeneffekt. Was du tatsächlich suchst, ist die Abwesenheit deines eigenen Lärms lange genug, um etwas Leiseres zu hören — einen Gedanken, der schon da war und darauf wartete, dass sich die Statik lichtet.</p>
+<p>Du bist kein Opfer deines Codes. Du bist der Operator — aber der Operator kann die Maschine nicht hören über dem Geräusch seines eigenen Denkens.</p>
+  </div>
+
+  <div class="cta">
+    <p id="aCtaText">Якщо це відгукнулось — більше есе про свідомість і код на</p>
+    <div class="cta-links">
+      <a class="btn-medium" href="https://medium.com/@stanari.art" target="_blank" rel="noopener"><span id="aMediumBtn">Читати на Medium ↗</span></a>
+      <a class="btn-telegram" href="https://t.me/STAN_ARI" target="_blank" rel="noopener"><span id="aTgBtn">Обговорити в Telegram ↗</span></a>
+    </div>
+  </div>
+
+  <a class="all-link" id="aAllLink" href="/dnevnyk/">← Усі статті</a>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var LANGS = ["uk", "en", "pl", "es", "de"];
+  var LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
+  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!"}};
+  var TITLES = {"uk": "Думки, які приходять тільки в тиші", "en": "The Thoughts That Only Come in Silence", "pl": "Myśli, które przychodzą tylko w ciszy", "es": "Los pensamientos que solo llegan en silencio", "de": "Die Gedanken, die nur in der Stille kommen"};
+  function apply(l){
+    document.documentElement.setAttribute('lang', l);
+    try { localStorage.setItem('sl', l); } catch(e) {}
+    document.getElementById('aBackLink').textContent = UI[l].back;
+    document.getElementById('aKicker').textContent = UI[l].kicker;
+    document.getElementById('aTitle').textContent = TITLES[l];
+    document.getElementById('aCtaText').textContent = UI[l].cta;
+    document.getElementById('aMediumBtn').textContent = UI[l].medium_btn;
+    document.getElementById('aTgBtn').textContent = UI[l].tg_btn;
+    document.getElementById('aAllLink').textContent = UI[l].all;
+    document.getElementById('aShareLabel').textContent = UI[l].share;
+    LANGS.forEach(function(ll){
+      var el = document.getElementById('aBody_' + ll);
+      if (el) el.style.display = (ll === l) ? '' : 'none';
+    });
+    document.querySelectorAll('#aLangSwitch button').forEach(function(btn){
+      btn.style.opacity = (btn.dataset.lang === l) ? '1' : '.45';
+    });
+  }
+  var sw = document.getElementById('aLangSwitch');
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.textContent = LABELS[l];
+    btn.dataset.lang = l;
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.onclick = function(){ apply(l); };
+    sw.appendChild(btn);
+  });
+  var initial = 'uk';
+  try { var saved = localStorage.getItem('sl'); if (saved && LANGS.indexOf(saved) !== -1) initial = saved; } catch(e) {}
+  apply(initial);
+
+  document.getElementById('aShareBtn').addEventListener('click', function(){
+    var l = document.documentElement.getAttribute('lang') || 'uk';
+    var shareData = { title: TITLES[l] + ' — Stan Ari', url: window.location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function(){
+        var btn = document.getElementById('aShareLabel');
+        var original = btn.textContent;
+        btn.textContent = UI[l].copied;
+        setTimeout(function(){ btn.textContent = original; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

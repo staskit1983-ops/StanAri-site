@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Баг, який не твій — Stan Ari</title>
+<meta name="description" content="Баг, який не твій — есе Stan Ari про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<link rel="canonical" href="https://stanari.art/dnevnyk/05-bug/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Баг, який не твій — Stan Ari"/>
+<meta property="og:url" content="https://stanari.art/dnevnyk/05-bug/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Bug That Isn’t Yours",
+  "url": "https://stanari.art/dnevnyk/05-bug/",
+  "author": {"@type":"Person","name":"Stan Ari"}
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;--border:rgba(255,224,155,.11);--max:680px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.75}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between;max-width:820px}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 20px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:30px;margin:0 0 40px;font-weight:400;line-height:1.3}
+.article p{margin:0 0 22px;font-size:17px;color:var(--text)}
+.article h3{font-size:15px;letter-spacing:.03em;color:var(--gold2);margin:38px 0 16px;font-weight:700;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.article em{color:var(--gold2);font-style:italic}
+.cta{margin-top:56px;padding:26px;background:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));border:1px solid var(--border);border-radius:16px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.cta p{color:var(--muted);font-size:14px;margin:0 0 16px}
+.cta-links{display:flex;gap:10px;flex-wrap:wrap}
+.cta-links a{font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;text-decoration:none}
+.btn-medium{background:rgba(216,175,99,.12);border:1px solid rgba(216,175,99,.4);color:var(--gold2)}
+.btn-telegram{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+.all-link{display:inline-block;margin-top:28px;font-size:13px;color:var(--muted);text-decoration:none;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button id="aShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="aShareLabel">Поділитися</span></button>
+      <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+      <a class="back" id="aBackLink" href="/">← Назад на сайт</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span><span id="aKicker">Щоденник</span></div>
+  <h1 id="aTitle">Баг, який не твій</h1>
+
+  <div class="article" id="aBody_uk">
+<p>Як я вже казав у попередній статті, я називатиму Бога "сервером" — щоб метафора лишалась зрозумілою, бо я думаю, що ми всі своєрідні біокомп'ютери, що працюють на дуже просунутій конструкції, яку ми самі не будували. І ось частина цієї ідеї, яка перестала бути втішною і стала корисною: інтерфейс може помилятись. Не тому, що джерело збрехало. Тому, що сам інтерфейс зламаний.</p>
+<h3>Приймач може спотворити сигнал</h3>
+<p>Радіо з пошкодженою проводкою не грає неправильну пісню. Воно грає правильну пісню погано — статика, перепади, сигнал, що приходить викривленим, хоча з самою трансляцією все було гаразд. Я думаю, багато з того, що виглядає як людська жорстокість, працює так само. Це не доказ того, що те, з чим ми зв'язані, жорстоке. Це доказ того, що конкретний приймач працює на пошкодженому коді.</p>
+<p>Тривожна частина в тому, що таке пошкодження поширюється. Воно рухається між людьми майже як вірус. Страх однієї людини стає підозрою групи. Підозра групи стає ненавистю нації. Ненависть нації стає війною. Голод по владі однієї людини стає системою, яка споживає людей, щоб себе далі живити.</p>
+<h3>Це ніколи не виглядає як баг зсередини</h3>
+<p>Ніхто не починає війну, вважаючи, що працює на пошкодженому коді. Це завжди приходить загорнутим у виправдання — самозахист, праведність, "заради загального блага", ідеологія, помста. Але зніми виправдання — і те, що лишається в кожному випадку, те саме, просто в іншому пальті: страх, який сплутали з правдою, а потім передали далі.</p>
+<h3>Це не те, для чого ми тут</h3>
+<p>Я кажу це з більшою впевненістю, ніж майже все інше, що я пишу. Що б не побудувало інтерфейс, у якому кожен з нас ходить, — війна не той результат, для якого його спроєктовано. Домінування — не той. Вбивство одне одного через те, чия назва для джерела правильна — не той. Це те, що трапляється, коли сигнал захоплюється чимось меншим за те, для чого його призначено нести.</p>
+<p>Я не можу довести це так, як міг би довести факт про ДНК. Це ближче до переконання, яке пережило кожну мою спробу переконати себе в протилежному: що пошкоджений код, який проходить крізь стільки людської історії, — це не те, що пройшло чисто. Це щось, що проникло.</p>
+<p>Ти не жертва свого коду. Але частина коду, що зараз проходить крізь людство, не твоя, не моя, і ніколи не мала б працювати взагалі.</p>
+  </div>
+  <div class="article" id="aBody_en" style="display:none">
+<p>As I said in the previous piece, I'll call God the "server" — so the metaphor stays clear, because I think we're all a kind of biocomputer, running on a very advanced design we didn't build ourselves. And here's the part of that idea that stopped being comforting and started being useful: an interface can be wrong. Not because the source lied. Because the interface itself is broken.</p>
+<h3>A receiver can distort the signal</h3>
+<p>A radio with damaged wiring doesn't play a false song. It plays the right song badly — static, dropouts, a signal that arrives twisted even though nothing was wrong with the broadcast. I think a lot of what looks like human cruelty works the same way. It isn't proof that whatever we're connected to is cruel. It's proof that a particular receiver is running corrupted code.</p>
+<p>The unsettling part is that corruption like this spreads. It moves between people almost like a virus. One person's fear becomes a group's suspicion. A group's suspicion becomes a nation's hatred. A nation's hatred becomes a war. One person's hunger for control becomes a system that consumes people to keep feeding it.</p>
+<h3>It never looks like a bug from the inside</h3>
+<p>Nobody starts a war believing they're running corrupted code. It always arrives wrapped in a justification — self-defense, righteousness, "for the greater good," ideology, revenge. Strip the justification away, though, and what's left in every case is the same thing, just wearing a different coat: fear that got mistaken for truth, and then passed on.</p>
+<h3>This isn't what we're here for</h3>
+<p>I say that with more certainty than almost anything else I write. Whatever built the interface each of us is walking around in, war isn't the output it was designed to produce. Domination isn't. Killing each other over whose name for the source is correct isn't. Those are what happens when a signal gets hijacked by something smaller than what it was built to carry.</p>
+<p>I can't prove this the way I could prove a fact about DNA. It's closer to a conviction that survived every attempt I've made to talk myself out of it: that the corrupted code running through so much of human history isn't what came through clean. It's something that got in.</p>
+<p>You are not a victim of your code. But some of the code running through humanity right now isn't yours, isn't mine, and was never supposed to be running at all.</p>
+  </div>
+  <div class="article" id="aBody_pl" style="display:none">
+<p>Jak już mówiłem w poprzednim tekście, będę nazywał Boga "serwerem" — żeby metafora pozostała jasna, bo myślę, że wszyscy jesteśmy swego rodzaju biokomputerami, działającymi na bardzo zaawansowanej konstrukcji, której sami nie zbudowaliśmy. I oto część tej idei, która przestała być pocieszająca i stała się użyteczna: interfejs może się mylić. Nie dlatego, że źródło skłamało. Dlatego, że sam interfejs jest uszkodzony.</p>
+<h3>Odbiornik może zniekształcić sygnał</h3>
+<p>Radio z uszkodzonym okablowaniem nie gra złej piosenki. Gra dobrą piosenkę źle — statyka, zaniki, sygnał, który dociera zniekształcony, mimo że z samą transmisją wszystko było w porządku. Myślę, że wiele z tego, co wygląda na ludzkie okrucieństwo, działa tak samo. To nie dowód, że to, z czym jesteśmy połączeni, jest okrutne. To dowód, że konkretny odbiornik działa na uszkodzonym kodzie.</p>
+<p>Niepokojąca część polega na tym, że takie uszkodzenie się rozprzestrzenia. Przemieszcza się między ludźmi niemal jak wirus. Strach jednej osoby staje się podejrzeniem grupy. Podejrzenie grupy staje się nienawiścią narodu. Nienawiść narodu staje się wojną. Głód władzy jednej osoby staje się systemem, który konsumuje ludzi, by się dalej żywić.</p>
+<h3>To nigdy nie wygląda jak błąd od wewnątrz</h3>
+<p>Nikt nie zaczyna wojny, sądząc, że działa na uszkodzonym kodzie. Zawsze przychodzi to owinięte w usprawiedliwienie — samoobronę, sprawiedliwość, "dla wspólnego dobra", ideologię, zemstę. Ale zdejmij usprawiedliwienie, a to, co zostaje w każdym przypadku, jest tym samym, tylko w innym płaszczu: strach pomylony z prawdą, a potem przekazany dalej.</p>
+<h3>Nie po to tu jesteśmy</h3>
+<p>Mówię to z większą pewnością niż niemal wszystko inne, co piszę. Cokolwiek zbudowało interfejs, w którym każdy z nas chodzi, wojna nie jest wynikiem, do którego został zaprojektowany. Dominacja nie jest. Zabijanie się nawzajem o to, czyje imię dla źródła jest właściwe — nie jest. To dzieje się, gdy sygnał zostaje przejęty przez coś mniejszego niż to, do czego był przeznaczony.</p>
+<p>Nie mogę tego udowodnić tak, jak mógłbym udowodnić fakt o DNA. To bliższe przekonaniu, które przetrwało każdą moją próbę przekonania się o czymś przeciwnym: że uszkodzony kod, przechodzący przez tak wiele ludzkiej historii, nie jest tym, co przeszło czysto. To coś, co się wdarło.</p>
+<p>Nie jesteś ofiarą swojego kodu. Ale część kodu, który obecnie przechodzi przez ludzkość, nie jest twoja, nie jest moja, i nigdy nie powinna działać w ogóle.</p>
+  </div>
+  <div class="article" id="aBody_es" style="display:none">
+<p>Como ya dije en la pieza anterior, llamaré a Dios el "servidor" — para que la metáfora se mantenga clara, porque creo que todos somos una especie de biocomputadora, funcionando con un diseño muy avanzado que no construimos nosotros mismos. Y aquí está la parte de esa idea que dejó de ser reconfortante y se volvió útil: una interfaz puede estar equivocada. No porque la fuente mintiera. Porque la interfaz misma está rota.</p>
+<h3>Un receptor puede distorsionar la señal</h3>
+<p>Una radio con cableado dañado no toca una canción equivocada. Toca la canción correcta mal — estática, cortes, una señal que llega distorsionada aunque no había nada mal con la transmisión misma. Creo que mucho de lo que parece crueldad humana funciona de la misma manera. No es prueba de que aquello con lo que estamos conectados sea cruel. Es prueba de que un receptor particular está funcionando con código corrupto.</p>
+<p>La parte inquietante es que este tipo de corrupción se propaga. Se mueve entre las personas casi como un virus. El miedo de una persona se convierte en la sospecha de un grupo. La sospecha de un grupo se convierte en el odio de una nación. El odio de una nación se convierte en una guerra. El hambre de control de una persona se convierte en un sistema que consume personas para seguir alimentándose.</p>
+<h3>Nunca parece un error desde adentro</h3>
+<p>Nadie empieza una guerra creyendo que está funcionando con código corrupto. Siempre llega envuelto en una justificación — autodefensa, rectitud, "por el bien mayor", ideología, venganza. Pero quita la justificación, y lo que queda en cada caso es lo mismo, solo con un abrigo diferente: miedo confundido con verdad, y luego transmitido.</p>
+<h3>No es para esto que estamos aquí</h3>
+<p>Digo esto con más certeza que casi cualquier otra cosa que escribo. Sea lo que sea que haya construido la interfaz en la que cada uno de nosotros camina, la guerra no es el resultado para el que fue diseñada. La dominación no lo es. Matarnos unos a otros sobre cuál nombre para la fuente es el correcto no lo es. Eso es lo que sucede cuando una señal es secuestrada por algo más pequeño de lo que fue diseñada para llevar.</p>
+<p>No puedo probar esto de la forma en que podría probar un hecho sobre el ADN. Es más cercano a una convicción que ha sobrevivido a cada intento que he hecho de convencerme de lo contrario: que el código corrupto que recorre tanto de la historia humana no es lo que pasó limpio. Es algo que se infiltró.</p>
+<p>No eres una víctima de tu código. Pero parte del código que recorre la humanidad ahora mismo no es tuyo, no es mío, y nunca debió estar funcionando en absoluto.</p>
+  </div>
+  <div class="article" id="aBody_de" style="display:none">
+<p>Wie ich im letzten Beitrag schon sagte, werde ich Gott den "Server" nennen — damit die Metapher klar bleibt, denn ich denke, wir sind alle eine Art Biocomputer, der auf einer sehr fortschrittlichen Konstruktion läuft, die wir nicht selbst gebaut haben. Und hier ist der Teil dieser Idee, der aufhörte, tröstlich zu sein, und begann, nützlich zu sein: Ein Interface kann falsch liegen. Nicht weil die Quelle gelogen hat. Weil das Interface selbst kaputt ist.</p>
+<h3>Ein Empfänger kann das Signal verzerren</h3>
+<p>Ein Radio mit beschädigter Verkabelung spielt kein falsches Lied. Es spielt das richtige Lied schlecht — Statik, Aussetzer, ein Signal, das verzerrt ankommt, obwohl mit der Übertragung selbst alles in Ordnung war. Ich denke, vieles von dem, was wie menschliche Grausamkeit aussieht, funktioniert genauso. Es ist kein Beweis dafür, dass das, womit wir verbunden sind, grausam ist. Es ist ein Beweis dafür, dass ein bestimmter Empfänger mit beschädigtem Code läuft.</p>
+<p>Der beunruhigende Teil ist, dass sich diese Art von Beschädigung ausbreitet. Sie bewegt sich zwischen Menschen fast wie ein Virus. Die Angst einer Person wird zum Verdacht einer Gruppe. Der Verdacht einer Gruppe wird zum Hass einer Nation. Der Hass einer Nation wird zu einem Krieg. Der Machthunger einer Person wird zu einem System, das Menschen verzehrt, um sich weiter zu ernähren.</p>
+<h3>Es sieht von innen nie wie ein Bug aus</h3>
+<p>Niemand beginnt einen Krieg im Glauben, mit beschädigtem Code zu laufen. Es kommt immer in eine Rechtfertigung verpackt — Selbstverteidigung, Rechtschaffenheit, "für das größere Wohl", Ideologie, Rache. Aber nimm die Rechtfertigung weg, und was in jedem Fall übrig bleibt, ist dasselbe, nur in einem anderen Mantel: Angst, die mit Wahrheit verwechselt und dann weitergegeben wurde.</p>
+<h3>Dafür sind wir nicht hier</h3>
+<p>Ich sage das mit mehr Gewissheit als fast alles andere, was ich schreibe. Was auch immer das Interface gebaut hat, in dem jeder von uns herumläuft — Krieg ist nicht das Ergebnis, für das es entworfen wurde. Dominanz ist es nicht. Sich gegenseitig darüber umzubringen, welcher Name für die Quelle der richtige ist, ist es nicht. Das passiert, wenn ein Signal von etwas Kleinerem gekapert wird, als es tragen sollte.</p>
+<p>Ich kann das nicht beweisen, wie ich eine Tatsache über DNA beweisen könnte. Es ist näher an einer Überzeugung, die jeden meiner Versuche überlebt hat, mich vom Gegenteil zu überzeugen: dass der beschädigte Code, der durch so viel menschliche Geschichte läuft, nicht das ist, was sauber durchkam. Es ist etwas, das eingedrungen ist.</p>
+<p>Du bist kein Opfer deines Codes. Aber ein Teil des Codes, der gerade durch die Menschheit läuft, ist nicht deiner, nicht meiner, und hätte niemals überhaupt laufen sollen.</p>
+  </div>
+
+  <div class="cta">
+    <p id="aCtaText">Якщо це відгукнулось — більше есе про свідомість і код на</p>
+    <div class="cta-links">
+      <a class="btn-medium" href="https://medium.com/@stanari.art" target="_blank" rel="noopener"><span id="aMediumBtn">Читати на Medium ↗</span></a>
+      <a class="btn-telegram" href="https://t.me/STAN_ARI" target="_blank" rel="noopener"><span id="aTgBtn">Обговорити в Telegram ↗</span></a>
+    </div>
+  </div>
+
+  <a class="all-link" id="aAllLink" href="/dnevnyk/">← Усі статті</a>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var LANGS = ["uk", "en", "pl", "es", "de"];
+  var LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
+  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!"}};
+  var TITLES = {"uk": "Баг, який не твій", "en": "The Bug That Isn’t Yours", "pl": "Błąd, który nie jest twój", "es": "El error que no es tuyo", "de": "Der Fehler, der nicht deiner ist"};
+  function apply(l){
+    document.documentElement.setAttribute('lang', l);
+    try { localStorage.setItem('sl', l); } catch(e) {}
+    document.getElementById('aBackLink').textContent = UI[l].back;
+    document.getElementById('aKicker').textContent = UI[l].kicker;
+    document.getElementById('aTitle').textContent = TITLES[l];
+    document.getElementById('aCtaText').textContent = UI[l].cta;
+    document.getElementById('aMediumBtn').textContent = UI[l].medium_btn;
+    document.getElementById('aTgBtn').textContent = UI[l].tg_btn;
+    document.getElementById('aAllLink').textContent = UI[l].all;
+    document.getElementById('aShareLabel').textContent = UI[l].share;
+    LANGS.forEach(function(ll){
+      var el = document.getElementById('aBody_' + ll);
+      if (el) el.style.display = (ll === l) ? '' : 'none';
+    });
+    document.querySelectorAll('#aLangSwitch button').forEach(function(btn){
+      btn.style.opacity = (btn.dataset.lang === l) ? '1' : '.45';
+    });
+  }
+  var sw = document.getElementById('aLangSwitch');
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.textContent = LABELS[l];
+    btn.dataset.lang = l;
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.onclick = function(){ apply(l); };
+    sw.appendChild(btn);
+  });
+  var initial = 'uk';
+  try { var saved = localStorage.getItem('sl'); if (saved && LANGS.indexOf(saved) !== -1) initial = saved; } catch(e) {}
+  apply(initial);
+
+  document.getElementById('aShareBtn').addEventListener('click', function(){
+    var l = document.documentElement.getAttribute('lang') || 'uk';
+    var shareData = { title: TITLES[l] + ' — Stan Ari', url: window.location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function(){
+        var btn = document.getElementById('aShareLabel');
+        var original = btn.textContent;
+        btn.textContent = UI[l].copied;
+        setTimeout(function(){ btn.textContent = original; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

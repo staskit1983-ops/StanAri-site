@@ -999,7 +999,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <a data-t="nav_gallery" href="#gallery" onclick="closeMenu()">Ілюстрації</a>
 <a data-t="nav_journal" href="/dnevnyk/" onclick="closeMenu()">Щоденник</a>
 <a data-t="nav_social" href="#social" onclick="closeMenu()">Соцмережі</a>
-<a data-t="nav_share" href="javascript:void(0)" onclick="stanariShareSite();closeMenu()">Поділитися</a>
+<a href="javascript:void(0)" onclick="stanariShareSite();closeMenu()" style="display:flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span data-t="nav_share">Поділитися</span></a>
 <a data-t="nav_music" href="#music" onclick="closeMenu()">Музика</a>
 </nav>
 <div class="stanari-menu-section">
@@ -1095,6 +1095,10 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <div class="kicker" style="margin-bottom:14px"><span class="kicker-dot"></span><span data-t="eyebrow">Author Brand • Books • Music • Mission</span></div>
 <h1 style="margin-bottom:8px">STAN ARI</h1>
 <p class="sub" data-t="subtitle" style="margin-bottom:6px">Creator of Inner Worlds</p>
+<a href="/dnevnyk/" style="display:inline-block;text-decoration:none;margin:14px 0 18px;padding:18px 30px;border:2px solid rgba(216,175,99,.55);border-radius:16px;background:rgba(216,175,99,.12);box-shadow:0 4px 24px rgba(216,175,99,.15)">
+<span id="journalHeroTitle" style="color:var(--gold2);font-weight:800;font-size:21px;letter-spacing:.02em">Мій щоденник</span>
+<span id="journalHeroSub" style="display:block;color:var(--muted);font-size:13px;margin-top:3px">Есе, думки, погляд →</span>
+</a>
 <p data-t="author_tagline" style="font-size:15px;color:var(--muted);margin-bottom:12px;letter-spacing:.04em">Письменник. Мислитель.</p>
 <p class="lead" data-t="lead" style="max-width:480px">Авторський світ, де книги, музика і місія з’єднуються в одну живу історію.</p>
 </div>
@@ -1363,9 +1367,6 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <img id="dnaTeaserImg" src="dna-illustration-uk.webp" alt="DNA — the hard drive that raised you" width="640" height="960" loading="lazy" decoding="async" style="width:100%;max-width:420px;height:auto;border-radius:16px;box-shadow:0 8px 40px rgba(216,175,99,.2);margin:0 auto 28px;display:block"/>
 <h3 id="dnaTeaserTitle" style="font-size:22px;font-weight:800;color:var(--gold2);margin-bottom:20px"></h3>
 <p id="dnaTeaserText" style="font-size:15px;line-height:1.85;color:var(--muted);text-align:left"></p>
-<div style="margin-top:32px">
-<a id="dnaJournalLink" href="/dnevnyk/" style="display:inline-block;padding:16px 32px;border:1px solid rgba(216,175,99,.4);border-radius:12px;background:rgba(216,175,99,.08);color:var(--gold2);font-weight:800;font-size:20px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">Щоденник думок →</a>
-</div>
 </div>
 </div>
 <script>
@@ -1398,7 +1399,13 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     }
   };
   var DNA_TEASER_IMG = { uk: 'dna-illustration-uk.webp', en: 'dna-illustration-en.webp', pl: 'dna-illustration-pl.webp', es: 'dna-illustration-es.webp', de: 'dna-illustration-en.webp' };
-  var JOURNAL_LINK_LABEL = { uk: 'Щоденник думок →', en: 'Journal of Thoughts →', pl: 'Dziennik myśli →', es: 'Diario de pensamientos →', de: 'Journal der Gedanken →' };
+  var JOURNAL_TOP_LABEL = {
+    uk: { title: 'Мій щоденник', sub: 'Есе, думки, погляд →' },
+    en: { title: 'My Journal', sub: 'Essays, thoughts, perspective →' },
+    pl: { title: 'Mój dziennik', sub: 'Eseje, myśli, spojrzenie →' },
+    es: { title: 'Mi diario', sub: 'Ensayos, pensamientos, mirada →' },
+    de: { title: 'Mein Journal', sub: 'Essays, Gedanken, Sichtweise →' }
+  };
   function renderDnaTeaser(){
     var l = window.lang || localStorage.getItem('sl') || 'uk';
     var d = DNA_TEASER[l] || DNA_TEASER.uk;
@@ -1406,12 +1413,15 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
     var titleEl = document.getElementById('dnaTeaserTitle');
     var tEl = document.getElementById('dnaTeaserText');
     var iEl = document.getElementById('dnaTeaserImg');
-    var jEl = document.getElementById('dnaJournalLink');
     if (kEl) kEl.textContent = d.kicker;
     if (titleEl) titleEl.textContent = d.title;
     if (tEl) tEl.innerHTML = d.text.split('\n\n').map(function(p){ return '<p style="margin-bottom:12px">'+p+'</p>'; }).join('');
     if (iEl) { var img = DNA_TEASER_IMG[l] || DNA_TEASER_IMG.uk; if (iEl.getAttribute('src') !== img) iEl.setAttribute('src', img); }
-    if (jEl) jEl.textContent = JOURNAL_LINK_LABEL[l] || JOURNAL_LINK_LABEL.uk;
+    var jt = document.getElementById('journalHeroTitle');
+    var js = document.getElementById('journalHeroSub');
+    var jl = JOURNAL_TOP_LABEL[l] || JOURNAL_TOP_LABEL.uk;
+    if (jt) jt.textContent = jl.title;
+    if (js) js.textContent = jl.sub;
   }
   document.addEventListener('DOMContentLoaded', renderDnaTeaser);
   window.renderDnaTeaser = renderDnaTeaser;

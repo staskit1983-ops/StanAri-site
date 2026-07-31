@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Щоденник думок — Stan Ari</title>
+<meta name="description" content="Есе про свідомість, успадковані патерни та переписування внутрішнього коду, які Stan Ari публікує на Medium."/>
+<link rel="canonical" href="https://stanari.art/dnevnyk/"/>
+<link rel="icon" href="/favicon.png"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Щоденник думок — Stan Ari"/>
+<meta property="og:description" content="Есе про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<meta property="og:image" content="https://stanari.art/images/img_5.jpg"/>
+<meta property="og:url" content="https://stanari.art/dnevnyk/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "Щоденник думок — Stan Ari",
+  "url": "https://stanari.art/dnevnyk/",
+  "author": {"@type":"Person","name":"Stan Ari"},
+  "description": "Essays on consciousness, inherited patterns, and rewriting the inner code."
+}
+</script>
+<style>
+:root{
+  --gold:#d8af63;--gold2:#f0d79a;--bg:#090807;--text:#f8f2e8;
+  --muted:#c8bca7;--muted2:#a3947f;
+  --border:rgba(255,224,155,.11);
+  --card:linear-gradient(180deg,rgba(22,18,13,.97),rgba(11,9,7,.99));
+  --max:900px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif;line-height:1.6}
+a{color:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.topbar{padding:20px 0;border-bottom:1px solid var(--border);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.topbar .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:800;font-size:18px;letter-spacing:.03em;text-decoration:none;color:var(--text)}
+.back{font-size:14px;color:var(--gold2);border:1px solid var(--border);padding:8px 14px;border-radius:10px;text-decoration:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border);
+  border-radius:100px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin:36px 0 14px;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1{font-size:32px;margin:0 0 6px;font-weight:400}
+.subtitle{color:var(--muted2);font-size:15px;font-style:italic;margin:0 0 36px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.entries{padding-bottom:64px;display:flex;flex-direction:column;gap:18px}
+.entry{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px}
+.entry-num{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.entry h2{font-size:20px;margin:0 0 8px;font-weight:400;color:var(--text)}
+.entry p{margin:0 0 16px;color:var(--muted);font-size:14px;line-height:1.65}
+.entry-links{display:flex;gap:10px;flex-wrap:wrap;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+.entry-links a{font-size:13px;font-weight:600;padding:9px 16px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-medium{background:rgba(216,175,99,.12);border:1px solid rgba(216,175,99,.4);color:var(--gold2)}
+.btn-telegram{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+footer{border-top:1px solid var(--border);padding:24px 0;font-size:13px;color:var(--muted2);text-align:center;
+  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <a class="logo" href="/">STAN ARI</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button id="jShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="jShareLabel">Поділитися</span></button>
+      <div id="jLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+      <a class="back" id="jBackLink" href="/">← Назад на сайт</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="kicker"><span class="kicker-dot"></span><span id="jKicker">Щоденник</span></div>
+  <h1 id="jH1">Щоденник думок</h1>
+  <p class="subtitle" id="jSubtitle">Есе, які я публікую на Medium</p>
+
+  <!--
+    ============================================================
+    ЯК ДОДАТИ НОВУ СТАТТЮ:
+    1. Скопіюй один блок <div class="entry">...</div> нижче.
+    2. Онови номер, і додай title/teaser для кожної з 5 мов
+       в об'єкті J_I18N нижче (у полі entries[]).
+    3. Коли стаття опублікована на Medium — заміни href
+       у кнопці "btn-medium" на реальне посилання.
+    ============================================================
+  -->
+  <div class="entries" id="jEntries">
+    <!-- Entry 0: DNA (published) -->
+    <div class="entry">
+      <div class="entry-num">01</div>
+      <h2 id="jTitle0"></h2>
+      <p id="jTeaser0"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/00-dna/"><span id="jReadFull0">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 1 -->
+    <div class="entry">
+      <div class="entry-num">02</div>
+      <h2 id="jTitle1"></h2>
+      <p id="jTeaser1"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/01-transition/"><span id="jReadFull1">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 2 -->
+    <div class="entry">
+      <div class="entry-num">03</div>
+      <h2 id="jTitle2"></h2>
+      <p id="jTeaser2"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/02-silence/"><span id="jReadFull2">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 3 -->
+    <div class="entry">
+      <div class="entry-num">04</div>
+      <h2 id="jTitle3"></h2>
+      <p id="jTeaser3"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/03-sleep/"><span id="jReadFull3">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 4 -->
+    <div class="entry">
+      <div class="entry-num">05</div>
+      <h2 id="jTitle4"></h2>
+      <p id="jTeaser4"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/04-god-server/"><span id="jReadFull4">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 5 -->
+    <div class="entry">
+      <div class="entry-num">06</div>
+      <h2 id="jTitle5"></h2>
+      <p id="jTeaser5"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/05-bug/"><span id="jReadFull5">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 6 -->
+    <div class="entry">
+      <div class="entry-num">07</div>
+      <h2 id="jTitle6"></h2>
+      <p id="jTeaser6"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/06-create/"><span id="jReadFull6">Читати статтю</span> →</a>
+      </div>
+    </div>
+    <!-- Entry 7 -->
+    <div class="entry">
+      <div class="entry-num">08</div>
+      <h2 id="jTitle7"></h2>
+      <p id="jTeaser7"></p>
+      <div class="entry-links">
+        <a class="btn-medium" href="/dnevnyk/07-science/"><span id="jReadFull7">Читати статтю</span> →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Stan Ari</footer>
+
+<script>
+(function(){
+  var J_I18N = {
+    uk: {
+      flag_label: '🇺🇦', back: '← Назад на сайт', kicker: 'Щоденник',
+      h1: 'Щоденник думок', subtitle: 'Есе, які я публікую на Medium',
+      readFull: 'Читати статтю', share: 'Поділитися', copied: 'Посилання скопійовано!',
+      entries: [
+        ['Жорсткий диск, який виростив тебе', 'Твоя ДНК вміщається в краплю, меншу за сльозу — і більшість із неї не "сміття". Це система керування, на яку ти ніколи не погоджувався.'],
+        ['Якщо код уже працює, як його знайти?', 'Два місця, де я реально ловив власні успадковані патерни за роботою.'],
+        ['Думки, які приходять тільки в тиші', 'Чому найкращий інсайт ніколи не з\'являється, коли намагаєшся думати.'],
+        ['Що знає сон раніше за тебе', 'Твоє тіло веде власні записи — і сон це той момент, коли воно їх передає.'],
+        ['Ніхто не знає, хто такий Бог', 'У що я насправді вірю про те, з чим ми всі тихо зв\'язані.'],
+        ['Баг, який не твій', 'Чому жорстокість поширюється як вірус — і що це каже про всіх нас.'],
+        ['Ми були створені творити, а не руйнувати', 'Чесний погляд на єдину роботу, яку нам справді дали.'],
+        ['Чому я думаю, що наука ближча до Бога, ніж більшість релігій', 'Кілька чесних прикладів, з реальними іменами.']
+      ]
+    },
+    en: {
+      flag_label: '🇬🇧', back: '← Back to site', kicker: 'Journal',
+      h1: 'Journal of Thoughts', subtitle: 'Essays I publish on Medium',
+      readFull: 'Read the essay', share: 'Share', copied: 'Link copied!',
+      entries: [
+        ['The Hard Drive That Raised You', 'Your DNA fits in a drop smaller than a tear — and most of it isn\'t junk. It\'s a control system you never agreed to.'],
+        ['If the Code Is Already Running, How Do You Find It?', 'Two places I\'ve actually caught my own inherited patterns in the act.'],
+        ['The Thoughts That Only Come in Silence', 'Why the best insight never shows up when you\'re trying to think.'],
+        ['What Sleep Knows Before You Do', 'Your body keeps its own records — and sleep is when it hands them over.'],
+        ['Nobody Knows Who God Is', 'What I actually believe about the thing we\'re all quietly connected to.'],
+        ['The Bug That Isn\'t Yours', 'Why cruelty spreads like a virus, and what that says about all of us.'],
+        ['We Were Built to Create, Not Destroy', 'A hard look at the one job we were actually given.'],
+        ['Why I Think Science Is Closer to God Than Most Religions', 'A few honest examples, with real names attached.']
+      ]
+    },
+    pl: {
+      flag_label: '🇵🇱', back: '← Powrót na stronę', kicker: 'Dziennik',
+      h1: 'Dziennik myśli', subtitle: 'Eseje, które publikuję na Medium',
+      readFull: 'Czytaj esej', share: 'Udostępnij', copied: 'Link skopiowany!',
+      entries: [
+        ['Dysk twardy, który cię wychował', 'Twoje DNA mieści się w kropli mniejszej niż łza — i większość z niego to nie "śmieci". To system kontroli, na który nigdy się nie zgodziłeś.'],
+        ['Jeśli kod już działa, jak go znaleźć?', 'Dwa miejsca, w których naprawdę złapałem swoje odziedziczone wzorce na gorącym uczynku.'],
+        ['Myśli, które przychodzą tylko w ciszy', 'Dlaczego najlepsza intuicja nigdy nie pojawia się, gdy próbujesz myśleć.'],
+        ['Co wie sen, zanim ty się dowiesz', 'Twoje ciało prowadzi własne notatki — a sen to moment, gdy je przekazuje.'],
+        ['Nikt nie wie, kim jest Bóg', 'W co naprawdę wierzę na temat tego, z czym wszyscy jesteśmy po cichu połączeni.'],
+        ['Błąd, który nie jest twój', 'Dlaczego okrucieństwo rozprzestrzenia się jak wirus — i co to mówi o nas wszystkich.'],
+        ['Zostaliśmy stworzeni, by tworzyć, nie niszczyć', 'Szczere spojrzenie na jedyną pracę, jaką naprawdę otrzymaliśmy.'],
+        ['Dlaczego myślę, że nauka jest bliższa Bogu niż większość religii', 'Kilka szczerych przykładów, z prawdziwymi nazwiskami.']
+      ]
+    },
+    es: {
+      flag_label: '🇪🇸', back: '← Volver al sitio', kicker: 'Diario',
+      h1: 'Diario de pensamientos', subtitle: 'Ensayos que publico en Medium',
+      readFull: 'Leer el ensayo', share: 'Compartir', copied: '¡Enlace copiado!',
+      entries: [
+        ['El disco duro que te crió', 'Tu ADN cabe en una gota más pequeña que una lágrima — y la mayor parte no es "basura". Es un sistema de control que nunca aceptaste.'],
+        ['Si el código ya se está ejecutando, ¿cómo lo encuentras?', 'Dos lugares donde de verdad he sorprendido mis propios patrones heredados en acción.'],
+        ['Los pensamientos que solo llegan en silencio', 'Por qué la mejor intuición nunca aparece cuando intentas pensar.'],
+        ['Lo que el sueño sabe antes que tú', 'Tu cuerpo lleva sus propios registros — y el sueño es cuando los entrega.'],
+        ['Nadie sabe quién es Dios', 'Lo que realmente creo sobre aquello con lo que todos estamos silenciosamente conectados.'],
+        ['El error que no es tuyo', 'Por qué la crueldad se propaga como un virus — y qué dice eso de todos nosotros.'],
+        ['Fuimos hechos para crear, no para destruir', 'Una mirada honesta al único trabajo que realmente se nos dio.'],
+        ['Por qué creo que la ciencia está más cerca de Dios que la mayoría de las religiones', 'Algunos ejemplos honestos, con nombres reales.']
+      ]
+    },
+    de: {
+      flag_label: '🇩🇪', back: '← Zurück zur Seite', kicker: 'Journal',
+      h1: 'Journal der Gedanken', subtitle: 'Essays, die ich auf Medium veröffentliche',
+      readFull: 'Essay lesen', share: 'Teilen', copied: 'Link kopiert!',
+      entries: [
+        ['Die Festplatte, die dich großgezogen hat', 'Deine DNA passt in einen Tropfen, kleiner als eine Träne — und das meiste davon ist kein "Müll". Es ist ein Kontrollsystem, dem du nie zugestimmt hast.'],
+        ['Wenn der Code schon läuft, wie findest du ihn?', 'Zwei Orte, an denen ich meine eigenen ererbten Muster tatsächlich auf frischer Tat ertappt habe.'],
+        ['Die Gedanken, die nur in der Stille kommen', 'Warum die beste Eingebung nie auftaucht, wenn du versuchst nachzudenken.'],
+        ['Was der Schlaf weiß, bevor du es weißt', 'Dein Körper führt eigene Aufzeichnungen — und der Schlaf ist der Moment, in dem er sie übergibt.'],
+        ['Niemand weiß, wer Gott ist', 'Was ich wirklich über das glaube, mit dem wir alle still verbunden sind.'],
+        ['Der Fehler, der nicht deiner ist', 'Warum sich Grausamkeit wie ein Virus ausbreitet — und was das über uns alle aussagt.'],
+        ['Wir wurden geschaffen, um zu erschaffen, nicht zu zerstören', 'Ein ehrlicher Blick auf die eine Aufgabe, die uns wirklich gegeben wurde.'],
+        ['Warum ich denke, dass Wissenschaft näher an Gott ist als die meisten Religionen', 'Ein paar ehrliche Beispiele, mit echten Namen.']
+      ]
+    }
+  };
+  var LANGS = ['uk','en','pl','de','es'];
+  function applyJLang(l){
+    var d = J_I18N[l] || J_I18N.uk;
+    document.documentElement.setAttribute('lang', l);
+    try { localStorage.setItem('sl', l); } catch(e) {}
+    var back = document.getElementById('jBackLink'); if (back) back.textContent = d.back;
+    var kicker = document.getElementById('jKicker'); if (kicker) kicker.textContent = d.kicker;
+    var h1 = document.getElementById('jH1'); if (h1) h1.textContent = d.h1;
+    var sub = document.getElementById('jSubtitle'); if (sub) sub.textContent = d.subtitle;
+    var shareLabel = document.getElementById('jShareLabel'); if (shareLabel) shareLabel.textContent = d.share;
+    d.entries.forEach(function(entry, i){
+      var t = document.getElementById('jTitle'+i); if (t) t.textContent = entry[0];
+      var p = document.getElementById('jTeaser'+i); if (p) p.textContent = entry[1];
+      var rm = document.getElementById('jReadFull'+i); if (rm) rm.textContent = d.readFull;
+    });
+    document.querySelectorAll('#jLangSwitch button').forEach(function(btn){
+      btn.style.opacity = (btn.dataset.lang === l) ? '1' : '.45';
+    });
+  }
+  var sw = document.getElementById('jLangSwitch');
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.textContent = J_I18N[l].flag_label;
+    btn.dataset.lang = l;
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.onclick = function(){ applyJLang(l); };
+    sw.appendChild(btn);
+  });
+  var initial = 'uk';
+  try { var saved = localStorage.getItem('sl'); if (saved && J_I18N[saved]) initial = saved; } catch(e) {}
+  applyJLang(initial);
+
+  document.getElementById('jShareBtn').addEventListener('click', function(){
+    var l = document.documentElement.getAttribute('lang') || 'uk';
+    var d = J_I18N[l] || J_I18N.uk;
+    var shareData = { title: d.h1 + ' — Stan Ari', url: window.location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(function(){
+        var btn = document.getElementById('jShareLabel');
+        var original = btn.textContent;
+        btn.textContent = d.copied;
+        setTimeout(function(){ btn.textContent = original; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -4,20 +4,34 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Жорсткий диск, який виростив тебе — Stan Ari</title>
-<meta name="description" content="Жорсткий диск, який виростив тебе — есе Stan Ari про свідомість, успадковані патерни та переписування внутрішнього коду."/>
+<meta name="description" content="Твоя ДНК вміщається в краплю, меншу за сльозу — і більшість із неї не «сміття». Це система керування, на яку ти ніколи не погоджувався."/>
 <link rel="canonical" href="https://stanari.art/dnevnyk/00-dna/"/>
 <link rel="icon" href="/favicon.png"/>
 <meta property="og:type" content="article"/>
 <meta property="og:title" content="Жорсткий диск, який виростив тебе — Stan Ari"/>
+<meta property="og:description" content="Твоя ДНК вміщається в краплю, меншу за сльозу — і більшість із неї не «сміття». Це система керування, на яку ти ніколи не погоджувався."/>
+<meta property="og:image" content="https://stanari.art/book1-cover.jpg"/>
 <meta property="og:url" content="https://stanari.art/dnevnyk/00-dna/"/>
+<meta property="article:published_time" content="2026-07-31"/>
+<meta property="article:author" content="Stan Ari"/>
 <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Жорсткий диск, який виростив тебе — Stan Ari"/>
+<meta name="twitter:description" content="Твоя ДНК вміщається в краплю, меншу за сльозу — і більшість із неї не «сміття». Це система керування, на яку ти ніколи не погоджувався."/>
+<meta name="twitter:image" content="https://stanari.art/book1-cover.jpg"/>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "The Hard Drive That Raised You",
+  "description": "Твоя ДНК вміщається в краплю, меншу за сльозу — і більшість із неї не «сміття». Це система керування, на яку ти ніколи не погоджувався.",
+  "image": "https://stanari.art/book1-cover.jpg",
   "url": "https://stanari.art/dnevnyk/00-dna/",
-  "author": {"@type":"Person","name":"Stan Ari"}
+  "datePublished": "2026-07-31",
+  "dateModified": "2026-07-31",
+  "inLanguage": "uk",
+  "author": {"@type":"Person","name":"Stan Ari","url":"https://stanari.art/"},
+  "publisher": {"@type":"Person","name":"Stan Ari","url":"https://stanari.art/"},
+  "mainEntityOfPage": {"@type":"WebPage","@id":"https://stanari.art/dnevnyk/00-dna/"}
 }
 </script>
 <style>
@@ -55,12 +69,14 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
 <body>
 
 <div class="topbar">
-  <div class="container">
-    <a class="logo" href="/">STAN ARI</a>
-    <div style="display:flex;align-items:center;gap:14px">
-      <button id="aShareBtn" style="background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--gold2);font-size:14px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg><span id="aShareLabel">Поділитися</span></button>
-      <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+  <div class="container" style="flex-direction:column;gap:12px;align-items:stretch">
+    <a href="/" style="text-decoration:none;text-align:center;color:var(--gold);font-weight:800;font-size:20px;letter-spacing:.08em">STAN ARI</a>
+    <div style="display:flex;align-items:center;justify-content:space-between">
       <a class="back" id="aBackLink" href="/">← Назад на сайт</a>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="aLangSwitch" style="display:flex;gap:6px;font-size:12px"></div>
+        <button id="aShareBtn" title="Поділитися" aria-label="Поділитися" style="background:transparent;border:1px solid var(--border);border-radius:10px;width:40px;height:40px;color:var(--gold2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg></button>
+      </div>
     </div>
   </div>
 </div>
@@ -168,6 +184,7 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
     </div>
   </div>
 
+  <a class="all-link" id="aNextLink" href="#" style="display:none;font-weight:700;color:var(--gold2)"></a>
   <a class="all-link" id="aAllLink" href="/dnevnyk/">← Усі статті</a>
 </div>
 
@@ -175,9 +192,13 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
 
 <script>
 (function(){
+  var NEXT_SLUG = "01-transition";
   var LANGS = ["uk", "en", "pl", "es", "de"];
-  var LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
-  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!"}};
+  var FLAG_LABELS = {"uk": "🇺🇦", "en": "🇬🇧", "pl": "🇵🇱", "es": "🇪🇸", "de": "🇩🇪"};
+  var TEXT_LABELS = {uk:'UA', en:'EN', pl:'PL', es:'ES', de:'DE'};
+  var isWindows = /Windows/.test(navigator.userAgent);
+  var LABELS = isWindows ? TEXT_LABELS : FLAG_LABELS;
+  var UI = {"uk": {"back": "← Назад на сайт", "kicker": "Щоденник", "all": "← Усі статті", "medium_btn": "Читати на Medium ↗", "tg_btn": "Обговорити в Telegram ↗", "cta": "Якщо це відгукнулось — більше есе про свідомість і код на", "share": "Поділитися", "copied": "Посилання скопійовано!", "next": "Наступна стаття →"}, "en": {"back": "← Back to site", "kicker": "Journal", "all": "← All essays", "medium_btn": "Read on Medium ↗", "tg_btn": "Discuss on Telegram ↗", "cta": "If this resonated, more essays on consciousness and code at", "share": "Share", "copied": "Link copied!", "next": "Next essay →"}, "pl": {"back": "← Powrót na stronę", "kicker": "Dziennik", "all": "← Wszystkie eseje", "medium_btn": "Czytaj na Medium ↗", "tg_btn": "Dyskutuj na Telegramie ↗", "cta": "Jeśli to do Ciebie przemówiło — więcej esejów o świadomości i kodzie na", "share": "Udostępnij", "copied": "Link skopiowany!", "next": "Następny esej →"}, "es": {"back": "← Volver al sitio", "kicker": "Diario", "all": "← Todos los ensayos", "medium_btn": "Leer en Medium ↗", "tg_btn": "Comentar en Telegram ↗", "cta": "Si esto resonó contigo, más ensayos sobre consciencia y código en", "share": "Compartir", "copied": "¡Enlace copiado!", "next": "Siguiente ensayo →"}, "de": {"back": "← Zurück zur Seite", "kicker": "Journal", "all": "← Alle Essays", "medium_btn": "Auf Medium lesen ↗", "tg_btn": "Auf Telegram diskutieren ↗", "cta": "Wenn dich das angesprochen hat — mehr Essays über Bewusstsein und Code auf", "share": "Teilen", "copied": "Link kopiert!", "next": "Nächster Essay →"}};
   var TITLES = {"uk": "Жорсткий диск, який виростив тебе", "en": "The Hard Drive That Raised You", "pl": "Dysk twardy, który cię wychował", "es": "El disco duro que te crió", "de": "Die Festplatte, die dich großgezogen hat"};
   function apply(l){
     document.documentElement.setAttribute('lang', l);
@@ -185,11 +206,19 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
     document.getElementById('aBackLink').textContent = UI[l].back;
     document.getElementById('aKicker').textContent = UI[l].kicker;
     document.getElementById('aTitle').textContent = TITLES[l];
+    document.title = TITLES[l] + ' — Stan Ari';
     document.getElementById('aCtaText').textContent = UI[l].cta;
     document.getElementById('aMediumBtn').textContent = UI[l].medium_btn;
     document.getElementById('aTgBtn').textContent = UI[l].tg_btn;
     document.getElementById('aAllLink').textContent = UI[l].all;
-    document.getElementById('aShareLabel').textContent = UI[l].share;
+    var nextEl = document.getElementById('aNextLink');
+    if (nextEl && NEXT_SLUG) {
+      nextEl.textContent = UI[l].next;
+      nextEl.href = '/dnevnyk/' + NEXT_SLUG + '/';
+      nextEl.style.display = 'block';
+    }
+    var shareBtn = document.getElementById('aShareBtn');
+    if (shareBtn) { shareBtn.title = UI[l].share; shareBtn.setAttribute('aria-label', UI[l].share); }
     LANGS.forEach(function(ll){
       var el = document.getElementById('aBody_' + ll);
       if (el) el.style.display = (ll === l) ? '' : 'none';
@@ -203,7 +232,7 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
     var btn = document.createElement('button');
     btn.textContent = LABELS[l];
     btn.dataset.lang = l;
-    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s;color:var(--text)';
     btn.onclick = function(){ apply(l); };
     sw.appendChild(btn);
   });
@@ -214,14 +243,14 @@ footer{border-top:1px solid var(--border);padding:24px 0;margin-top:48px;font-si
   document.getElementById('aShareBtn').addEventListener('click', function(){
     var l = document.documentElement.getAttribute('lang') || 'uk';
     var shareData = { title: TITLES[l] + ' — Stan Ari', url: window.location.href };
+    var btn = document.getElementById('aShareBtn');
     if (navigator.share) {
       navigator.share(shareData).catch(function(){});
     } else {
       navigator.clipboard.writeText(window.location.href).then(function(){
-        var btn = document.getElementById('aShareLabel');
-        var original = btn.textContent;
-        btn.textContent = UI[l].copied;
-        setTimeout(function(){ btn.textContent = original; }, 2000);
+        btn.title = UI[l].copied;
+        btn.style.borderColor = 'var(--gold)';
+        setTimeout(function(){ btn.title = UI[l].share; btn.style.borderColor = ''; }, 2000);
       });
     }
   });

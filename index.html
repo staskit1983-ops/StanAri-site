@@ -516,6 +516,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 @media (max-width:768px){
   :root{--hdr:60px}
   .hdr-inner .main-nav,.hdr-inner .lang-bar,.hdr-inner .hdr-cta{display:none}
+  .hdr-inner .desktop-share-btn{display:none!important}
   .hdr-mobile{display:flex}
   .hero-copy{padding:24px 16px}
   h1{font-size:clamp(40px,11vw,60px)}
@@ -1043,8 +1044,11 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <a data-t="nav_mission" href="#mission">Місія</a>
 <a data-t="nav_books" href="#books">Книги</a>
 <a data-t="nav_gallery" href="#gallery">Ілюстрації</a>
+<a data-t="nav_journal" href="/dnevnyk/">Щоденник</a>
+<a data-t="nav_social" href="#social">Соцмережі</a>
 <a data-t="nav_music" href="#music">Музика</a>
 </nav>
+<button class="desktop-share-btn" onclick="stanariShareSite()" title="Поділитися" aria-label="Поділитися" style="background:transparent;border:1px solid var(--border);border-radius:10px;width:36px;height:36px;color:var(--gold2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7c0.05-0.23,0.09-0.46,0.09-0.7s-0.04-0.47-0.09-0.7l7.05-4.11c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.16c-0.05,0.21-0.08,0.43-0.08,0.65c0,1.61,1.31,2.92,2.92,2.92s2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"/></svg></button>
 <div class="lang-bar">
 <div class="lang-drop" id="langDropDesktop">
   <button class="lang-drop-btn" onclick="toggleLangDrop('langDropDesktop')">
@@ -2019,6 +2023,14 @@ function setLang(l){
   window.lang=l;
   try{document.documentElement.setAttribute('lang', l);}catch(e){}
   try{localStorage.setItem('sl',l);}catch(e){}
+  var PAGE_TITLES = {
+    uk: 'Stan Ari — Creator of Inner Worlds | Книги, Музика, Місія',
+    en: 'Stan Ari — Creator of Inner Worlds | Books, Music, Mission',
+    pl: 'Stan Ari — Creator of Inner Worlds | Książki, Muzyka, Misja',
+    es: 'Stan Ari — Creator of Inner Worlds | Libros, Música, Misión',
+    de: 'Stan Ari — Creator of Inner Worlds | Bücher, Musik, Mission'
+  };
+  try{ document.title = PAGE_TITLES[l] || PAGE_TITLES.uk; }catch(e){}
   // Update placeholders
   document.querySelectorAll('[data-ph]').forEach(function(el){
     var key = el.getAttribute('data-ph');

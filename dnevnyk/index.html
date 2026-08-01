@@ -258,6 +258,7 @@ footer{border-top:1px solid var(--border);padding:24px 0;font-size:13px;color:va
     var back = document.getElementById('jBackLink'); if (back) back.textContent = d.back;
     var kicker = document.getElementById('jKicker'); if (kicker) kicker.textContent = d.kicker;
     var h1 = document.getElementById('jH1'); if (h1) h1.textContent = d.h1;
+    document.title = d.h1 + ' — Stan Ari';
     var sub = document.getElementById('jSubtitle'); if (sub) sub.textContent = d.subtitle;
     var shareBtnEl = document.getElementById('jShareBtn'); if (shareBtnEl) { shareBtnEl.title = d.share; shareBtnEl.setAttribute('aria-label', d.share); }
     var sLabel = document.getElementById('jSeriesLabel'); if (sLabel) sLabel.textContent = d.seriesLabel;
@@ -278,7 +279,7 @@ footer{border-top:1px solid var(--border);padding:24px 0;font-size:13px;color:va
     var btn = document.createElement('button');
     btn.textContent = isWindows ? TEXT_LABELS[l] : J_I18N[l].flag_label;
     btn.dataset.lang = l;
-    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s';
+    btn.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:16px;padding:2px;transition:opacity .2s;color:var(--text)';
     btn.onclick = function(){ applyJLang(l); };
     sw.appendChild(btn);
   });

@@ -1394,7 +1394,7 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 <div style="margin-top:28px;max-width:460px;margin-left:auto;margin-right:auto">
 <div class="card">
 <div class="photo-full">
-<img alt="Я народився людиною — I Was Born Human" class="cover" height="800" loading="lazy" decoding="async" onclick="openBookCover('cover-google-play-1600x2560.jpg')" src="ibh-mockup.jpg" width="600"/>
+<img alt="Я народився людиною — I Was Born Human" class="cover" height="800" loading="lazy" decoding="async" onclick="openBookCover(ibhCoverForLang())" src="ibh-mockup.jpg" width="600"/>
 <div style="position:absolute;top:12px;left:12px"><span class="tag" data-t="ibh_tag">Вже доступна</span></div>
 </div>
 <div class="card-body">
@@ -2872,6 +2872,11 @@ draw();
 <img alt="Book cover" id="bookCoverViewerImg" src=""/>
 </div>
 <script>
+function ibhCoverForLang(){
+  var IBH_COVERS = { uk: 'cover-ua-1600x2560.jpg', en: 'cover-en-1600x2560.jpg', pl: 'cover-pl-1600x2560.jpg', es: 'cover-es-1600x2560.jpg', de: 'cover-de-1600x2560.jpg' };
+  var l = window.lang || localStorage.getItem('sl') || 'en';
+  return IBH_COVERS[l] || IBH_COVERS.en;
+}
 function openBookCover(src){
   var v=document.getElementById('bookCoverViewer');
   var img=document.getElementById('bookCoverViewerImg');

@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="google" content="notranslate"/>
+<title>Я народився людиною — Читалка</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,sans-serif;touch-action:none}
+
+/* ══ INTRO VIDEO ══ */
+#introScreen{
+  position:fixed;inset:0;z-index:300;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+}
+#introVideo{
+  width:100%;height:100%;
+  object-fit:contain;
+  background:#000;
+}
+#introFade{
+  position:absolute;inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.5s ease-in;
+}
+#introFade.fading{opacity:1;}
+#skipBtn{
+  position:absolute;bottom:30px;right:24px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.6);
+  padding:8px 18px;border-radius:20px;
+  font-size:11px;letter-spacing:.1em;
+  cursor:pointer;
+  font-family:system-ui,sans-serif;
+}
+#startIntroBtn{
+  position:absolute;bottom:calc(34px + env(safe-area-inset-bottom, 0px));left:42%;transform:translateX(-50%);
+  display:none;
+  background:rgba(216,175,99,.16);
+  border:1px solid rgba(216,175,99,.35);
+  color:#d8af63;
+  padding:10px 22px;border-radius:22px;
+  font-size:12px;font-weight:800;letter-spacing:.08em;
+  cursor:pointer;
+  font-family:system-ui,sans-serif;
+}
+
+/* ══ READER ══ */
+#readerScreen{
+  position:fixed;inset:0;
+  background:#1a1a1a;
+  opacity:0;transition:opacity 1s;
+  pointer-events:none;
+}
+#readerScreen.visible{opacity:1;pointer-events:all;}
+
+/* ── BARS ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:48px;
+  background:rgba(0,0,0,.88);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:100;
+  border-bottom:1px solid rgba(216,175,99,.12);
+  transform:translateY(0);opacity:1;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
+}
+.topbar.hidden{transform:translateY(-100%);opacity:0;}
+.topbar-left{display:flex;flex-direction:column;}
+.topbar-title{color:rgba(216,175,99,.7);font-size:10px;letter-spacing:.2em;text-transform:uppercase;}
+.topbar-chapter{color:rgba(255,255,255,.35);font-size:9px;letter-spacing:.1em;margin-top:1px;}
+.top-btns{display:flex;gap:6px;align-items:center;}
+.top-btn{
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.18);
+  color:#d8af63;width:32px;height:32px;border-radius:8px;
+  font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.top-btn:hover{background:rgba(216,175,99,.18);}
+.atmo-btn{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.18);
+  color:#d8af63;padding:5px 12px;border-radius:16px;
+  font-size:10px;letter-spacing:.1em;cursor:pointer;
+  transition:background .2s;
+}
+.atmo-btn:hover{background:rgba(216,175,99,.18);}
+.atmo-dot{width:5px;height:5px;border-radius:50%;background:#d8af63;opacity:.3;transition:opacity .3s;}
+.atmo-btn.on .atmo-dot{opacity:1;animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.7);opacity:.5}}
+
+.bottombar{
+  position:fixed;bottom:0;left:0;right:0;height:58px;
+  background:rgba(0,0,0,.88);
+  display:flex;align-items:center;justify-content:center;gap:20px;z-index:100;
+  border-top:1px solid rgba(216,175,99,.1);
+  transform:translateY(0);opacity:1;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;
+}
+.bottombar.hidden{transform:translateY(100%);opacity:0;}
+.nav-btn{
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(216,175,99,.08);border:1px solid rgba(216,175,99,.2);
+  color:#d8af63;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.nav-btn:hover{background:rgba(216,175,99,.15);}
+.nav-btn:disabled{opacity:.2;cursor:default;}
+.pg-info{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.12em;min-width:60px;text-align:center;}
+
+/* Progress */
+.progress{
+  position:fixed;bottom:58px;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.05);z-index:100;
+  transition:bottom .35s cubic-bezier(.4,0,.2,1);
+}
+.progress.bars-hidden{bottom:0;}
+.progress-fill{height:100%;background:#d8af63;opacity:.6;transition:width .4s;}
+
+/* ── VIEWER ── */
+.viewer{
+  position:fixed;top:48px;bottom:58px;left:0;right:0;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:#1a1a1a;
+  transition:top .35s cubic-bezier(.4,0,.2,1),bottom .35s cubic-bezier(.4,0,.2,1);
+}
+.viewer.expanded{top:0;bottom:0;}
+
+.page-wrap{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .5s cubic-bezier(.77,0,.175,1),opacity .4s;
+}
+.page-wrap.active{transform:translateX(0);opacity:1;z-index:2;}
+.page-wrap.prev{transform:translateX(-100%);opacity:0;z-index:1;}
+.page-wrap.next{transform:translateX(100%);opacity:0;z-index:1;}
+.page-img{
+  max-height:100%;max-width:100%;
+  object-fit:contain;display:block;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);
+  user-select:none;-webkit-user-select:none;
+  transition:transform .15s;
+}
+
+/* ── LOCK PAGE ── */
+.lock-wrap{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(10,8,6,.95);
+  backdrop-filter:blur(4px);
+}
+.lock-box{
+  text-align:center;padding:40px 28px;max-width:320px;
+}
+.lock-icon{font-size:44px;margin-bottom:16px;opacity:.6;}
+.lock-title{
+  font-family:Georgia,serif;
+  color:#d8af63;font-size:18px;margin-bottom:8px;
+}
+.lock-text{
+  color:rgba(255,255,255,.45);font-size:13px;line-height:1.7;margin-bottom:24px;
+}
+.lock-btn{
+  background:#d8af63;color:#1a1408;border:none;
+  padding:14px 32px;border-radius:30px;
+  font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(216,175,99,.3);
+  transition:transform .15s,box-shadow .15s;
+}
+.lock-btn:active{transform:scale(.97);}
+
+/* ── LANG SELECTOR (показується якщо мова не обрана) ── */
+#langModal{
+  position:fixed;inset:0;z-index:400;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+}
+.lang-btns{
+  display:flex;gap:16px;align-items:center;justify-content:center;
+  flex-wrap:wrap;padding:20px;
+}
+.lang-flag{
+  background:rgba(216,175,99,.08);
+  border:2px solid rgba(216,175,99,.3);
+  color:#d8af63;
+  font-size:22px;font-weight:800;
+  letter-spacing:.08em;
+  padding:18px 28px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;gap:10px;
+}
+.lang-flag:hover{
+  background:rgba(216,175,99,.15);
+  border-color:#d8af63;
+  transform:scale(1.05);
+}
+
+/* ── FINALE VIDEO ── */
+#finaleScreen{
+  position:fixed;inset:0;z-index:300;
+  background:#000;
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;
+}
+#finaleScreen.show{display:flex;}
+#finaleVideo{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;}
+.finale-close{
+  position:absolute;top:20px;right:20px;z-index:10;
+  background:rgba(255,255,255,.1);border:none;
+  color:#fff;width:40px;height:40px;border-radius:50%;
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* === STAN ARI READER FIX v12: safe-area + desktop wheel zoom + drag pan === */
+:root{
+  --reader-safe-top: env(safe-area-inset-top, 0px);
+  --reader-top-offset: 10px;
+  --reader-topbar-height: 54px;
+}
+.topbar{
+  top: calc(var(--reader-safe-top) + var(--reader-top-offset)) !important;
+  height: var(--reader-topbar-height) !important;
+}
+.viewer{
+  top: calc(var(--reader-safe-top) + var(--reader-top-offset) + var(--reader-topbar-height)) !important;
+}
+.viewer.expanded{
+  top: 0 !important;
+  bottom: 0 !important;
+}
+.site-back-btn{
+  flex:0 0 auto !important;
+}
+.viewer.zoomed{
+  cursor:grab !important;
+}
+.viewer.zoomed.dragging{
+  cursor:grabbing !important;
+}
+.viewer.zoomed .page-img{
+  cursor:grab !important;
+}
+.viewer.zoomed.dragging .page-img{
+  cursor:grabbing !important;
+}
+.page-img{
+  transform-origin:center center !important;
+  will-change:transform !important;
+}
+@media(max-width:768px){
+  :root{--reader-top-offset:14px;--reader-topbar-height:56px;}
+  .topbar{padding-left:10px!important;padding-right:10px!important;}
+  .site-back-btn{font-size:13px!important;padding:9px 13px!important;}
+  .topbar-title{font-size:9px!important;letter-spacing:.15em!important;}
+}
+@media(max-width:420px){
+  .site-back-btn{font-size:12px!important;padding:8px 11px!important;}
+  .top-btn{width:30px!important;height:30px!important;}
+  .atmo-btn{padding:5px 9px!important;}
+}
+/* === /STAN ARI READER FIX v2 === */
+
+
+/* === iPhone / mobile reader stability patch === */
+@media(max-width:768px){
+  .bottombar{
+    height:calc(58px + env(safe-area-inset-bottom, 0px))!important;
+    padding-bottom:env(safe-area-inset-bottom, 0px)!important;
+  }
+  .progress{bottom:calc(58px + env(safe-area-inset-bottom, 0px))!important;}
+  .progress.bars-hidden{bottom:0!important;}
+  .viewer{bottom:calc(58px + env(safe-area-inset-bottom, 0px))!important;}
+  .viewer.expanded{bottom:0!important;}
+  #startIntroBtn{left:42%!important;bottom:calc(34px + env(safe-area-inset-bottom, 0px))!important;}
+}
+/* === /iPhone / mobile reader stability patch === */
+
+</style>
+
+<style>
+/* === iOS crash guard === */
+@supports (-webkit-touch-callout: none) {
+  .topbar.hidden{transform:none!important;opacity:1!important;}
+  .bottombar.hidden{transform:none!important;opacity:1!important;}
+  .progress.bars-hidden{bottom:58px!important;}
+  .viewer.expanded{
+    top:calc(var(--reader-safe-top) + var(--reader-top-offset) + var(--reader-topbar-height))!important;
+    bottom:58px!important;
+  }
+}
+</style>
+
+<!-- STAN ARI FIX v5: robust Firebase app init + auth refresh -->
+<script src="https://app.lemonsqueezy.com/js/lemon.js" async></script>
+</head>
+<body>
+
+<!-- ══ LANG MODAL ══ -->
+<div id="langModal">
+  <button onclick="window.location.href='index.html'" aria-label="Close" style="position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:2px solid rgba(216,175,99,.3);background:rgba(255,255,255,.04);color:#d8af63;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:401">✕</button>
+  <div class="lang-btns">
+    <button class="lang-flag" onclick="startReader('uk')">🇺🇦 UA</button>
+    <button class="lang-flag" onclick="startReader('en')">🇬🇧 EN</button>
+    <button class="lang-flag" onclick="startReader('pl')">🇵🇱 PL</button>
+    <button class="lang-flag" onclick="startReader('es')">🇪🇸 ES</button>
+  </div>
+</div>
+
+<!-- ══ INTRO VIDEO ══ -->
+<div id="introScreen" style="display:none;">
+  <video id="introVideo" playsinline webkit-playsinline autoplay muted>
+    <source src="video/book_intro.mp4" type="video/mp4">
+  </video>
+  <div id="introFade"></div>
+  <button id="startIntroBtn" onclick="manualStartIntro()">▶ START</button>
+  <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
+</div>
+
+<!-- ══ READER ══ -->
+<div id="readerScreen">
+  <div class="topbar" id="topbar">
+    <div class="topbar-left" style="display:flex;align-items:center;gap:12px">
+      <button class="site-back-btn" id="btnBackSite" onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,rgba(216,175,99,.35),rgba(216,175,99,.15));border:2px solid #d8af63;border-radius:10px;color:#f5e4a0;font-size:15px;font-weight:800;cursor:pointer;padding:10px 18px;line-height:1;letter-spacing:.5px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 12px rgba(216,175,99,.3)" title="Повернутись на сайт">← stanari.art</button>
+      <div>
+        <span class="topbar-title" id="topbarTitle">Я НАРОДИВСЯ ЛЮДИНОЮ</span>
+        <span class="topbar-chapter" id="chapterLabel"></span>
+      </div>
+    </div>
+    <div class="top-btns">
+      <button class="top-btn" id="btnZoomOut" onclick="zoom(-0.2)" title="Зменшити">−</button>
+      <button class="top-btn" id="btnZoomIn" onclick="zoom(0.2)" title="Збільшити">+</button>
+      <button class="atmo-btn" id="atmoBtn" onclick="toggleAtmo()">
+        <span class="atmo-dot"></span> 🎵
+      </button>
+    </div>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <!-- Pages injected by JS -->
+  </div>
+
+  <div class="progress" id="progressBar">
+    <div class="progress-fill" id="pFill"></div>
+  </div>
+
+  <div class="bottombar" id="bottombar">
+    <button class="nav-btn" id="btnPrev" onclick="go(-1)" disabled>←</button>
+    <span class="pg-info" id="pgInfo">1 / —</span>
+    <button class="nav-btn" id="btnNext" onclick="go(1)">→</button>
+  </div>
+</div>
+
+<!-- ══ AUDIO ══ -->
+<audio id="atmoAudio" loop>
+  <source src="audio/Black_Gold_Threshold.mp3" type="audio/mpeg">
+</audio>
+<audio id="finaleAudio">
+  <source src="audio/STAN_ARI-ECHOES_OF_ARIA.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ══ FINALE ══ -->
+<div id="finaleScreen">
+  <button class="finale-close" onclick="closeFinale()">✕</button>
+  <video id="finaleVideo" controls playsinline>
+    <!-- Якщо є відеокліп — src="video/finale_clip.mp4" -->
+  </video>
+</div>
+
+<script>
+console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
+// ── Config
+const LANG_CONFIG = {
+  uk: { total: 119, free: 39,  folder: 'pages2/ua', label: 'Українська' },
+  en: { total: 125, free: 41,  folder: 'pages2/en', label: 'English' },
+  pl: { total: 121, free: 40,  folder: 'pages2/pl', label: 'Polski' },
+  es: { total: 125, free: 41,  folder: 'pages2/es', label: 'Español' },
+  de: { total: 136, free: 45,  folder: 'pages2/de', label: 'Deutsch' },
+};
+
+const BOOK_TITLES = {
+  uk: 'Я НАРОДИВСЯ ЛЮДИНОЮ',
+  en: 'I WAS BORN HUMAN',
+  pl: 'URODZIŁEM SIĘ CZŁOWIEKIEM',
+  es: 'NACÍ SIENDO HUMANO',
+  de: 'ICH WURDE ALS MENSCH GEBOREN',
+};
+
+const CHAPTER_LABELS = {};
+
+let lang = null;
+let cur = 0;
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false, panStartX = 0, panStartY = 0, panBaseX = 0, panBaseY = 0;
+let barsVisible = true;
+let hideTimer = null;
+let atmoOn = false;
+
+function isInAppBrowser() {
+  return /FBAN|FBAV|Instagram|Line|Twitter|TikTok|Telegram|Messenger/i.test(navigator.userAgent);
+}
+
+function isIOSReaderDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+let finalePlayed = false;
+
+// ── Firebase / book access
+let hasAccess = false;
+let authUser = null;
+let firebaseApi = null;
+let accessChecked = false;
+let pages = [];
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBsrWuWCILNHKy8jphyvszge7XWUbPwFdY",
+  authDomain: "stanari-platform.firebaseapp.com",
+  projectId: "stanari-platform",
+  storageBucket: "stanari-platform.firebasestorage.app",
+  messagingSenderId: "1083904103961",
+  appId: "1:1083904103961:web:cd1fec10d11096c8f3fc88"
+};
+
+const LEMON_CHECKOUT_URL = 'https://stanari.lemonsqueezy.com/checkout/buy/7fc5ae9e-5b55-47e4-bc01-e0f391b41420';
+function buildLemonCheckoutUrl(email) {
+  const url = new URL(LEMON_CHECKOUT_URL);
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (cleanEmail) {
+    url.searchParams.set('checkout[email]', cleanEmail);
+    url.searchParams.set('checkout[custom][firebase_email]', cleanEmail);
+  }
+  return url.toString();
+}
+
+function stanariCurrentAuthEmail() {
+  // Firebase Auth is the only source of truth for the active account.
+  // localStorage may contain an old email from another device/session, so it must never unlock or buy.
+  return String(authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
+}
+
+async function getFirebaseApi() {
+  if (firebaseApi) return firebaseApi;
+  const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const authMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+  const fsMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+  let app;
+  try {
+    app = appMod.getApp();
+  } catch (e) {
+    app = appMod.initializeApp(FIREBASE_CONFIG);
+  }
+  const auth = authMod.getAuth(app);
+  try { await authMod.setPersistence(auth, authMod.browserLocalPersistence); } catch(e) { console.warn('Auth persistence setup failed:', e); }
+  const db = fsMod.getFirestore(app);
+  const provider = new authMod.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  firebaseApi = { authMod, fsMod, auth, db, provider };
+  return firebaseApi;
+}
+
+async function waitForAuthUser(timeoutMs = 2500) {
+  const { authMod, auth } = await getFirebaseApi();
+  if (auth.currentUser) return auth.currentUser;
+  return await new Promise(resolve => {
+    let done = false;
+    const finish = user => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      try { unsub(); } catch(e) {}
+      resolve(user || null);
+    };
+    const unsub = authMod.onAuthStateChanged(auth, finish);
+    const timer = setTimeout(() => finish(auth.currentUser || null), timeoutMs);
+  });
+}
+
+async function checkFirestoreBookAccess() {
+  try {
+    const { fsMod, db } = await getFirebaseApi();
+    await handleRedirectLoginResult();
+    authUser = await waitForAuthUser();
+
+    // Access must be based on the currently authenticated Firebase user, not on a stale localStorage email.
+    const email = (authUser && authUser.email ? authUser.email : '').trim().toLowerCase();
+    if (!email) {
+      hasAccess = false;
+      accessChecked = true;
+      return false;
+    }
+
+    console.log('[STAN ARI ACCESS] checking Firestore document:', `book2_access/${email}`);
+    const directRef = fsMod.doc(db, 'book2_access', email);
+    const directSnap = await fsMod.getDoc(directRef);
+    if (directSnap.exists() && directSnap.data() && directSnap.data().access === true) {
+      hasAccess = true;
+      localStorage.setItem('stanari_book2_access', 'granted_by_firestore');
+      localStorage.setItem('stanari_book2_access_email', email);
+      localStorage.setItem('stanari_book2_access_lang', 'all');
+      console.log('[STAN ARI ACCESS] granted by book2_access:', email);
+      return true;
+    }
+
+    // Fallback for older promo/manual grants saved by uid in users/{uid}.
+    if (authUser && authUser.uid) {
+      const userRef = fsMod.doc(db, 'users', authUser.uid);
+      const userSnap = await fsMod.getDoc(userRef);
+      if (userSnap.exists() && userSnap.data() && userSnap.data().hasAccessBook2 === true) {
+        hasAccess = true;
+        localStorage.setItem('stanari_book2_access', 'granted_by_users_uid');
+        localStorage.setItem('stanari_book2_access_email', email);
+        localStorage.setItem('stanari_book2_access_lang', 'all');
+        console.log('[STAN ARI ACCESS] granted by users/{uid}:', authUser.uid);
+        return true;
+      }
+    }
+    hasAccess = false;
+    localStorage.removeItem('stanari_book2_access');
+    localStorage.removeItem('stanari_book2_access_email');
+    console.log('[STAN ARI ACCESS] no access document found for:', email);
+  } catch (err) {
+    console.warn('Book access check failed:', err);
+  } finally {
+    accessChecked = true;
+  }
+  return hasAccess;
+}
+
+function stanariIsIOSLike() {
+  const ua = navigator.userAgent || '';
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function shouldUseRedirectLogin() {
+  // iPhone/Safari/mobile: use full-page redirect for login only.
+  return stanariIsIOSLike() || /Android|Mobile/i.test(navigator.userAgent || '');
+}
+
+let redirectResultHandled = false;
+async function handleRedirectLoginResult() {
+  if (redirectResultHandled) return authUser || null;
+  redirectResultHandled = true;
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    const result = await authMod.getRedirectResult(auth);
+    if (result && result.user) {
+      authUser = result.user;
+      return authUser;
+    }
+    authUser = auth.currentUser || authUser;
+  } catch(e) {
+    console.warn('Redirect login result failed:', e);
+  }
+  return authUser || null;
+}
+
+async function signInAndCheckAccess() {
+  const { authMod, auth, provider } = await getFirebaseApi();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  try {
+    // Popup works on modern mobile browsers and avoids the broken
+    // signInWithRedirect storage-partitioning issue (Chrome 115+/Safari ITP).
+    const result = await authMod.signInWithPopup(auth, provider);
+    authUser = result && result.user ? result.user : auth.currentUser;
+  } catch (popupErr) {
+    console.warn('Popup login failed, falling back to redirect:', popupErr);
+    var code = popupErr && popupErr.code ? popupErr.code : '';
+    if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      localStorage.setItem('stanari_login_from_lock', '1');
+      await authMod.signInWithRedirect(auth, provider);
+      return null;
+    }
+    alert('Не вдалося відкрити Google Login. Спробуйте ще раз.');
+    return null;
+  }
+
+  await checkFirestoreBookAccess();
+  // After login, rebuild the lock. If access exists it opens; if not, button becomes a direct Lemon buy button.
+  initReader();
+  return authUser || null;
+}
+
+// ── Email magic-link sign in for the reader lock screen
+window.readerShowLoginModal = function(){
+  const modal = document.getElementById('readerLoginModal');
+  if (modal) modal.style.display = 'flex';
+};
+window.readerEmailSignIn = async function(){
+  const input = document.getElementById('lockEmailInput');
+  const email = input ? input.value.trim().toLowerCase() : '';
+  if (!email || email.indexOf('@') < 1) { if (input) input.focus(); alert('Введіть коректний email.'); return false; }
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    await authMod.sendSignInLinkToEmail(auth, email, { url: (location.origin + location.pathname), handleCodeInApp: true });
+    localStorage.setItem('stanari_email_for_signin', email);
+    alert('Лист із посиланням для входу надіслано на ' + email + '. Перевірте пошту (і теку «Спам»).');
+  } catch(e) {
+    console.warn('Reader email link send failed:', e);
+    alert('Не вдалося надіслати лист. Спробуйте ще раз або скористайтесь Google.');
+  }
+  return false;
+};
+async function completeReaderEmailLinkSignIn(){
+  try {
+    const { authMod, auth } = await getFirebaseApi();
+    if (!authMod.isSignInWithEmailLink(auth, location.href)) return;
+    let email = localStorage.getItem('stanari_email_for_signin') || '';
+    if (!email) { email = (window.prompt('Підтвердіть ваш email для входу:') || '').trim().toLowerCase(); }
+    if (!email) return;
+    const result = await authMod.signInWithEmailLink(auth, email, location.href);
+    localStorage.removeItem('stanari_email_for_signin');
+    authUser = result && result.user ? result.user : auth.currentUser;
+    try { history.replaceState(null, '', location.origin + location.pathname); } catch(e) {}
+    await checkFirestoreBookAccess();
+    initReader();
+  } catch(e) { console.warn('Reader email link sign-in failed:', e); }
+}
+completeReaderEmailLinkSignIn();
+
+
+
+
+// ── Handle Firebase redirect result on iOS / in-app browsers
+handleRedirectLoginResult().then(async (user) => {
+  if (!user) return;
+  authUser = user;
+  await checkFirestoreBookAccess();
+  // IMPORTANT v8: after Google redirect, do not auto-open Lemon.
+  // Rebuild reader instead: access=true opens the book; no access shows a direct buy button for the next tap.
+  if (localStorage.getItem('stanari_login_from_lock') === '1') {
+    localStorage.removeItem('stanari_login_from_lock');
+    if (lang) initReader();
+  }
+});
+
+// One long-lived Firebase Auth observer for the reader UI.
+getFirebaseApi().then(({ authMod, auth }) => {
+  authMod.onAuthStateChanged(auth, async (user) => {
+    authUser = user || null;
+    if (user && user.email) {
+      const email = user.email.trim().toLowerCase();
+      localStorage.setItem('stanari_last_auth_email', email);
+      localStorage.setItem('stanari_known_email', email);
+      localStorage.setItem('stanari_login_completed', '1');
+      await checkFirestoreBookAccess();
+    } else {
+      hasAccess = false;
+      localStorage.removeItem('stanari_last_auth_email');
+      localStorage.removeItem('stanari_known_email');
+      localStorage.removeItem('stanari_login_completed');
+      localStorage.removeItem('stanari_book2_access');
+      localStorage.removeItem('stanari_book2_access_email');
+      try { cur = Math.min(cur, pages.length ? pages.length - 1 : 0); initReader(); } catch(e) {}
+    }
+  });
+}).catch(e => console.warn('Reader auth observer setup failed:', e));
+
+// iOS Safari can restore Firebase auth a little later than the first page render.
+// Keep listening after load: if access appears, rebuild the reader and remove the lock immediately.
+async function stanariRebuildReaderIfUnlocked() {
+  if (!hasAccess) return;
+  try {
+    const locked = document.querySelector('.lock-wrap');
+    if (locked || pages.length <= (LANG_CONFIG[lang]?.free || 0) + 1) {
+      cur = 0;
+      initReader();
+    }
+  } catch(e) { console.warn('Reader rebuild after unlock failed:', e); }
+}
+
+
+function stanariPaymentReturnDetected() {
+  const q = new URLSearchParams(location.search);
+  return q.get('purchase') === 'success' || q.get('payment') === 'success' || sessionStorage.getItem('stanari_payment_pending') === '1' || localStorage.getItem('stanari_payment_pending') === '1';
+}
+
+function stanariSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function waitForAccessAfterPayment() {
+  if (!stanariPaymentReturnDetected() || hasAccess) return;
+  // Lemon webhook may need a few seconds to create book2_access/{email} in Firestore.
+  for (let i = 0; i < 18 && !hasAccess; i++) {
+    await stanariSleep(i === 0 ? 1200 : 2000);
+    await checkFirestoreBookAccess();
+  }
+  if (hasAccess) {
+    sessionStorage.removeItem('stanari_payment_pending');
+    localStorage.removeItem('stanari_payment_pending');
+  }
+}
+
+// ── Check language
+// v9: opening reader from the main “Read the book” button must always show language choice.
+// Saved language is used only for direct reader opens without chooseLang=1, or when lang=uk/en/pl is provided.
+const readerParams = new URLSearchParams(location.search);
+const forcedLang = readerParams.get('lang');
+const mustChooseLang = readerParams.get('chooseLang') === '1' || readerParams.get('selectLang') === '1' || readerParams.get('noLangAuto') === '1';
+const savedLang = localStorage.getItem('readerLang');
+if (forcedLang && LANG_CONFIG[forcedLang]) {
+  startReader(forcedLang);
+} else if (!mustChooseLang && savedLang && LANG_CONFIG[savedLang]) {
+  startReader(savedLang);
+} else {
+  document.getElementById('langModal').style.display = 'flex';
+}
+
+
+function updateReaderBookTitle() {
+  const el = document.querySelector('.topbar-title');
+  if (!el) return;
+  el.textContent = BOOK_TITLES[lang] || BOOK_TITLES.en;
+}
+
+// ── Start reader with chosen language
+function startReader(l) {
+  lang = l;
+  const titleEl = document.getElementById('topbarTitle');
+  if (titleEl) titleEl.textContent = BOOK_TITLES[l] || BOOK_TITLES.en;
+  localStorage.setItem('readerLang', l);
+  updateReaderBookTitle();
+  document.getElementById('langModal').style.display = 'none';
+
+  // Update buy button language in parent if exists
+  try {
+    const buyUrls = {
+      uk: 'https://stanari.lemonsqueezy.com/checkout/buy/7fc5ae9e-5b55-47e4-bc01-e0f391b41420',
+      en: 'https://stanari.lemonsqueezy.com/checkout/buy/7fc5ae9e-5b55-47e4-bc01-e0f391b41420',
+      pl: 'https://stanari.lemonsqueezy.com/checkout/buy/7fc5ae9e-5b55-47e4-bc01-e0f391b41420',
+    };
+    if (window.opener) {
+      const buyBtn = window.opener.document.querySelector('[data-t="buy_main_btn"]');
+      if (buyBtn) buyBtn.href = buyUrls[l];
+    }
+  } catch(e) {}
+
+  // Check Firebase/Firestore access before building pages.
+  checkFirestoreBookAccess()
+    .then(() => waitForAccessAfterPayment())
+    .finally(() => playIntro());
+}
+
+// ── Intro video
+function playIntro() {
+  const intro = document.getElementById('introScreen');
+  intro.style.display = 'flex';
+  const video = document.getElementById('introVideo');
+  const startBtn = document.getElementById('startIntroBtn');
+
+  if (startBtn) startBtn.style.display = 'none';
+
+  const showManualStart = () => {
+    if (startBtn) startBtn.style.display = 'inline-flex';
+  };
+
+  video.muted = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {
+      // iOS / in-app browsers may block autoplay. Show manual start instead of skipping.
+      showManualStart();
+    });
+  }
+
+  video.addEventListener('ended', () => {
+    fadeAndStart();
+  }, { once:true });
+
+  // Safety: if browser stalls on black screen, show manual start instead of crashing/staying stuck.
+  setTimeout(() => {
+    if (document.getElementById('introScreen').style.display !== 'none' && video.paused) {
+      showManualStart();
+    }
+  }, 2200);
+
+  // Long safety fallback: never leave user stuck on intro.
+  setTimeout(() => {
+    if (document.getElementById('introScreen').style.display !== 'none') {
+      fadeAndStart();
+    }
+  }, 12000);
+}
+
+function manualStartIntro() {
+  const video = document.getElementById('introVideo');
+  const startBtn = document.getElementById('startIntroBtn');
+  if (startBtn) startBtn.style.display = 'none';
+  video.muted = true;
+  video.play().catch(() => fadeAndStart());
+}
+
+function fadeAndStart() {
+  document.getElementById('introFade').classList.add('fading');
+  setTimeout(() => {
+    document.getElementById('introScreen').style.display = 'none';
+    initReader();
+  }, 1500);
+}
+
+function skipIntro() {
+  fadeAndStart();
+}
+
+// ── Init reader
+let readerPointerHandlersAttached = false;
+
+function initReader() {
+  const cfg = LANG_CONFIG[lang];
+  const viewer = document.getElementById('viewer');
+
+// ── Desktop wheel zoom + drag pan
+if (!readerPointerHandlersAttached) {
+readerPointerHandlersAttached = true;
+viewer.addEventListener('wheel', e => {
+  if (!document.getElementById('readerScreen').classList.contains('visible')) return;
+  e.preventDefault();
+  zoom(e.deltaY < 0 ? 0.15 : -0.15);
+  showBars();
+}, {passive:false});
+
+viewer.addEventListener('mousedown', e => {
+  if (scale <= 1.02 || e.button !== 0) return;
+  isPanning = true;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  panBaseX = panX;
+  panBaseY = panY;
+  viewer.classList.add('dragging');
+  showBars();
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', e => {
+  if (!isPanning) return;
+  panX = panBaseX + (e.clientX - panStartX);
+  panY = panBaseY + (e.clientY - panStartY);
+  clampPan();
+  applyScale();
+});
+
+document.addEventListener('mouseup', () => {
+  if (!isPanning) return;
+  isPanning = false;
+  viewer.classList.remove('dragging');
+  applyScale();
+});
+}
+
+  viewer.innerHTML = '';
+  pages = [];
+
+  // Build all pages
+  for (let i = 1; i <= cfg.total; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'page-wrap' + (i === 1 ? ' active' : ' next');
+    wrap.dataset.page = i;
+
+    const isLocked = !hasAccess && i > cfg.free;
+
+    if (isLocked) {
+      const lockTexts = {
+        uk: { title: 'Ви прочитали безкоштовний фрагмент', btn: '🔔 Повідомити про вихід', msg: 'Продаж книги ще не відкрито. Підпишіться в Telegram — повідомимо, щойно можна буде купити.' },
+        en: { title: 'You have read the free sample', btn: '🔔 Notify me', msg: 'Sales are not open yet. Follow us on Telegram — we will let you know as soon as you can buy it.' },
+        pl: { title: 'Przeczytałeś darmowy fragment', btn: '🔔 Powiadom mnie', msg: 'Sprzedaż jeszcze się nie rozpoczęła. Dołącz do Telegramu — powiadomimy, gdy tylko będzie można kupić.' },
+        de: { title: 'Sie haben die kostenlose Leseprobe gelesen', btn: '🔔 Benachrichtigen', msg: 'Der Verkauf ist noch nicht gestartet. Folgen Sie uns auf Telegram — wir informieren Sie, sobald der Kauf möglich ist.' },
+        es: { title: 'Has leído la muestra gratuita', btn: '🔔 Avísame', msg: 'La venta aún no está abierta. Síguenos en Telegram — te avisaremos en cuanto puedas comprarlo.' }
+      };
+      const lt = lockTexts[lang] || lockTexts.en;
+      wrap.innerHTML = `
+        <div class="lock-wrap">
+          <div class="lock-box">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-title">${lt.title}</div>
+            <div style="color:rgba(255,255,255,.6);font-size:14px;line-height:1.6;margin:12px 0 20px">${lt.msg}</div>
+            <a class="lock-btn" href="https://t.me/STAN_ARI" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">${lt.btn}</a>
+          </div>
+        </div>`;
+      pages.push(wrap);
+      break;
+    } else {
+      const img = document.createElement('img');
+      img.className = 'page-img';
+      img.src = cfg.fmt === 'jpg' ? `${cfg.folder}/${String(i).padStart(3,'0')}.jpg` : `${cfg.folder}/p-${String(i).padStart(3,'0')}.png`;
+      img.loading = i <= 3 ? 'eager' : 'lazy';
+      img.draggable = false;
+      wrap.appendChild(img);
+      pages.push(wrap);
+    }
+  }
+
+  pages.forEach(p => viewer.appendChild(p));
+  syncRenderedPagesForMemory();
+
+  document.getElementById('readerScreen').classList.add('visible');
+  updateUI();
+  startHideTimer();
+
+  // Start atmosphere music
+  setTimeout(() => {
+    const audio = document.getElementById('atmoAudio');
+    audio.volume = 0.35;
+    audio.play().then(() => {
+      atmoOn = true;
+      document.getElementById('atmoBtn').classList.add('on');
+    }).catch(() => {});
+  }, 500);
+}
+
+
+function syncRenderedPagesForMemory() {
+  if (!isIOSReaderDevice()) return;
+  if (!pages || !pages.length || !lang) return;
+  const cfg = LANG_CONFIG[lang];
+  pages.forEach((wrap, idx) => {
+    const pageNo = parseInt(wrap.dataset.page || (idx + 1), 10);
+    const locked = wrap.querySelector('.lock-wrap');
+    if (locked) return;
+
+    const near = Math.abs(idx - cur) <= 2;
+    const hasImg = !!wrap.querySelector('img.page-img');
+
+    if (near && !hasImg) {
+      const img = document.createElement('img');
+      img.className = 'page-img';
+      img.src = cfg.fmt === 'jpg' ? `${cfg.folder}/${String(pageNo).padStart(3,'0')}.jpg` : `${cfg.folder}/p-${String(pageNo).padStart(3,'0')}.png`;
+      img.loading = Math.abs(idx - cur) <= 1 ? 'eager' : 'lazy';
+      img.draggable = false;
+      wrap.appendChild(img);
+    }
+
+    if (!near && hasImg) {
+      wrap.innerHTML = '';
+    }
+  });
+}
+
+// ── Navigation
+function go(dir) {
+  const next = cur + dir;
+  if (next < 0 || next >= pages.length) return;
+  scale = 1; panX = 0; panY = 0; applyScale();
+  pages[cur].className = 'page-wrap ' + (dir > 0 ? 'prev' : 'next');
+  cur = next;
+  pages[cur].className = 'page-wrap active';
+  syncRenderedPagesForMemory();
+  updateUI();
+  showBars();
+
+  // Check if last page — play finale
+  const cfg = LANG_CONFIG[lang];
+  if (hasAccess && cur === pages.length - 1 && !finalePlayed) {
+    finalePlayed = true;
+    setTimeout(() => playFinale(), 900);
+  }
+}
+
+function updateUI() {
+  const cfg = LANG_CONFIG[lang];
+  const realPgNum = parseInt(pages[cur]?.dataset?.page || cur + 1);
+
+  // PNG filenames are one step behind the printed page number visible inside the book.
+  // Show the same page number the reader sees printed on the page, but never exceed total.
+  const displayPgNum = Math.min(realPgNum + 1, cfg.total);
+
+  document.getElementById('pgInfo').textContent = `${displayPgNum} / ${cfg.total}`;
+  document.getElementById('pFill').style.width = (displayPgNum / cfg.total * 100) + '%';
+  document.getElementById('btnPrev').disabled = cur === 0;
+  document.getElementById('btnNext').disabled = cur === pages.length - 1;
+
+  // Keep the top bar clean and language-safe across UA / EN / PL.
+  // The actual block/chapter title is printed inside the book page itself.
+  document.getElementById('chapterLabel').textContent = '';
+}
+
+// ── Zoom
+function zoom(d) {
+  scale = Math.min(3, Math.max(0.5, scale + d));
+  if (scale <= 1) { panX = 0; panY = 0; }
+  clampPan();
+  applyScale();
+}
+function applyScale() {
+  syncRenderedPagesForMemory();
+  const img = pages[cur]?.querySelector('.page-img');
+  const viewerEl = document.getElementById('viewer');
+  if (img) {
+    img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    img.style.cursor = scale > 1.02 ? (isPanning ? 'grabbing' : 'grab') : 'default';
+  }
+  if (viewerEl) viewerEl.classList.toggle('zoomed', scale > 1.02);
+}
+function clampPan() {
+  if (scale <= 1) { panX = 0; panY = 0; return; }
+  const viewerEl = document.getElementById('viewer');
+  const img = pages[cur]?.querySelector('.page-img');
+  if (!viewerEl || !img) return;
+  const maxX = Math.max(0, (img.clientWidth * scale - viewerEl.clientWidth) / 2) + 100;
+  const maxY = Math.max(0, (img.clientHeight * scale - viewerEl.clientHeight) / 2) + 100;
+  panX = Math.max(-maxX, Math.min(maxX, panX));
+  panY = Math.max(-maxY, Math.min(maxY, panY));
+}
+
+// ── Auto-hide bars
+function showBars() {
+  if (!barsVisible) {
+    barsVisible = true;
+    document.getElementById('topbar').classList.remove('hidden');
+    document.getElementById('bottombar').classList.remove('hidden');
+    document.getElementById('progressBar').classList.remove('bars-hidden');
+    document.getElementById('viewer').classList.remove('expanded');
+  }
+  startHideTimer();
+}
+function hideBars() {
+  if (isIOSReaderDevice()) return;
+  barsVisible = false;
+  document.getElementById('topbar').classList.add('hidden');
+  document.getElementById('bottombar').classList.add('hidden');
+  document.getElementById('progressBar').classList.add('bars-hidden');
+  document.getElementById('viewer').classList.add('expanded');
+}
+function startHideTimer() {
+  clearTimeout(hideTimer);
+
+  // iPhone/iPad Safari and in-app browsers can crash/reload when fixed bars
+  // are repeatedly hidden and the viewer is expanded after a few idle seconds.
+  // Keep controls stable on iOS to prevent "Повторна помилка".
+  if (isIOSReaderDevice()) return;
+
+  hideTimer = setTimeout(hideBars, 3000);
+}
+
+['touchstart','mousemove','click'].forEach(ev => {
+  document.addEventListener(ev, () => {
+    if (document.getElementById('readerScreen').classList.contains('visible')) showBars();
+  }, {passive: true});
+});
+
+// ── Atmosphere
+function toggleAtmo() {
+  const audio = document.getElementById('atmoAudio');
+  atmoOn = !atmoOn;
+  if (atmoOn) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+  document.getElementById('atmoBtn').classList.toggle('on', atmoOn);
+}
+
+// ── Buy access
+async function buyAccess() {
+  try {
+    await handleRedirectLoginResult();
+    const { auth } = await getFirebaseApi();
+    authUser = auth.currentUser || authUser;
+
+    if (!authUser || !authUser.email) {
+      await signInAndCheckAccess();
+      return;
+    }
+
+    await checkFirestoreBookAccess();
+    if (hasAccess) { cur = 0; initReader(); return; }
+
+    sessionStorage.setItem('stanari_payment_pending', '1');
+    const checkout = buildLemonCheckoutUrl(authUser.email);
+    // Fallback path: the visible lock button is an overlay link; this function is used for login and old buttons.
+    window.location.href = checkout;
+  } catch(e) {
+    console.warn('Login/buy access failed:', e);
+  }
+}
+
+
+// ── Finale
+function playFinale() {
+  const audio = document.getElementById('atmoAudio');
+  audio.pause();
+  const finaleAudio = document.getElementById('finaleAudio');
+  finaleAudio.volume = 0.8;
+  finaleAudio.play().catch(() => {});
+  // Do not cover the final bio page; soundtrack plays in the background.
+}
+function closeFinale() {
+  document.getElementById('finaleScreen').classList.remove('show');
+  document.getElementById('finaleAudio').pause();
+}
+
+// ── Pinch zoom
+let initDist = 0, initScale = 1;
+const viewer = document.getElementById('viewer');
+viewer.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    initDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    initScale = scale;
+  }
+}, {passive: true});
+viewer.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.min(3, Math.max(0.5, initScale * (d / initDist)));
+    if (scale <= 1) { panX = 0; panY = 0; }
+    clampPan();
+    applyScale();
+    e.preventDefault();
+  }
+}, {passive: false});
+
+// ── Swipe + touch pan when zoomed
+let tsx = 0, tsy = 0, startScale = 1, touchPanMoved = false;
+viewer.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    tsx = e.touches[0].clientX;
+    tsy = e.touches[0].clientY;
+    startScale = scale;
+    panBaseX = panX;
+    panBaseY = panY;
+    touchPanMoved = false;
+  }
+}, {passive: true});
+
+viewer.addEventListener('touchmove', e => {
+  if (e.touches.length === 1 && scale > 1.02) {
+    panX = panBaseX + (e.touches[0].clientX - tsx);
+    panY = panBaseY + (e.touches[0].clientY - tsy);
+    clampPan();
+    applyScale();
+    touchPanMoved = true;
+    e.preventDefault();
+  }
+}, {passive:false});
+
+viewer.addEventListener('touchend', e => {
+  if (e.changedTouches.length === 1 && scale < 1.1 && !touchPanMoved) {
+    const dx = e.changedTouches[0].clientX - tsx;
+    const dy = e.changedTouches[0].clientY - tsy;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+    else showBars();
+  }
+}, {passive: true});
+
+// ── Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft') go(-1);
+  if (e.key === '+') zoom(0.2);
+  if (e.key === '-') zoom(-0.2);
+  if (e.key === 'Escape') window.history.back();
+});
+
+// Debug helper: open reader.html?debugAccess=1 and check browser console.
+if (new URLSearchParams(location.search).get('debugAccess') === '1') {
+  setTimeout(async () => {
+    await checkFirestoreBookAccess();
+    console.log('[STAN ARI ACCESS v3]', { email: authUser && authUser.email, hasAccess, accessChecked });
+  }, 1000);
+}
+</script>
+
+
+<script>
+/* === STAN ARI READER LEMON OVERLAY FINAL v20 ===
+   Event-based refresh only: no endless interval that can fight mobile taps.
+*/
+let stanariReaderLemonSetupTimer = null;
+function waitForLemonAndSetupReader(callback, maxWaitMs){
+  maxWaitMs = maxWaitMs || 8000;
+  var start = Date.now();
+  var interval = setInterval(function(){
+    if (window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'){
+      clearInterval(interval);
+      try { window.LemonSqueezy.Setup(); } catch(e){}
+      if (callback) callback();
+    } else if (Date.now() - start > maxWaitMs) {
+      clearInterval(interval);
+      // Lemon didn't load — open URL directly
+      if (callback) callback();
+    }
+  }, 100);
+}
+
+window.readerBuyBook = function(url){
+  if (window.LemonSqueezy && typeof window.LemonSqueezy.Url !== 'undefined' && window.LemonSqueezy.Url.Open) {
+    try { window.LemonSqueezy.Url.Open(url); return; } catch(e){}
+  }
+  // Lemon not ready — wait and open
+  waitForLemonAndSetupReader(function(){
+    if (window.LemonSqueezy && window.LemonSqueezy.Url && window.LemonSqueezy.Url.Open) {
+      try { window.LemonSqueezy.Url.Open(url); return; } catch(e){}
+    }
+    window.open(url, '_blank');
+  });
+};
+
+function stanariReaderRefreshLemonOverlay(){
+  try {
+    waitForLemonAndSetupReader();
+  } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', stanariReaderRefreshLemonOverlay);
+window.addEventListener('load', stanariReaderRefreshLemonOverlay);
+try {
+  new MutationObserver(stanariReaderRefreshLemonOverlay).observe(document.getElementById('viewer') || document.body, { childList:true, subtree:true });
+} catch(e) {}
+/* === /STAN ARI READER LEMON OVERLAY FINAL v20 === */
+</script>
+
+<script>
+/* === WAKE LOCK — screen stays on while reading (Android Chrome) === */
+(function(){
+  if (!('wakeLock' in navigator)) return; // not supported (e.g. iPhone)
+  var lock = null;
+  async function requestWakeLock(){
+    try {
+      lock = await navigator.wakeLock.request('screen');
+    } catch(e) { /* silently ignore — user denied or not supported */ }
+  }
+  function releaseWakeLock(){
+    if (lock) { lock.release().catch(function(){}); lock = null; }
+  }
+  // Acquire when reader screen becomes visible
+  var observer = new MutationObserver(function(){
+    var screen = document.getElementById('readerScreen');
+    if (screen && screen.classList.contains('visible')) {
+      requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    var screen = document.getElementById('readerScreen');
+    if (screen) observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+  });
+  // Re-acquire after tab becomes visible again (browser releases lock when tab hidden)
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible') {
+      var screen = document.getElementById('readerScreen');
+      if (screen && screen.classList.contains('visible')) requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+  });
+})();
+/* === /WAKE LOCK === */
+
+/* === READER UI TRANSLATIONS === */
+(function(){
+  var readerT = {
+    uk: { zoomIn:'Збільшити', zoomOut:'Зменшити', backSite:'Повернутись на сайт', skip:'Пропустити →' },
+    en: { zoomIn:'Zoom in', zoomOut:'Zoom out', backSite:'Back to site', skip:'Skip →' },
+    pl: { zoomIn:'Powiększ', zoomOut:'Pomniejsz', backSite:'Powrót do strony', skip:'Pomiń →' },
+    de: { zoomIn:'Vergrößern', zoomOut:'Verkleinern', backSite:'Zurück zur Website', skip:'Überspringen →' },
+    es: { zoomIn:'Ampliar', zoomOut:'Reducir', backSite:'Volver al sitio', skip:'Omitir →' }
+  };
+  function applyReaderTitles(){
+    var l = (typeof lang !== 'undefined' ? lang : null)
+          || localStorage.getItem('readerLang')
+          || localStorage.getItem('sl') || 'uk';
+    var t = readerT[l] || readerT.uk;
+    var zi = document.getElementById('btnZoomIn');
+    var zo = document.getElementById('btnZoomOut');
+    var bk = document.getElementById('btnBackSite');
+    var sk = document.getElementById('skipBtn');
+    if (zi) zi.title = t.zoomIn;
+    if (zo) zo.title = t.zoomOut;
+    if (bk) bk.title = t.backSite;
+    if (sk) sk.textContent = t.skip;
+  }
+  document.addEventListener('DOMContentLoaded', applyReaderTitles);
+  setTimeout(applyReaderTitles, 800);
+})();
+/* === /READER UI TRANSLATIONS === */
+(function(){
+  try {
+    var q = new URLSearchParams(location.search);
+    var OWNER_EMAILS = ["staskit1983@gmail.com", "stanari.art@gmail.com"];
+    function ownerEmail(){
+      var e = "";
+      try { e = (typeof authUser !== 'undefined' && authUser && authUser.email) ? authUser.email : ''; } catch(_){}
+      if (!e) { try { e = localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || ''; } catch(_){} }
+      return (e || '').trim().toLowerCase();
+    }
+    function isOwner(){ return OWNER_EMAILS.indexOf(ownerEmail()) !== -1; }
+    var forceDebug = (q.get('debug') === '1');
+    if (!forceDebug && !isOwner()) {
+      var waitTimer = setInterval(function(){
+        if (isOwner()) { clearInterval(waitTimer); startDebug(); }
+      }, 1500);
+      setTimeout(function(){ clearInterval(waitTimer); }, 30000);
+      return;
+    }
+    startDebug();
+    function startDebug(){
+
+    var box = document.createElement('div');
+    box.id = 'stanariDebugBox';
+    box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:999999;max-width:92vw;background:rgba(5,4,2,.92);border:1px solid #d8af63;border-radius:10px;padding:10px 12px;color:#ffe89b;font:12px/1.5 monospace;white-space:pre;box-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:auto';
+    document.body.appendChild(box);
+
+    function val(v){ return (v === undefined || v === null || v === '') ? '—' : v; }
+    function yn(b){ return b ? 'yes' : 'no'; }
+
+    function render(){
+      var email = '';
+      try { email = (typeof authUser !== 'undefined' && authUser && authUser.email) ? authUser.email : ''; } catch(e){}
+      var known = '';
+      try { known = (localStorage.getItem('stanari_last_auth_email') || localStorage.getItem('stanari_known_email') || ''); } catch(e){}
+      var acc = false, accChk = false;
+      try { acc = (typeof hasAccess !== 'undefined') ? hasAccess : false; } catch(e){}
+      try { accChk = (typeof accessChecked !== 'undefined') ? accessChecked : false; } catch(e){}
+      var payPending = false;
+      try { payPending = (sessionStorage.getItem('stanari_payment_pending') === '1' || localStorage.getItem('stanari_payment_pending') === '1'); } catch(e){}
+      var lemonReady = false;
+      try { lemonReady = !!(window.LemonSqueezy && typeof window.LemonSqueezy.Setup === 'function'); } catch(e){}
+      var swActive = false;
+      try { swActive = !!(navigator.serviceWorker && navigator.serviceWorker.controller); } catch(e){}
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      box.textContent =
+        'STAN ARI DEBUG\n' +
+        '──────────────\n' +
+        'Firebase user: ' + val(email) + '\n' +
+        'known email:   ' + val(known) + '\n' +
+        'access check ran: ' + yn(accChk) + '\n' +
+        'access: ' + yn(acc) + '\n' +
+        'Firestore path: book2_access/' + val(email || known) + '\n' +
+        'payment pending: ' + yn(payPending) + '\n' +
+        'Lemon ready: ' + yn(lemonReady) + '\n' +
+        'service worker: ' + yn(swActive) + '\n' +
+        'iOS device: ' + yn(isIOS) + '\n' +
+        '(tap to close)';
+    }
+
+    box.addEventListener('click', function(){ box.remove(); clearInterval(timer); });
+    render();
+    var timer = setInterval(render, 1000);
+    }
+  } catch(e) { /* never break the reader because of debug */ }
+})();
+/* === /STAN ARI DEBUG OVERLAY === */
+</script>
+
+</body>
+</html>

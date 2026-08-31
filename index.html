@@ -725,6 +725,13 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 #books img[src*="book1-mockup"],#books img[src*="book2-mockup"],#books img[src*="ibh-mockup"]{
   cursor:pointer;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.55);
 }
+@media(min-width:769px){
+  .ibh-card-wrap{max-width:900px!important}
+  .ibh-card{display:grid!important;grid-template-columns:320px 1fr!important;align-items:stretch}
+  .ibh-card .ibh-photo{width:auto!important;height:auto!important}
+  .ibh-card .ibh-photo img.cover{width:100%!important;height:100%!important;object-fit:cover!important}
+  .ibh-card > .card-body{min-width:0}
+}
 #gallery .gallery-item img{height:320px;object-fit:cover}
 @media(max-width:760px){
   .music-final-card{grid-template-columns:1fr}
@@ -1393,9 +1400,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </div>
 </div>
 <!-- Книга 2: Я народився людиною -->
-<div style="margin-top:28px;max-width:460px;margin-left:auto;margin-right:auto">
-<div class="card">
-<div class="photo-full">
+<div class="ibh-card-wrap" style="margin-top:28px;max-width:460px;margin-left:auto;margin-right:auto">
+<div class="card ibh-card">
+<div class="photo-full ibh-photo">
 <img alt="Я народився людиною — I Was Born Human" class="cover" height="800" loading="lazy" decoding="async" onclick="openBookCover(ibhCoverForLang())" src="ibh-mockup.jpg" width="600"/>
 <div style="position:absolute;top:12px;left:12px"><span class="tag" data-t="ibh_tag">Вже доступна</span></div>
 </div>

@@ -364,6 +364,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 <script>
 console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
 // ── Config
+const READER_PAGE_TITLES = {
+  uk: 'Stan Ari — Я народився людиною — Читалка',
+  en: 'Stan Ari — I Was Born Human — Reader',
+  pl: 'Stan Ari — Urodziłem się człowiekiem — Czytnik',
+  es: 'Stan Ari — Nací siendo humano — Lector',
+  de: 'Stan Ari — Ich wurde als Mensch geboren — Lesegerät'
+};
 const LANG_CONFIG = {
   uk: { total: 119, free: 39,  folder: 'pages2/ua', label: 'Українська' },
   en: { total: 125, free: 41,  folder: 'pages2/en', label: 'English' },
@@ -710,15 +717,6 @@ function updateReaderBookTitle() {
   if (!el) return;
   el.textContent = BOOK_TITLES[lang] || BOOK_TITLES.en;
 }
-
-// ── Start reader with chosen language
-const READER_PAGE_TITLES = {
-  uk: 'Stan Ari — Я народився людиною — Читалка',
-  en: 'Stan Ari — I Was Born Human — Reader',
-  pl: 'Stan Ari — Urodziłem się człowiekiem — Czytnik',
-  es: 'Stan Ari — Nací siendo humano — Lector',
-  de: 'Stan Ari — Ich wurde als Mensch geboren — Lesegerät'
-};
 
 function startReader(l) {
   document.title = READER_PAGE_TITLES[l] || READER_PAGE_TITLES.en;

@@ -730,14 +730,8 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
   .music-final-card{grid-template-columns:1fr}
   #gallery .gallery-item img{height:auto}
 }
-/* Book 2 (I Was Born Human) card: stacked on mobile, cover-left/content-right on desktop */
-@media(min-width:769px){
-  .ibh-card-wrap{max-width:900px}
-  .ibh-card{display:flex;flex-direction:row;align-items:stretch}
-  .ibh-card .ibh-photo{width:320px;flex:0 0 320px}
-  .ibh-card .ibh-photo img.cover{height:100%}
-  .ibh-card > .card-body{flex:1;min-width:0}
-}
+/* Book 2 desktop horizontal layout removed — caused a layout break, reverted. */
+
 </style>
 <style>
 /* Stas block — desktop: text left, photo right; mobile: photo top, text bottom */
@@ -1399,9 +1393,9 @@ h3{font-size:clamp(18px,2vw,26px);font-weight:800;color:#fff8ed;line-height:1.15
 </div>
 </div>
 <!-- Книга 2: Я народився людиною -->
-<div class="ibh-card-wrap" style="margin-top:28px;max-width:460px;margin-left:auto;margin-right:auto">
-<div class="card ibh-card">
-<div class="photo-full ibh-photo">
+<div style="margin-top:28px;max-width:460px;margin-left:auto;margin-right:auto">
+<div class="card">
+<div class="photo-full">
 <img alt="Я народився людиною — I Was Born Human" class="cover" height="800" loading="lazy" decoding="async" onclick="openBookCover(ibhCoverForLang())" src="ibh-mockup.jpg" width="600"/>
 <div style="position:absolute;top:12px;left:12px"><span class="tag" data-t="ibh_tag">Вже доступна</span></div>
 </div>
@@ -4965,9 +4959,13 @@ document.getElementById('appleBooksModal').addEventListener('click', function(e)
   <div style="background:#1a1410;border:1px solid rgba(216,175,99,.3);border-radius:20px;padding:32px 24px;max-width:360px;width:90%;text-align:center">
     <img alt="Google Play" height="36" src="https://cdn.simpleicons.org/googleplay/ffffff" width="36" style="margin-bottom:16px"/>
     <h3 style="color:#f5e4a0;font-size:18px;margin:0 0 8px">Google Play Books</h3>
-    <p style="color:var(--muted);font-size:14px;margin:0 0 24px" data-t="ibh_title">Я народився людиною</p>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 24px" data-t="lang_label">Вибери мову</p>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <a href="https://play.google.com/store/books" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid #d8af63;background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">Google Play Books ↗</a>
+      <a href="https://play.google.com/store/books/details?id=XFAHEgAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid #d8af63;background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇬🇧 English</a>
+      <a href="https://play.google.com/store/books/details?id=SjQBEgAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇺🇦 Українська</a>
+      <a href="https://play.google.com/store/books/details?id=i48HEgAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇵🇱 Polski</a>
+      <a href="https://play.google.com/store/books/details?id=tlEHEgAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇪🇸 Español</a>
+      <a href="https://play.google.com/store/books/details?id=OY0HEgAAQBAJ" target="_blank" rel="noopener" onclick="closeGooglePlayModal2()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;border:2px solid rgba(216,175,99,.4);background:transparent;color:#d8af63;font-weight:800;font-size:16px;text-decoration:none">🇩🇪 Deutsch</a>
     </div>
     <button id="gpModal2CloseBtn" onclick="closeGooglePlayModal2()" style="margin-top:20px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">✕ Закрити</button>
   </div>

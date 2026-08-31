@@ -9,13 +9,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,sans-serif;touch-action:none}
 
-/* ══ INTRO VIDEO ══ */
+/* ══ INTRO IMAGE ══ */
 #introScreen{
   position:fixed;inset:0;z-index:300;
   background:#000;
   display:flex;align-items:center;justify-content:center;
 }
-#introVideo{
+#introImg{
   width:100%;height:100%;
   object-fit:contain;
   background:#000;
@@ -35,17 +35,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   color:rgba(255,255,255,.6);
   padding:8px 18px;border-radius:20px;
   font-size:11px;letter-spacing:.1em;
-  cursor:pointer;
-  font-family:system-ui,sans-serif;
-}
-#startIntroBtn{
-  position:absolute;bottom:calc(34px + env(safe-area-inset-bottom, 0px));left:42%;transform:translateX(-50%);
-  display:none;
-  background:rgba(216,175,99,.16);
-  border:1px solid rgba(216,175,99,.35);
-  color:#d8af63;
-  padding:10px 22px;border-radius:22px;
-  font-size:12px;font-weight:800;letter-spacing:.08em;
   cursor:pointer;
   font-family:system-ui,sans-serif;
 }
@@ -280,7 +269,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
   .progress.bars-hidden{bottom:0!important;}
   .viewer{bottom:calc(58px + env(safe-area-inset-bottom, 0px))!important;}
   .viewer.expanded{bottom:0!important;}
-  #startIntroBtn{left:42%!important;bottom:calc(34px + env(safe-area-inset-bottom, 0px))!important;}
 }
 /* === /iPhone / mobile reader stability patch === */
 
@@ -312,16 +300,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
     <button class="lang-flag" onclick="startReader('en')">🇬🇧 EN</button>
     <button class="lang-flag" onclick="startReader('pl')">🇵🇱 PL</button>
     <button class="lang-flag" onclick="startReader('es')">🇪🇸 ES</button>
+    <button class="lang-flag" onclick="startReader('de')">🇩🇪 DE</button>
   </div>
 </div>
 
-<!-- ══ INTRO VIDEO ══ -->
+<!-- ══ INTRO IMAGE (temporary, video animation removed) ══ -->
 <div id="introScreen" style="display:none;">
-  <video id="introVideo" playsinline webkit-playsinline autoplay muted>
-    <source src="video/book_intro.mp4" type="video/mp4">
-  </video>
+  <img id="introImg" src="ibh-mockup.jpg" alt="Я народився людиною" style="width:100%;height:100%;object-fit:contain">
   <div id="introFade"></div>
-  <button id="startIntroBtn" onclick="manualStartIntro()">▶ START</button>
   <button id="skipBtn" onclick="skipIntro()">Пропустити →</button>
 </div>
 
@@ -709,7 +695,7 @@ async function waitForAccessAfterPayment() {
 const readerParams = new URLSearchParams(location.search);
 const forcedLang = readerParams.get('lang');
 const mustChooseLang = readerParams.get('chooseLang') === '1' || readerParams.get('selectLang') === '1' || readerParams.get('noLangAuto') === '1';
-const savedLang = localStorage.getItem('readerLang');
+const savedLang = localStorage.getItem('readerLang2');
 if (forcedLang && LANG_CONFIG[forcedLang]) {
   startReader(forcedLang);
 } else if (!mustChooseLang && savedLang && LANG_CONFIG[savedLang]) {
@@ -730,7 +716,7 @@ function startReader(l) {
   lang = l;
   const titleEl = document.getElementById('topbarTitle');
   if (titleEl) titleEl.textContent = BOOK_TITLES[l] || BOOK_TITLES.en;
-  localStorage.setItem('readerLang', l);
+  localStorage.setItem('readerLang2', l);
   updateReaderBookTitle();
   document.getElementById('langModal').style.display = 'none';
 
@@ -757,53 +743,17 @@ function startReader(l) {
 function playIntro() {
   const intro = document.getElementById('introScreen');
   intro.style.display = 'flex';
-  const video = document.getElementById('introVideo');
-  const startBtn = document.getElementById('startIntroBtn');
 
-  if (startBtn) startBtn.style.display = 'none';
-
-  const showManualStart = () => {
-    if (startBtn) startBtn.style.display = 'inline-flex';
-  };
-
-  video.muted = true;
-  video.setAttribute('muted', '');
-  video.setAttribute('playsinline', '');
-  video.setAttribute('webkit-playsinline', '');
-
-  const playPromise = video.play();
-  if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise.catch(() => {
-      // iOS / in-app browsers may block autoplay. Show manual start instead of skipping.
-      showManualStart();
-    });
-  }
-
-  video.addEventListener('ended', () => {
-    fadeAndStart();
-  }, { once:true });
-
-  // Safety: if browser stalls on black screen, show manual start instead of crashing/staying stuck.
-  setTimeout(() => {
-    if (document.getElementById('introScreen').style.display !== 'none' && video.paused) {
-      showManualStart();
-    }
-  }, 2200);
-
-  // Long safety fallback: never leave user stuck on intro.
+  // Static image splash (temporary replacement for the video animation).
   setTimeout(() => {
     if (document.getElementById('introScreen').style.display !== 'none') {
       fadeAndStart();
     }
-  }, 12000);
+  }, 2000);
 }
 
 function manualStartIntro() {
-  const video = document.getElementById('introVideo');
-  const startBtn = document.getElementById('startIntroBtn');
-  if (startBtn) startBtn.style.display = 'none';
-  video.muted = true;
-  video.play().catch(() => fadeAndStart());
+  fadeAndStart();
 }
 
 function fadeAndStart() {
@@ -1272,7 +1222,7 @@ try {
   };
   function applyReaderTitles(){
     var l = (typeof lang !== 'undefined' ? lang : null)
-          || localStorage.getItem('readerLang')
+          || localStorage.getItem('readerLang2')
           || localStorage.getItem('sl') || 'uk';
     var t = readerT[l] || readerT.uk;
     var zi = document.getElementById('btnZoomIn');

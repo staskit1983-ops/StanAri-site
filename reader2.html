@@ -364,6 +364,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:sys
 <script>
 console.log("[STAN ARI] reader v20 auth/lemon swiss fix loaded");
 // ── Config
+// TEMPORARY PROMO: whole book free while sales aren't set up yet.
+// To turn the paywall back on later, just change this to false.
+const FREE_PROMO_MODE = true;
 const READER_PAGE_TITLES = {
   uk: 'Stan Ari — Я народився людиною — Читалка',
   en: 'Stan Ari — I Was Born Human — Reader',
@@ -829,7 +832,7 @@ document.addEventListener('mouseup', () => {
     wrap.className = 'page-wrap' + (i === 1 ? ' active' : ' next');
     wrap.dataset.page = i;
 
-    const isLocked = !hasAccess && i > cfg.free;
+    const isLocked = !FREE_PROMO_MODE && !hasAccess && i > cfg.free;
 
     if (isLocked) {
       const lockTexts = {

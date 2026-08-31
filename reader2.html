@@ -712,7 +712,16 @@ function updateReaderBookTitle() {
 }
 
 // ── Start reader with chosen language
+const READER_PAGE_TITLES = {
+  uk: 'Stan Ari — Я народився людиною — Читалка',
+  en: 'Stan Ari — I Was Born Human — Reader',
+  pl: 'Stan Ari — Urodziłem się człowiekiem — Czytnik',
+  es: 'Stan Ari — Nací siendo humano — Lector',
+  de: 'Stan Ari — Ich wurde als Mensch geboren — Lesegerät'
+};
+
 function startReader(l) {
+  document.title = READER_PAGE_TITLES[l] || READER_PAGE_TITLES.en;
   lang = l;
   const titleEl = document.getElementById('topbarTitle');
   if (titleEl) titleEl.textContent = BOOK_TITLES[l] || BOOK_TITLES.en;
